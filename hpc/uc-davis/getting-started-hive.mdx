@@ -10,7 +10,7 @@ This guide walks you through creating a HIVE account and setting up SSH key auth
 ## Prerequisites
 
 - A UC Davis Kerberos account
-- An SSH key pair (instructions provided below if you don't have one)
+- An SSH key pair (optional but recommended - instructions provided below)
 
 ## Create Your HIVE Account
 
@@ -26,8 +26,8 @@ This guide walks you through creating a HIVE account and setting up SSH key auth
 
    - **Sponsoring group**: Select your lab or department group from the dropdown
    - **PI**: Enter the name of your PI
-   - **Access Type**: Choose SSH (recommended) or SafeKey
-   - **SSH Key**: Paste your public SSH key (see below for how to generate one)
+   - **Access Type**: Choose OpenOnDemand or SSH Key (recommended). You can always log in with your UC Davis Kerberos password regardless of which option you choose
+   - **SSH Key**: Paste your public SSH key if using SSH authentication (see below for how to generate one)
 
 <Frame>
   <img src="/hpc/images/hive_setup_2.png" alt="HIVE account request form showing fields for sponsoring group, PI, access type, and SSH key" />
@@ -37,9 +37,9 @@ This guide walks you through creating a HIVE account and setting up SSH key auth
   The image above shows example values. You should select your own lab group and PI.
 </Note>
 
-## Setting Up an SSH Key
+## Setting Up an SSH Key (Optional but Recommended)
 
-If you don't already have an SSH key, follow the instructions for your operating system below.
+SSH keys provide a more secure and convenient way to log in without entering your password each time. If you prefer, you can skip this step and use your Kerberos password instead.
 
 <Tabs>
   <Tab title="Windows (PowerShell)">
