@@ -28,14 +28,14 @@
             "group": "High Performance Computing",
             "pages": [
               "hpc/index",
-              "hpc/getting-started"
-            ]
-          },
-          {
-            "group": "HPC at UC Davis",
-            "pages": [
-              "hpc/uc-davis/index",
-              "hpc/uc-davis/getting-started-hive"
+              "hpc/getting-started",
+              {
+                "group": "HPC at UC Davis",
+                "pages": [
+                  "hpc/uc-davis/index",
+                  "hpc/uc-davis/getting-started-hive"
+                ]
+              }
             ]
           }
         ]
