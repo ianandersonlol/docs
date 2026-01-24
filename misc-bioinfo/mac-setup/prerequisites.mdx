@@ -1,0 +1,71 @@
+---
+title: Prerequisites - Xcode Command Line Tools
+description: Install the essential development tools that form the foundation of your bioinformatics environment
+icon: hammer
+---
+
+# Prerequisites: Xcode Command Line Tools
+
+<div style={{textAlign: 'center'}}>
+
+![Xcode](/images/Xcode.png)
+
+</div>
+
+Before installing anything else, you need the Xcode Command Line Tools. These are essential development tools that form the foundation of your bioinformatics environment.
+
+## What are Xcode Command Line Tools?
+
+Xcode Command Line Tools are a collection of development utilities provided by Apple that include:
+
+- **Compilers**: `gcc`, `clang`, and `g++` for compiling C/C++ code (many bioinformatics tools are written in C/C++)
+- **Version Control**: `git` for managing code and downloading bioinformatics software from repositories
+- **Build Tools**: `make`, `cmake`, and other build systems used by bioinformatics packages
+- **Development Libraries**: Essential system libraries that bioinformatics software depends on
+- **Command Line Utilities**: Tools like `ld` (linker) and `ar` (archiver) for building software from source
+
+## Why They're Critical for Bioinformatics
+
+Many bioinformatics tools are distributed as source code that needs to be compiled on your system. Without these tools:
+
+- **Package managers** like Homebrew and conda won't work properly
+- **Source installations** of tools like BLAST, BWA, or GATK will fail
+- **Dependencies** for Python packages (like those requiring compilation) won't install
+- **Git repositories** containing bioinformatics pipelines can't be cloned
+
+## Installation
+
+```bash
+xcode-select --install
+```
+
+This will open a dialog asking if you want to install the command line tools. Click "Install" and wait for the process to complete.
+
+You can verify the installation by running:
+
+```bash
+xcode-select -p
+```
+
+This should return `/Library/Developer/CommandLineTools` if properly installed.
+
+## Verification
+
+Test that key tools are available:
+
+```bash
+# Check compiler
+gcc --version
+
+# Check git
+git --version
+
+# Check make
+make --version
+```
+
+All commands should return version information without errors.
+
+<Note>
+  Once Xcode Command Line Tools are installed, proceed to [Homebrew](/misc-bioinfo/mac-setup/homebrew) to install the package manager.
+</Note>

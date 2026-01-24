@@ -1,0 +1,76 @@
+---
+title: Core Command Line Utilities
+description: Essential command line tools for bioinformatics workflows
+icon: terminal
+---
+
+# Core Command Line Utilities
+
+These utilities will become your daily drivers for file manipulation, system monitoring, and data processing.
+
+```bash
+brew install htop tree wget curl jq git awk
+```
+
+## htop - Interactive Process Viewer
+
+`htop` is an enhanced version of the traditional `top` command, providing a colorful, interactive interface to monitor system processes and resource usage.
+
+```bash
+# Launch htop
+htop
+```
+
+**Why it's important**: Bioinformatics workflows often involve long-running processes that consume significant CPU and memory. `htop` helps you monitor resource usage and identify bottlenecks.
+
+## tree - Directory Structure Visualization
+
+`tree` displays directory contents in a tree-like format, making it easy to understand project structure.
+
+```bash
+# Display directory structure
+tree
+
+# Limit depth and show only directories
+tree -d -L 2
+```
+
+## wget & curl - Data Download Tools
+
+Both are essential for downloading datasets, reference genomes, and other files from web servers.
+
+```bash
+# Download with wget
+wget https://example.com/genome.fasta
+
+# Download with curl
+curl -O https://example.com/proteins.faa
+```
+
+<Note>
+  **Why both?** Different servers and APIs work better with different tools. Many bioinformatics databases provide `curl` commands in their documentation.
+</Note>
+
+## jq - JSON Processor
+
+`jq` is invaluable for parsing JSON responses from APIs, which is common when working with biological databases.
+
+```bash
+# Pretty print JSON
+curl -s "https://api.example.com/gene/BRCA1" | jq '.'
+
+# Extract specific fields
+curl -s "https://api.example.com/gene/BRCA1" | jq '.description'
+```
+
+## Quick Reference
+
+| Tool | Purpose | Common Use |
+|------|---------|------------|
+| `htop` | Process monitoring | Watch long-running jobs |
+| `tree` | Directory visualization | Understand project structure |
+| `wget` | Download files | Fetch datasets |
+| `curl` | HTTP requests | API calls, downloads |
+| `jq` | JSON processing | Parse API responses |
+| `git` | Version control | Track code changes |
+| `awk` | Text processing | Parse tabular data |

@@ -1,0 +1,218 @@
+---
+title: Homebrew - The Missing Package Manager
+description: Install and use Homebrew for managing software on macOS
+icon: beer-mug-empty
+---
+
+# Homebrew: The Missing Package Manager
+
+<div style={{textAlign: 'center'}}>
+
+![Homebrew Logo](/images/Homebrew.png)
+
+</div>
+
+[Homebrew](https://brew.sh/) is an essential package manager for macOS that makes installing and managing software incredibly easy. Think of it as an app store for command-line tools and applications.
+
+## Installation
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+After installation, add Homebrew to your PATH (the installer will provide specific instructions for your system):
+
+```bash
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
+eval "$(/opt/homebrew/bin/brew shellenv)"
+```
+
+## Why Homebrew is Essential for Bioinformatics
+
+- **Dependency Management**: Automatically handles complex dependencies between tools
+- **Version Control**: Easy to install specific versions of bioinformatics tools
+- **Bioinformatics Tap**: The `brewsci/bio` tap contains hundreds of specialized bioinformatics packages
+- **Easy Updates**: Keep all your tools up to date with simple commands
+- **Binary Distribution**: Pre-compiled packages mean faster installation than building from source
+
+## Understanding Formulas vs Casks
+
+Homebrew has two main types of packages:
+
+### Formulas (Command-Line Tools)
+
+**Formulas** are command-line tools and libraries installed with `brew install`:
+
+```bash
+# Examples of formulas
+brew install samtools
+brew install python
+brew install wget
+brew install git
+```
+
+Formulas are typically:
+- Command-line programs
+- Libraries and dependencies
+- Open-source software
+- Installed to `/opt/homebrew/bin/` (Apple Silicon) or `/usr/local/bin/` (Intel)
+
+### Casks (GUI Applications)
+
+**Casks** are GUI applications installed with `brew install --cask`:
+
+```bash
+# Examples of casks
+brew install --cask rstudio
+brew install --cask visual-studio-code
+brew install --cask github
+brew install --cask igv
+```
+
+Casks are typically:
+- Applications with graphical interfaces
+- Installed to `/Applications/`
+- Sometimes proprietary software
+- .app bundles, .pkg installers, or .dmg files
+
+## Homebrew Tutorial: Common Operations
+
+### Basic Installation
+
+```bash
+# Install a formula (command-line tool)
+brew install samtools
+
+# Install a cask (GUI application)
+brew install --cask rstudio
+
+# Install from a specific tap
+brew install brewsci/bio/blast
+```
+
+### Searching for Packages
+
+```bash
+# Search all packages
+brew search blast
+
+# Search only formulas
+brew search --formula blast
+
+# Search only casks
+brew search --cask genome
+
+# Search in specific tap
+brew search brewsci/bio/
+```
+
+### Getting Information
+
+```bash
+# Get info about a package
+brew info samtools
+
+# List installed packages
+brew list
+
+# List only formulas
+brew list --formula
+
+# List only casks
+brew list --cask
+```
+
+## Updating and Upgrading
+
+### Update Homebrew Itself
+
+```bash
+# Update Homebrew's package definitions (do this regularly!)
+brew update
+```
+
+This updates Homebrew's local database of available packages and versions, but doesn't upgrade your installed software.
+
+### Upgrade Installed Packages
+
+```bash
+# See what packages can be upgraded
+brew outdated
+
+# Upgrade ALL packages (formulas and casks)
+brew upgrade
+
+# Upgrade specific formula
+brew upgrade samtools
+
+# Upgrade specific cask
+brew upgrade --cask rstudio
+
+# Upgrade only formulas
+brew upgrade --formula
+
+# Upgrade only casks
+brew upgrade --cask
+```
+
+### Maintenance Commands
+
+```bash
+# Clean up old versions and cache
+brew cleanup
+
+# See what cleanup would remove (dry run)
+brew cleanup --dry-run
+
+# Check system for potential problems
+brew doctor
+
+# Get help
+brew help
+```
+
+## Bioinformatics-Specific Tips
+
+### Add Important Taps
+
+```bash
+# Bioinformatics packages
+brew tap brewsci/bio
+
+# R packages and tools
+brew tap brewsci/science
+
+# List your taps
+brew tap
+```
+
+### Common Bioinformatics Installations
+
+```bash
+# Essential bioinformatics tools (formulas)
+brew install samtools bcftools bedtools
+brew install brewsci/bio/blast
+brew install brewsci/bio/bwa
+
+# GUI applications (casks)
+brew install --cask igv
+brew install --cask jalview
+brew install --cask figtree
+```
+
+### Best Practices
+
+```bash
+# Weekly maintenance routine
+brew update && brew upgrade && brew cleanup
+
+# Before starting a new project, update everything
+brew update && brew doctor
+
+# Check what's installed
+brew list | grep bio
+```
+
+<Tip>
+  **Documentation**: [Homebrew Documentation](https://docs.brew.sh/) | [Homebrew Cask Documentation](https://github.com/Homebrew/homebrew-cask/blob/master/USAGE.md)
+</Tip>

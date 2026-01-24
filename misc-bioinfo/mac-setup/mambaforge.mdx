@@ -1,0 +1,107 @@
+---
+title: Mambaforge - Fast Conda Package Management
+description: Install Mambaforge for blazing-fast bioinformatics package management
+icon: snake
+---
+
+# Mambaforge: Fast Conda Package Management
+
+<div style={{textAlign: 'center'}}>
+
+![Mamba Logo](/images/MambaLogo.png)
+
+</div>
+
+[Mambaforge](https://github.com/conda-forge/miniforge#mambaforge) combines conda with mamba, providing blazing-fast package management that's essential for bioinformatics workflows.
+
+## Installation
+
+```bash
+# Download and install Mambaforge
+curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh"
+bash Mambaforge-$(uname)-$(uname -m).sh
+```
+
+Follow the installation prompts and allow it to initialize your shell.
+
+## Why Mamba Over Regular Conda?
+
+- **Speed**: Mamba is 10-100x faster than conda for complex environments
+- **Better Dependency Resolution**: More reliable solving of complex bioinformatics dependencies
+- **Drop-in Replacement**: All conda commands still work with mamba
+- **Conda-forge First**: Prioritizes the community-maintained conda-forge channel
+
+## Bioinformatics Environments
+
+Here are some specialized environments for different types of analysis:
+
+### Genomics Environment
+
+```bash
+mamba create -n genomics -c conda-forge -c bioconda \
+    samtools bcftools bedtools gatk4 picard bwa minimap2
+```
+
+### RNA-seq Analysis
+
+```bash
+mamba create -n rnaseq -c conda-forge -c bioconda \
+    salmon kallisto hisat2 stringtie deseq2 edgeR
+```
+
+### General Data Science
+
+```bash
+mamba create -n datascience -c conda-forge \
+    python pandas numpy scipy matplotlib seaborn jupyter biopython
+```
+
+### Phylogenetics
+
+```bash
+mamba create -n phylo -c conda-forge -c bioconda \
+    iqtree raxml-ng mafft muscle fasttree beast2
+```
+
+## Useful Practices with Mamba
+
+```bash
+# Always activate base environment first
+mamba activate
+
+# Update regularly
+mamba update --all
+
+# Clean up unused packages
+mamba clean --all
+
+# Export environments for reproducibility
+mamba env export > environment.yml
+```
+
+## Environment Management
+
+```bash
+# List all environments
+mamba env list
+
+# Activate an environment
+mamba activate genomics
+
+# Deactivate current environment
+mamba deactivate
+
+# Remove an environment
+mamba env remove -n old_environment
+
+# Create environment from file
+mamba env create -f environment.yml
+```
+
+<Tip>
+  **Pro Tip**: Always create separate environments for different projects or analyses. This prevents dependency conflicts and makes your work reproducible.
+</Tip>
+
+<Tip>
+  **Documentation**: [Mamba Documentation](https://mamba.readthedocs.io/) | [Conda-forge](https://conda-forge.org/)
+</Tip>

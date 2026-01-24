@@ -104,6 +104,22 @@
             "group": "Miscellaneous Bioinformatics",
             "pages": [
               "misc-bioinfo/index",
+              {
+                "group": "Mac Setup for Bioinformatics",
+                "pages": [
+                  "misc-bioinfo/mac-setup/index",
+                  "misc-bioinfo/mac-setup/prerequisites",
+                  "misc-bioinfo/mac-setup/homebrew",
+                  "misc-bioinfo/mac-setup/cli-tools",
+                  "misc-bioinfo/mac-setup/github",
+                  "misc-bioinfo/mac-setup/vscode",
+                  "misc-bioinfo/mac-setup/terminal-theme",
+                  "misc-bioinfo/mac-setup/mambaforge",
+                  "misc-bioinfo/mac-setup/r-rstudio",
+                  "misc-bioinfo/mac-setup/shell-customization",
+                  "misc-bioinfo/mac-setup/troubleshooting"
+                ]
+              },
               "misc-bioinfo/getting-started"
             ]
           }

@@ -1,0 +1,104 @@
+---
+title: GitHub CLI and Desktop
+description: Set up version control with GitHub CLI and GitHub Desktop
+icon: github
+---
+
+# GitHub CLI and Desktop
+
+<div style={{textAlign: 'center'}}>
+
+![GitHub CLI](/images/githubCLI.png)
+
+</div>
+
+Version control is crucial for reproducible research and collaboration.
+
+## GitHub CLI Installation
+
+```bash
+brew install gh
+```
+
+The GitHub CLI allows you to interact with GitHub directly from the command line:
+
+```bash
+# Authenticate
+gh auth login
+
+# Clone repositories
+gh repo clone username/repository
+
+# Create pull requests
+gh pr create --title "Add new analysis pipeline"
+```
+
+### Common GitHub CLI Commands
+
+```bash
+# List your repositories
+gh repo list
+
+# Create a new repository
+gh repo create my-analysis --private
+
+# View repository issues
+gh issue list
+
+# Create a new issue
+gh issue create --title "Bug in alignment step"
+
+# View pull request status
+gh pr status
+
+# Check out a pull request locally
+gh pr checkout 123
+```
+
+## GitHub Desktop
+
+<div style={{textAlign: 'center'}}>
+
+![GitHub Desktop](/images/GithubDesktop.png)
+
+</div>
+
+```bash
+brew install --cask github
+```
+
+GitHub Desktop provides a visual interface for Git operations, which can be helpful for:
+- Reviewing changes before commits
+- Managing branches visually
+- Resolving merge conflicts with a graphical interface
+
+## Why Version Control Matters for Bioinformatics
+
+<Tip>
+  **Reproducibility**: Track exactly what code produced your results at any point in time.
+</Tip>
+
+- **Collaboration**: Work with others on analysis pipelines without overwriting each other's work
+- **Backup**: Your code is safely stored remotely on GitHub
+- **Documentation**: Commit messages serve as a log of your analysis decisions
+- **Sharing**: Easily share your analysis code with publications
+
+## Quick Git Workflow
+
+```bash
+# Check status of your repository
+git status
+
+# Add changes to staging
+git add analysis_script.py
+
+# Commit with a descriptive message
+git commit -m "Add quality filtering step to pipeline"
+
+# Push to GitHub
+git push origin main
+```
+
+<Tip>
+  **Documentation**: [GitHub CLI Manual](https://cli.github.com/manual/) | [GitHub Desktop Docs](https://docs.github.com/en/desktop)
+</Tip>

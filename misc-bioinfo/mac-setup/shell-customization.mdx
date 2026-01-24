@@ -1,0 +1,266 @@
+---
+title: Shell Customization
+description: Customize your .zshrc for an efficient bioinformatics workflow
+icon: wand-magic-sparkles
+---
+
+# Customizing Your Shell: The Power of .zshrc
+
+Now that you have all the tools installed, we can customize your shell to make your workflow better and more efficient. The `.zshrc` file is your shell's configuration file that runs every time you open a new terminal session. Think of this as your settings file. `rc` stands for "run commands" which is essentially the commands that get run when zsh (Apple's version of bash) runs at the start!
+
+## Basic .zshrc Setup
+
+```bash
+# Open your .zshrc file
+code ~/.zshrc
+```
+
+Add these useful configurations:
+
+## Useful Aliases
+
+```bash
+# ============================================
+# NAVIGATION SHORTCUTS
+# ============================================
+
+alias ..="cd .."
+alias ...="cd ../.."
+alias ll="ls -la"
+alias la="ls -A"
+alias l="ls -CF"
+
+# ============================================
+# GIT SHORTCUTS
+# ============================================
+
+alias gs="git status"
+alias ga="git add"
+alias gc="git commit -m"
+alias gp="git push"
+alias gl="git log --oneline"
+alias gd="git diff"
+
+# ============================================
+# CONDA/MAMBA SHORTCUTS
+# ============================================
+
+alias ca="mamba activate"
+alias cda="mamba deactivate"
+alias cenv="mamba env list"
+alias cin="mamba install"
+
+# ============================================
+# SYSTEM MONITORING
+# ============================================
+
+alias meminfo="free -h"
+alias diskspace="df -h"
+alias processes="htop"
+
+# ============================================
+# QUICK FILE OPERATIONS
+# ============================================
+
+alias treelevel2="tree -L 2"
+alias sizeof="du -sh"
+```
+
+## Useful Functions
+
+```bash
+# ============================================
+# USEFUL FUNCTIONS
+# ============================================
+
+# Quick sequence statistics
+seqstats() {
+    if [ -z "$1" ]; then
+        echo "Usage: seqstats <fasta_file>"
+        return 1
+    fi
+    echo "File: $1"
+    echo "Number of sequences: $(grep -c '^>' $1)"
+    echo "Total bases: $(grep -v '^>' $1 | wc -m)"
+    echo "File size: $(du -h $1 | cut -f1)"
+}
+
+# Create and enter directory
+mkcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+# Extract various archive formats
+extract() {
+    if [ -f $1 ]; then
+        case $1 in
+            *.tar.bz2)   tar xjf $1     ;;
+            *.tar.gz)    tar xzf $1     ;;
+            *.bz2)       bunzip2 $1     ;;
+            *.rar)       unrar x $1     ;;
+            *.gz)        gunzip $1      ;;
+            *.tar)       tar xf $1      ;;
+            *.tbz2)      tar xjf $1     ;;
+            *.tgz)       tar xzf $1     ;;
+            *.zip)       unzip $1       ;;
+            *.Z)         uncompress $1  ;;
+            *.7z)        7z x $1        ;;
+            *)           echo "'$1' cannot be extracted via extract()" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
+
+# Quick BLAST database search
+blastdb() {
+    if [ -z "$1" ] || [ -z "$2" ]; then
+        echo "Usage: blastdb <query.fasta> <database>"
+        echo "Example: blastdb protein.fasta nr"
+        return 1
+    fi
+    blastp -query $1 -db $2 -outfmt 6 -max_target_seqs 10
+}
+```
+
+## Environment Setup
+
+```bash
+# ============================================
+# ENVIRONMENT SETUP
+# ============================================
+
+# Add common bioinformatics tools to PATH
+export PATH="/usr/local/bin:$PATH"
+
+# Set default editor
+export EDITOR="code"
+
+# Colorized ls output
+export CLICOLOR=1
+export LSCOLORS=ExFxBxDxCxegedabagacad
+
+# Better grep colors
+export GREP_OPTIONS='--color=auto'
+```
+
+## Conda/Mamba Initialization
+
+<Note>
+  This section is typically auto-generated when you install Mambaforge. Check your `.zshrc` to see if it's already there.
+</Note>
+
+```bash
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/opt/homebrew/Caskroom/mambaforge/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/opt/homebrew/Caskroom/mambaforge/base/etc/profile.d/conda.sh" ]; then
+        . "/opt/homebrew/Caskroom/mambaforge/base/etc/profile.d/conda.sh"
+    else
+        export PATH="/opt/homebrew/Caskroom/mambaforge/base/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+
+if [ -f "/opt/homebrew/Caskroom/mambaforge/base/etc/profile.d/mamba.sh" ]; then
+    . "/opt/homebrew/Caskroom/mambaforge/base/etc/profile.d/mamba.sh"
+fi
+# <<< conda initialize <<<
+```
+
+## Prompt Customization
+
+```bash
+# ============================================
+# PROMPT CUSTOMIZATION
+# ============================================
+
+# Show current conda environment in prompt
+setopt PROMPT_SUBST
+PROMPT='%F{green}%n@%m%f:%F{blue}%~%f${CONDA_DEFAULT_ENV:+ (%F{yellow}$CONDA_DEFAULT_ENV%f)}$ '
+```
+
+## Project Management Function
+
+This function creates a standard bioinformatics project structure:
+
+```bash
+# Quick project setup for bioinformatics analysis
+newproject() {
+    if [ -z "$1" ]; then
+        echo "Usage: newproject <project_name>"
+        return 1
+    fi
+
+    mkdir -p "$1"/{data/{raw,processed},scripts,results,docs}
+    cd "$1"
+
+    # Create README
+    cat > README.md << EOF
+# $1
+
+## Description
+[Add project description here]
+
+## Directory Structure
+- \`data/raw/\`: Raw input data
+- \`data/processed/\`: Cleaned and processed data
+- \`scripts/\`: Analysis scripts
+- \`results/\`: Output files and results
+- \`docs/\`: Documentation and reports
+
+## Usage
+[Add usage instructions here]
+
+## Dependencies
+[List required software and versions]
+EOF
+
+    # Create .gitignore
+    cat > .gitignore << EOF
+# Data files
+*.fastq
+*.fasta
+*.sam
+*.bam
+*.vcf
+data/raw/
+data/processed/
+
+# Results
+results/
+*.pdf
+*.png
+*.jpg
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Conda
+environment.yml
+EOF
+
+    echo "Project '$1' created successfully!"
+    tree
+}
+```
+
+## Reload Your Configuration
+
+After editing your `.zshrc`, reload it:
+
+```bash
+source ~/.zshrc
+```
+
+<Tip>
+  Start with a few aliases you think you'll use, then gradually add more as you identify repetitive tasks in your workflow.
+</Tip>

@@ -1,0 +1,98 @@
+---
+title: VS Code - Your Bioinformatics IDE
+description: Set up Visual Studio Code for bioinformatics development
+icon: code
+---
+
+# VS Code: Your Bioinformatics IDE
+
+<div style={{textAlign: 'center'}}>
+
+<img src="/images/VSCode.png" alt="VS Code" style={{width: '200px', height: 'auto'}} />
+
+</div>
+
+```bash
+brew install --cask visual-studio-code
+```
+
+VS Code has become the go-to editor for bioinformatics (aside from RStudio, but we'll get to that) due to its extensive extension ecosystem and great UI/UX.
+
+## Essential Extensions for Bioinformatics
+
+These are some great extensions to make VS Code work even better, but totally optional!
+
+```bash
+# Install from command line
+code --install-extension ms-python.python
+code --install-extension ms-toolsai.jupyter
+code --install-extension ms-vscode.r
+code --install-extension yzhang.markdown-all-in-one
+code --install-extension redhat.vscode-yaml
+```
+
+### Key Extensions
+
+| Extension | Purpose |
+|-----------|---------|
+| **Python** | Full Python support with debugging and IntelliSense |
+| **Jupyter** | Work with Jupyter notebooks directly in VS Code |
+| **R** | R language support and debugging |
+| **Markdown All in One** | Essential for writing documentation and papers |
+| **YAML** | For configuration files and workflow definitions |
+
+## VS Code Tips for Bioinformatics
+
+1. **Integrated Terminal**: Use `` Ctrl+` `` to open terminal without leaving the editor
+2. **Remote Development**: Edit files on remote servers and HPC clusters
+3. **Git Integration**: Built-in version control with visual diff tools
+4. **Multi-file Editing**: Work with large projects spanning multiple languages
+
+## VS Code Keyboard Shortcuts Reference
+
+For quick reference to VS Code keyboard shortcuts on macOS:
+
+<div style={{textAlign: 'center'}}>
+
+![VS Code macOS Keyboard Shortcuts](/images/keyboard-shortcuts-macos.png)
+
+</div>
+
+### Most Useful Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Cmd+P` | Quick file open |
+| `Cmd+Shift+P` | Command palette |
+| `Cmd+/` | Toggle comment |
+| `Cmd+D` | Select next occurrence |
+| `Cmd+Shift+F` | Search across files |
+| `Cmd+B` | Toggle sidebar |
+| `` Ctrl+` `` | Toggle terminal |
+
+## Recommended Settings for Bioinformatics
+
+Open settings (JSON) with `Cmd+Shift+P` → "Preferences: Open Settings (JSON)" and add:
+
+```json
+{
+  "editor.fontSize": 14,
+  "editor.wordWrap": "on",
+  "files.associations": {
+    "*.fasta": "plaintext",
+    "*.fa": "plaintext",
+    "*.fastq": "plaintext",
+    "*.fq": "plaintext",
+    "*.vcf": "plaintext",
+    "*.bed": "plaintext",
+    "*.gff": "plaintext",
+    "*.gtf": "plaintext"
+  },
+  "editor.renderWhitespace": "boundary",
+  "files.trimTrailingWhitespace": true
+}
+```
+
+<Tip>
+  **Documentation**: [VS Code Docs](https://code.visualstudio.com/docs)
+</Tip>

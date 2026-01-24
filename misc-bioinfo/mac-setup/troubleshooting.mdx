@@ -1,0 +1,182 @@
+---
+title: Troubleshooting
+description: Common issues and solutions when setting up your Mac for bioinformatics
+icon: wrench
+---
+
+# Troubleshooting Tips
+
+Here are solutions to common issues you might encounter when setting up your bioinformatics environment.
+
+## Permission Issues
+
+<Warning>
+  Avoid using `sudo` with Homebrew or conda. This can cause permission problems and break your installation.
+</Warning>
+
+If you encounter permission errors:
+
+1. **For Homebrew**: Run `brew doctor` to diagnose issues
+2. **For conda/mamba**: Ensure you're using user-local installations (Mambaforge installs to your home directory by default)
+
+```bash
+# Check Homebrew permissions
+brew doctor
+
+# Fix common Homebrew permission issues
+sudo chown -R $(whoami) /opt/homebrew
+```
+
+## Path Issues
+
+If commands aren't found after installation:
+
+```bash
+# Check your PATH
+echo $PATH
+
+# Verify a tool's location
+which samtools
+
+# Make sure Homebrew is in your PATH
+eval "$(/opt/homebrew/bin/brew shellenv)"
+```
+
+### Common PATH Additions
+
+Add these to your `.zshrc` if tools aren't being found:
+
+```bash
+# Homebrew (Apple Silicon)
+export PATH="/opt/homebrew/bin:$PATH"
+
+# Homebrew (Intel)
+export PATH="/usr/local/bin:$PATH"
+```
+
+## Conda Environment Issues
+
+If environments aren't activating:
+
+```bash
+# Reinitialize conda
+conda init zsh
+
+# Reload your shell
+source ~/.zshrc
+
+# Check if conda is properly configured
+conda info
+```
+
+### Environment Conflicts
+
+If you're getting dependency conflicts:
+
+```bash
+# Create a fresh environment instead of installing to base
+mamba create -n myenv python=3.10
+
+# Use strict channel priority
+conda config --set channel_priority strict
+```
+
+## Memory Issues
+
+Bioinformatics tools can be memory-intensive:
+
+```bash
+# Monitor memory usage
+htop
+
+# Check available memory
+vm_stat | head -5
+```
+
+### Tips for Memory Management
+
+- Close unnecessary applications during heavy analysis
+- Use tools that support streaming (don't load entire files into memory)
+- Consider using an HPC cluster for large analyses
+
+## Homebrew Issues
+
+### Package Not Found
+
+```bash
+# Update Homebrew first
+brew update
+
+# Search for the package
+brew search <package_name>
+
+# Check if it's in a tap
+brew search brewsci/bio/<package_name>
+```
+
+### Upgrade Issues
+
+```bash
+# If an upgrade fails, try:
+brew cleanup
+brew upgrade <package>
+
+# Nuclear option - reinstall
+brew uninstall <package>
+brew install <package>
+```
+
+## VS Code Issues
+
+### Command 'code' Not Found
+
+1. Open VS Code
+2. Press `Cmd+Shift+P`
+3. Type "Shell Command: Install 'code' command in PATH"
+4. Restart your terminal
+
+### Extensions Not Working
+
+```bash
+# List installed extensions
+code --list-extensions
+
+# Reinstall a problematic extension
+code --uninstall-extension <extension-id>
+code --install-extension <extension-id>
+```
+
+## Git/GitHub Issues
+
+### Authentication Failures
+
+```bash
+# Reconfigure GitHub CLI authentication
+gh auth logout
+gh auth login
+
+# For SSH issues, generate a new key
+ssh-keygen -t ed25519 -C "your_email@example.com"
+```
+
+### Repository Issues
+
+```bash
+# Reset to match remote (careful - loses local changes!)
+git fetch origin
+git reset --hard origin/main
+```
+
+## Getting Help
+
+If you're still stuck:
+
+1. **Search the error message** - Often others have encountered the same issue
+2. **Check official documentation** - Most tools have troubleshooting sections
+3. **GitHub Issues** - Search or open issues on the tool's repository
+4. **Stack Overflow** - Great for programming and bioinformatics questions
+5. **Biostars** - Community specifically for bioinformatics questions
+
+<Tip>
+  When asking for help, always include: the command you ran, the full error message, your operating system version, and relevant tool versions.
+</Tip>

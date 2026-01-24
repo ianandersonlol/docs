@@ -1,0 +1,122 @@
+---
+title: R and RStudio
+description: Set up R and RStudio for statistical computing in bioinformatics
+icon: chart-line
+---
+
+# R and RStudio: Statistical Computing Powerhouse
+
+<div style={{textAlign: 'center'}}>
+
+![RStudio](/images/Rstudio.png)
+
+</div>
+
+R remains the gold standard for statistical analysis in bioinformatics, and RStudio provides the best development environment for R.
+
+## Installation
+
+```bash
+# Install R
+brew install r
+
+# Install RStudio Desktop
+brew install --cask rstudio
+```
+
+## Useful Bioinformatics R Packages
+
+Launch RStudio and install these core packages:
+
+### Install Bioconductor
+
+Bioconductor is the main repository for bioinformatics R packages.
+
+```r
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+```
+
+### Core Bioconductor Packages
+
+```r
+BiocManager::install(c(
+    "GenomicRanges",
+    "Biostrings",
+    "rtracklayer",
+    "GenomicFeatures",
+    "AnnotationDbi",
+    "org.Hs.eg.db"
+))
+```
+
+### RNA-seq Analysis
+
+```r
+BiocManager::install(c(
+    "DESeq2",
+    "edgeR",
+    "limma",
+    "tximport"
+))
+```
+
+### Data Manipulation and Visualization
+
+```r
+install.packages(c(
+    "tidyverse",
+    "data.table",
+    "ggplot2",
+    "plotly",
+    "pheatmap",
+    "VennDiagram"
+))
+```
+
+## Package Categories
+
+### Genomics
+| Package | Purpose |
+|---------|---------|
+| `GenomicRanges` | Handling genomic intervals |
+| `Biostrings` | DNA/RNA/protein sequence analysis |
+| `BSgenome` | Reference genome sequences |
+
+### RNA-seq
+| Package | Purpose |
+|---------|---------|
+| `DESeq2` | Differential expression analysis |
+| `edgeR` | Another excellent DE tool |
+| `tximport` | Import transcript-level abundance estimates |
+
+### Single-cell
+| Package | Purpose |
+|---------|---------|
+| `Seurat` | Single-cell RNA-seq analysis |
+| `SingleCellExperiment` | Data structures for scRNA-seq |
+| `scater` | Quality control and visualization |
+
+## RStudio Tips for Bioinformatics
+
+1. **Project Management**: Always work in RStudio projects for better organization
+2. **R Markdown**: Create reproducible reports combining code, results, and text
+3. **Environment Panel**: Keep track of your data objects and their sizes
+4. **Integrated Git/GitHub**: Version control directly within RStudio
+
+<Warning>
+  Git is your friend! Learn to use it - it will be helpful for future jobs.
+</Warning>
+
+## Recommended RStudio Settings
+
+Go to **Tools → Global Options** and configure:
+
+- **Code → Editing**: Enable "Highlight selected line"
+- **Code → Display**: Enable "Show line numbers" and "Highlight R function calls"
+- **Code → Saving**: Enable "Ensure that source files end with newline"
+- **Appearance**: Choose a comfortable theme (Dracula is available here too!)
+
+<Tip>
+  **Documentation**: [R Documentation](https://www.r-project.org/other-docs.html) | [RStudio User Guide](https://docs.posit.co/ide/user/)
+</Tip>
