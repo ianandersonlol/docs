@@ -28,6 +28,11 @@
             "group": "High Performance Computing",
             "pages": [
               "hpc/index",
+              "hpc/data-transfer",
+              "hpc/job-dependencies",
+              "hpc/checkpointing",
+              "hpc/slurm-environment-variables",
+              "hpc/common-pitfalls",
               {
                 "group": "HPC at UC Davis",
                 "pages": [

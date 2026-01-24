@@ -1,0 +1,219 @@
+---
+title: Common Pitfalls
+description: Mistakes to avoid when using HPC clusters
+---
+
+Learning from others' mistakes is faster than making them yourself. Here are common issues people run into on HPC clusters.
+
+## Running on the Login Node
+
+<Warning>
+  **The #1 mistake:** Running computational work on the login/head node.
+</Warning>
+
+The login node is shared by everyone. When you run heavy computation there, it slows down the cluster for all users trying to edit files, submit jobs, or transfer data.
+
+**Signs you're doing this:**
+- You SSH'd in and immediately started running Python/R/etc.
+- You're running something that uses a lot of CPU or memory
+- Cluster admins send you sad emails
+
+**Solution:** Use [interactive sessions](/hpc/uc-davis/using-hive/job-submission#interactive-sessions) or submit batch jobs.
+
+## Memory Issues
+
+### Requesting Too Little Memory
+
+Your job gets killed with OOM (Out Of Memory) errors.
+
+```bash
+# Check what your job actually used
+sacct -j JOBID --format=JobID,MaxRSS,ReqMem,State
+```
+
+If `MaxRSS` (actual usage) is close to or exceeds `ReqMem` (requested), increase your memory request.
+
+### Requesting Too Much Memory
+
+Your job sits in the queue forever because there aren't enough resources.
+
+**Solution:** Start with reasonable estimates, check actual usage with `sacct`, and adjust for future jobs.
+
+### Running Out of Memory Installing Packages
+
+Installing packages with conda/pip on a login node or small interactive session often fails because package solving is memory-intensive.
+
+**Solution:** Request an interactive session with enough memory:
+
+```bash
+srun -p high -c 4 --mem=16G -t 1:00:00 --pty bash
+# Now install packages
+conda install large_package
+```
+
+## Time Limit Problems
+
+### Job Killed at Time Limit
+
+Your job runs out of time and gets killed, losing unsaved work.
+
+**Solutions:**
+- Request more time (but don't wildly over-request)
+- Implement [checkpointing](/hpc/checkpointing) for long jobs
+- Use the `--signal` flag to get a warning before time runs out:
+  ```bash
+  #SBATCH --signal=B:SIGTERM@300  # Signal 5 minutes before time limit
+  ```
+
+### Over-Requesting Time
+
+Requesting 7 days when you need 2 hours makes your job harder to schedule (the scheduler has to find a slot where nothing else needs those resources for a week).
+
+**Solution:** Estimate realistically. You can always submit another job if needed.
+
+## File System Issues
+
+### Writing to the Same File from Multiple Jobs
+
+<Warning>
+  Multiple jobs writing to the same file simultaneously can corrupt data or crash nodes (especially on parallel file systems like Quobyte).
+</Warning>
+
+**Solution:** Use unique output filenames:
+
+```bash
+#SBATCH --array=1-100
+#SBATCH --output=logs/job_%A_%a.out  # Unique per task
+
+# In your script, also use unique output files
+python process.py --output "results/output_${SLURM_ARRAY_TASK_ID}.csv"
+```
+
+### Running Out of Disk Space
+
+Your home directory fills up and everything breaks.
+
+**Solutions:**
+- Store large files in your group's shared storage, not home
+- Clean up conda caches: `conda clean --all`
+- Remove old job outputs and logs you don't need
+- Check usage: `du -sh ~ && du -sh /path/to/group/storage`
+
+### Forgetting Files Are on the Cluster
+
+You delete your local copy, then realize the results you need are only on the cluster... which just had a storage failure.
+
+**Solution:** Important results should exist in at least two places. Transfer results back to your local machine or another backup location.
+
+## Job Script Mistakes
+
+### Windows Line Endings
+
+You edit a script on Windows and upload it. The script fails with `bad interpreter` or weird errors.
+
+**Solution:**
+```bash
+dos2unix your_script.sh
+# Or in vim: :set ff=unix
+```
+
+### Forgetting to Load Modules
+
+Your script works in your interactive session but fails as a batch job because modules aren't loaded automatically.
+
+**Solution:** Always include `module load` commands in your job scripts:
+
+```bash
+#!/bin/bash
+#SBATCH ...
+
+module load conda/latest
+conda activate myenv
+
+python script.py
+```
+
+### Using Relative Paths
+
+Your script uses `./data/input.txt` but the job runs from a different directory.
+
+**Solutions:**
+- Use absolute paths: `/full/path/to/data/input.txt`
+- Or explicitly `cd` to the right directory:
+  ```bash
+  cd $SLURM_SUBMIT_DIR
+  ```
+
+### Hardcoding Thread Counts
+
+You write `export OMP_NUM_THREADS=32` but request different CPU counts for different jobs.
+
+**Solution:** Use SLURM variables:
+```bash
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+```
+
+## GPU Issues
+
+### Not Requesting GPUs
+
+You submit to a GPU partition but forget `--gres=gpu:N`. You get a node with GPUs but can't access them.
+
+**Solution:** Always include:
+```bash
+#SBATCH --gres=gpu:1  # or gpu:2, gpu:a100:1, etc.
+```
+
+### CUDA Version Mismatch
+
+Your code was written for CUDA 11 but the cluster has CUDA 12, or vice versa.
+
+**Solution:**
+- Check available CUDA versions: `module avail cuda`
+- Load the version that matches your software
+- Or use containers with the correct CUDA version baked in
+
+### Running GPU Code on CPU Node
+
+Your job runs (slowly) on CPU because it's not actually using the GPU.
+
+**Verify GPU access:**
+```bash
+nvidia-smi  # Should show your allocated GPUs
+echo $CUDA_VISIBLE_DEVICES  # Should show GPU indices
+```
+
+## Environment Issues
+
+### Conda Environment Not Found
+
+`conda activate myenv` fails in your job script.
+
+**Solution:** Load conda first:
+```bash
+module load conda/latest
+source $(conda info --base)/etc/profile.d/conda.sh
+conda activate myenv
+```
+
+### Environment Works Interactively but Not in Batch
+
+Your interactive session has different environment variables than batch jobs.
+
+**Debug by comparing:**
+```bash
+# In interactive session
+env > interactive_env.txt
+
+# In batch job
+env > batch_env.txt
+
+# Compare
+diff interactive_env.txt batch_env.txt
+```
+
+---
+
+<Tip>
+  When something fails, check the error output carefully. SLURM usually tells you what went wrong—the message just might be buried in a lot of other output.
+</Tip>

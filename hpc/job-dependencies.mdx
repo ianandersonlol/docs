@@ -1,0 +1,178 @@
+---
+title: Job Dependencies
+description: Chaining jobs so they run in sequence
+---
+
+Job dependencies let you submit multiple jobs where some wait for others to complete before starting. This is useful for pipelines, post-processing, or breaking long work into stages.
+
+## Basic Syntax
+
+```bash
+sbatch --dependency=<type>:<job_id> job.sh
+```
+
+## Dependency Types
+
+| Type | Meaning |
+|------|---------|
+| `afterok:job_id` | Start after job_id completes **successfully** (exit code 0) |
+| `afternotok:job_id` | Start after job_id **fails** (non-zero exit code) |
+| `afterany:job_id` | Start after job_id finishes (success or failure) |
+| `after:job_id` | Start after job_id starts (not very common) |
+| `singleton` | Only one job with this name can run at a time |
+
+## Example: Simple Pipeline
+
+A common pattern is preprocessing → main computation → postprocessing:
+
+```bash
+# Submit first job, capture job ID
+JOB1=$(sbatch --parsable preprocess.sh)
+echo "Submitted preprocessing job: $JOB1"
+
+# Submit second job, depends on first succeeding
+JOB2=$(sbatch --parsable --dependency=afterok:$JOB1 main_computation.sh)
+echo "Submitted main job: $JOB2"
+
+# Submit third job, depends on second succeeding
+JOB3=$(sbatch --parsable --dependency=afterok:$JOB2 postprocess.sh)
+echo "Submitted postprocessing job: $JOB3"
+```
+
+<Note>
+  The `--parsable` flag makes sbatch output just the job ID, which is easier to capture in scripts.
+</Note>
+
+## Multiple Dependencies
+
+A job can depend on multiple other jobs:
+
+```bash
+# Submit independent jobs
+JOB_A=$(sbatch --parsable job_a.sh)
+JOB_B=$(sbatch --parsable job_b.sh)
+JOB_C=$(sbatch --parsable job_c.sh)
+
+# This job waits for ALL of them to succeed
+sbatch --dependency=afterok:$JOB_A:$JOB_B:$JOB_C final_merge.sh
+```
+
+Or with `afterany` if you want it to run regardless of success/failure:
+
+```bash
+sbatch --dependency=afterany:$JOB_A:$JOB_B:$JOB_C cleanup.sh
+```
+
+## Array Job Dependencies
+
+You can depend on an entire array job or specific tasks:
+
+```bash
+# Submit array job
+ARRAY_JOB=$(sbatch --parsable --array=1-100 process_chunk.sh)
+
+# Wait for entire array to complete
+sbatch --dependency=afterok:$ARRAY_JOB merge_results.sh
+```
+
+To depend on a specific array task:
+
+```bash
+# Depend on task 50 of the array
+sbatch --dependency=afterok:${ARRAY_JOB}_50 special_task.sh
+```
+
+## Practical Example: Genomics Pipeline
+
+```bash
+#!/bin/bash
+# submit_pipeline.sh - Submit a complete analysis pipeline
+
+SAMPLE=$1
+
+# Step 1: Quality control
+QC_JOB=$(sbatch --parsable \
+    --job-name="${SAMPLE}_qc" \
+    --wrap="fastqc ${SAMPLE}.fastq -o qc_results/")
+
+# Step 2: Alignment (after QC passes)
+ALIGN_JOB=$(sbatch --parsable \
+    --dependency=afterok:$QC_JOB \
+    --job-name="${SAMPLE}_align" \
+    --wrap="bwa mem reference.fa ${SAMPLE}.fastq > ${SAMPLE}.sam")
+
+# Step 3: Convert and sort (after alignment)
+SORT_JOB=$(sbatch --parsable \
+    --dependency=afterok:$ALIGN_JOB \
+    --job-name="${SAMPLE}_sort" \
+    --wrap="samtools sort ${SAMPLE}.sam -o ${SAMPLE}.sorted.bam")
+
+# Step 4: Index (after sorting)
+sbatch --dependency=afterok:$SORT_JOB \
+    --job-name="${SAMPLE}_index" \
+    --wrap="samtools index ${SAMPLE}.sorted.bam"
+
+echo "Pipeline submitted for ${SAMPLE}"
+echo "Jobs: QC=$QC_JOB → Align=$ALIGN_JOB → Sort=$SORT_JOB → Index"
+```
+
+Run with: `./submit_pipeline.sh sample_001`
+
+## Singleton Jobs
+
+The `singleton` dependency ensures only one job with a given name runs at a time. Useful for jobs that can't run concurrently (e.g., updating a shared database):
+
+```bash
+sbatch --dependency=singleton --job-name=update_database update.sh
+sbatch --dependency=singleton --job-name=update_database update.sh
+sbatch --dependency=singleton --job-name=update_database update.sh
+```
+
+These will run one at a time, in order.
+
+## Checking Dependency Status
+
+See why a job is pending:
+
+```bash
+squeue -j JOB_ID -o "%.18i %.9P %.8j %.8u %.2t %.10M %.6D %R"
+```
+
+If it shows `(Dependency)` in the REASON column, it's waiting for another job.
+
+## Tips
+
+<AccordionGroup>
+  <Accordion title="Use afterok for pipelines, afterany for cleanup">
+    - `afterok`: Use when the next step only makes sense if the previous succeeded
+    - `afterany`: Use for cleanup jobs that should run regardless (deleting temp files, sending notifications)
+  </Accordion>
+
+  <Accordion title="Add error handling">
+    Submit a notification job that runs if something fails:
+
+    ```bash
+    JOB=$(sbatch --parsable important_job.sh)
+
+    # Send email if it fails
+    sbatch --dependency=afternotok:$JOB \
+        --wrap="echo 'Job $JOB failed' | mail -s 'Job Failed' you@email.com"
+    ```
+  </Accordion>
+
+  <Accordion title="Be careful with long dependency chains">
+    If job A depends on B which depends on C which depends on D... and D fails, everything gets stuck. Consider:
+    - Using `afterany` for steps that can handle upstream failures
+    - Adding timeout logic or manual intervention points
+  </Accordion>
+
+  <Accordion title="Combine with job arrays for fan-out/fan-in">
+    ```bash
+    # Fan out: many parallel tasks
+    PARALLEL=$(sbatch --parsable --array=1-100 parallel_work.sh)
+
+    # Fan in: single job merges all results
+    sbatch --dependency=afterok:$PARALLEL merge_all.sh
+    ```
+  </Accordion>
+</AccordionGroup>

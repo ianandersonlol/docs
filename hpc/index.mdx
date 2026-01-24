@@ -3,22 +3,32 @@ title: High Performance Computing
 description: Workflows, tools, and tips for working with HPC clusters
 ---
 
-# High Performance Computing
+This section covers workflows, tools, and best practices for working with high-performance computing clusters. These guides apply to SLURM-based clusters generally—see the UC Davis section for cluster-specific details.
 
-This section covers workflows, tools, and best practices for working with high-performance computing clusters.
+## General Guides
 
 <CardGroup cols={2}>
-  <Card title="HPC at UC Davis" icon="building-columns" href="/hpc/uc-davis/index">
-    Setup and usage for UC Davis HPC
+  <Card title="Data Transfer" icon="upload" href="/hpc/data-transfer">
+    Moving files to and from clusters (scp, rsync, GUI tools)
+  </Card>
+  <Card title="Job Dependencies" icon="diagram-project" href="/hpc/job-dependencies">
+    Chain jobs to run in sequence for pipelines
+  </Card>
+  <Card title="Checkpointing" icon="floppy-disk" href="/hpc/checkpointing">
+    Save and resume long-running jobs
+  </Card>
+  <Card title="SLURM Environment Variables" icon="code" href="/hpc/slurm-environment-variables">
+    Reference for variables available in jobs
+  </Card>
+  <Card title="Common Pitfalls" icon="triangle-exclamation" href="/hpc/common-pitfalls">
+    Mistakes to avoid on HPC clusters
   </Card>
 </CardGroup>
 
-## What's Covered
+## Cluster-Specific Guides
 
-Topics in this section will include:
-
-- Cluster basics and job submission
-- SLURM and other schedulers
-- Environment management with modules and conda
-- Data transfer and storage best practices
-- Performance optimization tips
+<CardGroup cols={2}>
+  <Card title="HPC at UC Davis" icon="building-columns" href="/hpc/uc-davis">
+    Setup and usage for UC Davis HIVE cluster
+  </Card>
+</CardGroup>

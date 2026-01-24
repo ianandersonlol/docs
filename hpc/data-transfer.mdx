@@ -1,0 +1,167 @@
+---
+title: Data Transfer
+description: Moving data to and from HPC clusters
+---
+
+Getting data onto and off of HPC clusters is a common task. This guide covers command-line tools and GUI applications for transferring files.
+
+## Command-Line Tools
+
+### scp (Secure Copy)
+
+Simple file transfers over SSH:
+
+```bash
+# Copy file to cluster
+scp local_file.txt username@cluster.edu:/path/to/destination/
+
+# Copy file from cluster
+scp username@cluster.edu:/path/to/file.txt ./local_destination/
+
+# Copy entire directory (recursive)
+scp -r local_directory/ username@cluster.edu:/path/to/destination/
+```
+
+<Tip>
+  Use `-C` flag to enable compression for faster transfers of compressible files (text, uncompressed data).
+</Tip>
+
+### rsync (Recommended for Large Transfers)
+
+More robust than scp—supports resuming interrupted transfers and only copies changed files:
+
+```bash
+# Sync local directory to cluster
+rsync -avzP local_directory/ username@cluster.edu:/path/to/destination/
+
+# Sync from cluster to local
+rsync -avzP username@cluster.edu:/path/to/source/ ./local_destination/
+```
+
+**Common flags:**
+| Flag | Description |
+|------|-------------|
+| `-a` | Archive mode (preserves permissions, timestamps, etc.) |
+| `-v` | Verbose output |
+| `-z` | Compress during transfer |
+| `-P` | Show progress + allow resuming partial transfers |
+| `--delete` | Delete files in destination that don't exist in source (careful!) |
+
+<Note>
+  rsync is ideal for large datasets or ongoing syncs. If a transfer fails partway through, just run the same command again—it picks up where it left off.
+</Note>
+
+### sftp (Interactive File Transfer)
+
+Interactive session for browsing and transferring:
+
+```bash
+sftp username@cluster.edu
+```
+
+Common sftp commands:
+- `ls` / `lls` - list remote / local files
+- `cd` / `lcd` - change remote / local directory
+- `get file.txt` - download file
+- `put file.txt` - upload file
+- `mget *.csv` - download multiple files
+- `mput *.csv` - upload multiple files
+
+## GUI Applications
+
+For those who prefer graphical interfaces:
+
+<Tabs>
+  <Tab title="Cross-Platform">
+    **Cyberduck** (macOS, Windows) - [cyberduck.io](https://cyberduck.io/)
+    - Free and open source
+    - Supports SFTP, S3, Google Drive, and more
+    - Drag-and-drop interface
+    - Bookmarks for quick access to clusters
+
+    **FileZilla** (macOS, Windows, Linux) - [filezilla-project.org](https://filezilla-project.org/)
+    - Free and open source
+    - Dual-pane interface (local and remote)
+    - Site manager for saving connections
+    - Transfer queue with resume support
+  </Tab>
+  <Tab title="macOS">
+    **Transmit** - [panic.com/transmit](https://panic.com/transmit/)
+    - Paid, polished interface
+    - Fast transfers with "Transmit Turbo"
+    - Sync folders between local and remote
+
+    **Cyberduck** - [cyberduck.io](https://cyberduck.io/)
+    - Free, integrates well with Finder
+  </Tab>
+  <Tab title="Windows">
+    **WinSCP** - [winscp.net](https://winscp.net/)
+    - Free and open source
+    - Explorer-like interface
+    - Integrates with PuTTY for authentication
+    - Built-in text editor
+
+    **MobaXterm** - [mobaxterm.mobatek.net](https://mobaxterm.mobatek.net/)
+    - All-in-one terminal with built-in SFTP browser
+    - Free version available
+  </Tab>
+  <Tab title="Linux">
+    **FileZilla** - [filezilla-project.org](https://filezilla-project.org/)
+    - Available in most package managers
+
+    **Nautilus/Files** (GNOME)
+    - Built-in: use "Connect to Server" with `sftp://username@cluster.edu`
+  </Tab>
+</Tabs>
+
+## Globus (For Very Large Transfers)
+
+For transferring very large datasets (hundreds of GB or more), Globus provides reliable, high-speed transfers that can resume automatically if interrupted.
+
+<Note>
+  Check if your institution has a Globus endpoint set up. Many universities provide Globus access for research data transfers.
+</Note>
+
+## Tips for Large Transfers
+
+<AccordionGroup>
+  <Accordion title="Use compression wisely">
+    - Text files, CSVs, uncompressed data: use `-z` flag or compress before transfer
+    - Already compressed files (`.gz`, `.zip`, images, videos): skip compression
+  </Accordion>
+
+  <Accordion title="Use screen or tmux for long transfers">
+    Long transfers can be interrupted if your SSH connection drops. Run transfers inside `screen` or `tmux`:
+
+    ```bash
+    # Start a screen session
+    screen -S transfer
+
+    # Run your rsync command
+    rsync -avzP ...
+
+    # Detach with Ctrl+A, then D
+    # Reattach later with: screen -r transfer
+    ```
+  </Accordion>
+
+  <Accordion title="Check available space first">
+    Before transferring large datasets, verify there's enough space:
+
+    ```bash
+    df -h /path/to/destination
+    ```
+  </Accordion>
+
+  <Accordion title="Verify transfers completed correctly">
+    For critical data, verify with checksums:
+
+    ```bash
+    # Generate checksum locally
+    md5sum large_file.tar.gz > checksum.md5
+
+    # Transfer both files, then verify on cluster
+    md5sum -c checksum.md5
+    ```
+  </Accordion>
+</AccordionGroup>

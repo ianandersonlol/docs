@@ -1,0 +1,192 @@
+---
+title: Checkpointing
+description: Saving and resuming long-running jobs
+---
+
+Long-running jobs can fail for many reasons—time limits, node failures, preemption, or bugs discovered mid-run. Checkpointing lets you save progress and resume from where you left off instead of starting over.
+
+## Why Checkpoint?
+
+- **Time limits:** Most clusters have maximum job durations. Checkpointing lets you split long work across multiple jobs.
+- **Preemption:** Low-priority queues may kill your job when higher-priority work needs resources.
+- **Reliability:** Hardware failures happen. Don't lose days of computation to a random node crash.
+- **Debugging:** If something goes wrong late in a run, you can restart from a recent checkpoint with fixes.
+
+## General Strategy
+
+<Steps>
+  <Step title="Save state periodically">
+    Write your program's state to disk at regular intervals (every N iterations, every hour, etc.).
+  </Step>
+  <Step title="Check for existing checkpoints on startup">
+    When your program starts, look for a checkpoint file. If found, load it and continue. If not, start fresh.
+  </Step>
+  <Step title="Use atomic writes">
+    Write to a temporary file, then rename it to the checkpoint file. This prevents corrupt checkpoints if the job is killed mid-write.
+  </Step>
+</Steps>
+
+## Python Example
+
+```python
+import os
+import pickle
+
+CHECKPOINT_FILE = "checkpoint.pkl"
+
+def save_checkpoint(state, filename=CHECKPOINT_FILE):
+    """Save state atomically."""
+    temp_file = filename + ".tmp"
+    with open(temp_file, "wb") as f:
+        pickle.dump(state, f)
+    os.rename(temp_file, filename)  # Atomic on POSIX systems
+
+def load_checkpoint(filename=CHECKPOINT_FILE):
+    """Load checkpoint if it exists."""
+    if os.path.exists(filename):
+        with open(filename, "rb") as f:
+            return pickle.load(f)
+    return None
+
+# Main loop with checkpointing
+def main():
+    # Try to resume from checkpoint
+    state = load_checkpoint()
+
+    if state is None:
+        # Fresh start
+        start_iteration = 0
+        results = []
+    else:
+        # Resume from checkpoint
+        start_iteration = state["iteration"]
+        results = state["results"]
+        print(f"Resuming from iteration {start_iteration}")
+
+    for i in range(start_iteration, 10000):
+        # Do work...
+        result = expensive_computation(i)
+        results.append(result)
+
+        # Checkpoint every 100 iterations
+        if i % 100 == 0:
+            save_checkpoint({
+                "iteration": i + 1,
+                "results": results
+            })
+            print(f"Checkpoint saved at iteration {i}")
+
+    # Final save
+    save_final_results(results)
+```
+
+## PyTorch Checkpointing
+
+```python
+import torch
+
+CHECKPOINT_PATH = "model_checkpoint.pt"
+
+def save_checkpoint(model, optimizer, epoch, loss):
+    torch.save({
+        "epoch": epoch,
+        "model_state_dict": model.state_dict(),
+        "optimizer_state_dict": optimizer.state_dict(),
+        "loss": loss,
+    }, CHECKPOINT_PATH)
+
+def load_checkpoint(model, optimizer):
+    if os.path.exists(CHECKPOINT_PATH):
+        checkpoint = torch.load(CHECKPOINT_PATH)
+        model.load_state_dict(checkpoint["model_state_dict"])
+        optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+        return checkpoint["epoch"], checkpoint["loss"]
+    return 0, None
+
+# Training loop
+start_epoch, _ = load_checkpoint(model, optimizer)
+
+for epoch in range(start_epoch, num_epochs):
+    train_one_epoch(model, optimizer, dataloader)
+
+    # Save checkpoint after each epoch
+    save_checkpoint(model, optimizer, epoch + 1, loss)
+```
+
+## SLURM Integration
+
+### Handling Preemption Signals
+
+When SLURM preempts your job, it sends a signal before killing it. You can catch this signal to save a final checkpoint:
+
+```python
+import signal
+import sys
+
+def handle_preemption(signum, frame):
+    print("Received preemption signal, saving checkpoint...")
+    save_checkpoint(current_state)
+    sys.exit(0)
+
+# Register signal handlers
+signal.signal(signal.SIGTERM, handle_preemption)
+signal.signal(signal.SIGCONT, handle_preemption)  # SLURM preemption
+```
+
+### Job Script for Resumable Work
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=resumable_job
+#SBATCH --partition=low
+#SBATCH --time=1-00:00:00
+#SBATCH --output=job_%j.out
+#SBATCH --requeue
+#SBATCH --signal=B:SIGTERM@120  # Send SIGTERM 120 seconds before time limit
+
+python train_with_checkpoints.py
+```
+
+The `--signal=B:SIGTERM@120` tells SLURM to send SIGTERM 2 minutes before the time limit, giving your script time to save a checkpoint gracefully.
+
+## Tips
+
+<AccordionGroup>
+  <Accordion title="Don't checkpoint too frequently">
+    Writing checkpoints takes time and I/O bandwidth. Find a balance—often enough to limit lost work, but not so often that it slows down your job significantly.
+  </Accordion>
+
+  <Accordion title="Keep a few old checkpoints">
+    Don't just keep the latest checkpoint. If it gets corrupted, you want a fallback:
+
+    ```python
+    def save_checkpoint_with_rotation(state, base_name="checkpoint", keep=3):
+        # Rotate old checkpoints
+        for i in range(keep - 1, 0, -1):
+            old = f"{base_name}_{i}.pkl"
+            new = f"{base_name}_{i+1}.pkl"
+            if os.path.exists(old):
+                os.rename(old, new)
+
+        # Save new checkpoint
+        save_checkpoint(state, f"{base_name}_1.pkl")
+    ```
+  </Accordion>
+
+  <Accordion title="Include metadata in checkpoints">
+    Save not just the state, but information about how to interpret it:
+
+    ```python
+    checkpoint = {
+        "version": "1.2",  # Your code version
+        "timestamp": datetime.now().isoformat(),
+        "config": config_dict,
+        "state": actual_state,
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Test your checkpointing">
+    Before running a week-long job, test that you can actually resume from a checkpoint. Kill a short test job intentionally and verify it resumes correctly.
+  </Accordion>
+</AccordionGroup>

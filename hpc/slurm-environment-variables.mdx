@@ -1,0 +1,165 @@
+---
+title: SLURM Environment Variables
+description: Reference for variables available inside SLURM jobs
+---
+
+When your job runs, SLURM sets environment variables with information about the job and its allocation. These are useful for making your scripts dynamic and portable.
+
+## Commonly Used Variables
+
+| Variable | Description | Example Value |
+|----------|-------------|---------------|
+| `$SLURM_JOB_ID` | Unique job identifier | `123456` |
+| `$SLURM_JOB_NAME` | Job name (from `--job-name`) | `my_analysis` |
+| `$SLURM_SUBMIT_DIR` | Directory where `sbatch` was run | `/home/user/project` |
+| `$SLURM_CPUS_PER_TASK` | CPUs allocated per task | `8` |
+| `$SLURM_NTASKS` | Number of tasks | `4` |
+| `$SLURM_MEM_PER_NODE` | Memory per node (MB) | `32000` |
+| `$SLURM_NODELIST` | List of allocated nodes | `node[01-02]` |
+| `$SLURM_NNODES` | Number of nodes | `2` |
+
+## Array Job Variables
+
+| Variable | Description | Example Value |
+|----------|-------------|---------------|
+| `$SLURM_ARRAY_JOB_ID` | Job ID of the array | `123456` |
+| `$SLURM_ARRAY_TASK_ID` | Current task index | `42` |
+| `$SLURM_ARRAY_TASK_COUNT` | Total number of tasks | `100` |
+| `$SLURM_ARRAY_TASK_MIN` | First task index | `1` |
+| `$SLURM_ARRAY_TASK_MAX` | Last task index | `100` |
+
+## GPU Variables
+
+| Variable | Description | Example Value |
+|----------|-------------|---------------|
+| `$SLURM_GPUS` | Total GPUs allocated | `2` |
+| `$SLURM_GPUS_PER_NODE` | GPUs per node | `2` |
+| `$CUDA_VISIBLE_DEVICES` | GPU indices visible to CUDA | `0,1` |
+
+## Practical Examples
+
+### Dynamic Output Files
+
+Use job ID to create unique output files:
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=analysis
+#SBATCH --output=logs/%x_%j.out  # %x=job name, %j=job ID
+
+# Create output directory named after job
+OUTPUT_DIR="results/${SLURM_JOB_NAME}_${SLURM_JOB_ID}"
+mkdir -p "$OUTPUT_DIR"
+
+python analyze.py --output "$OUTPUT_DIR/results.csv"
+```
+
+### Setting Thread Counts
+
+Match OpenMP/Python threads to allocated CPUs:
+
+```bash
+#!/bin/bash
+#SBATCH --cpus-per-task=16
+
+# Set thread counts to match allocation
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+export MKL_NUM_THREADS=$SLURM_CPUS_PER_TASK
+export NUMEXPR_MAX_THREADS=$SLURM_CPUS_PER_TASK
+
+python compute.py
+```
+
+### Array Jobs with Input Files
+
+Process different files based on array index:
+
+```bash
+#!/bin/bash
+#SBATCH --array=0-99
+
+# Method 1: Direct file naming
+INPUT_FILE="data/sample_${SLURM_ARRAY_TASK_ID}.fastq"
+
+# Method 2: Read from a file list
+INPUT_FILE=$(sed -n "${SLURM_ARRAY_TASK_ID}p" file_list.txt)
+
+# Method 3: Find files dynamically
+FILES=(data/*.fastq)
+INPUT_FILE=${FILES[$SLURM_ARRAY_TASK_ID]}
+
+echo "Processing: $INPUT_FILE"
+process_sample.py "$INPUT_FILE"
+```
+
+### Logging Job Information
+
+Record job details for reproducibility:
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=experiment
+
+echo "========== Job Information =========="
+echo "Job ID: $SLURM_JOB_ID"
+echo "Job Name: $SLURM_JOB_NAME"
+echo "Nodes: $SLURM_NODELIST"
+echo "CPUs per task: $SLURM_CPUS_PER_TASK"
+echo "Submit directory: $SLURM_SUBMIT_DIR"
+echo "Working directory: $(pwd)"
+echo "Start time: $(date)"
+echo "======================================"
+
+# Your actual work here
+python train.py
+
+echo "End time: $(date)"
+```
+
+### Unique Temporary Directories
+
+Avoid conflicts between jobs:
+
+```bash
+#!/bin/bash
+#SBATCH --array=1-50
+
+# Create unique temp directory for this task
+TEMP_DIR="/tmp/${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
+mkdir -p "$TEMP_DIR"
+
+# Use it for intermediate files
+python process.py --temp-dir "$TEMP_DIR"
+
+# Clean up
+rm -rf "$TEMP_DIR"
+```
+
+## Output Filename Patterns
+
+These patterns work in `--output` and `--error` directives:
+
+| Pattern | Expands To |
+|---------|------------|
+| `%j` | Job ID |
+| `%x` | Job name |
+| `%A` | Array job ID |
+| `%a` | Array task ID |
+| `%N` | Short hostname of first node |
+| `%u` | Username |
+
+Example:
+```bash
+#SBATCH --output=logs/%x_%A_%a.out  # my_job_123456_42.out
+```
+
+## All SLURM Variables
+
+For a complete list of variables available in your job:
+
+```bash
+# Add this to your job script to see all SLURM variables
+env | grep SLURM | sort
+```
+
+Or check the [SLURM documentation](https://slurm.schedmd.com/sbatch.html#SECTION_OUTPUT-ENVIRONMENT-VARIABLES) for the full reference.
