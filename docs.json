@@ -26,8 +26,8 @@
         "groups": [
           {
             "group": "High Performance Computing",
-            "href": "hpc/index",
             "pages": [
+              "hpc/index",
               "hpc/job-submission",
               "hpc/data-transfer",
               "hpc/job-dependencies",
@@ -36,13 +36,13 @@
               "hpc/common-pitfalls",
               {
                 "group": "HPC at UC Davis",
-                "href": "hpc/uc-davis/index",
                 "pages": [
+                  "hpc/uc-davis/index",
                   "hpc/uc-davis/getting-started-hive",
                   {
                     "group": "Using HIVE",
-                    "href": "hpc/uc-davis/using-hive/index",
                     "pages": [
+                      "hpc/uc-davis/using-hive/index",
                       "hpc/uc-davis/using-hive/partitions-and-hardware",
                       "hpc/uc-davis/using-hive/job-submission",
                       "hpc/uc-davis/using-hive/software-and-storage",
@@ -54,13 +54,13 @@
               },
               {
                 "group": "HPC at Stanford",
-                "href": "hpc/stanford/index",
                 "pages": [
+                  "hpc/stanford/index",
                   "hpc/stanford/getting-started-sherlock",
                   {
                     "group": "Using Sherlock",
-                    "href": "hpc/stanford/using-sherlock/index",
                     "pages": [
+                      "hpc/stanford/using-sherlock/index",
                       "hpc/stanford/using-sherlock/partitions-and-hardware",
                       "hpc/stanford/using-sherlock/job-submission",
                       "hpc/stanford/using-sherlock/software-and-storage",
@@ -78,8 +78,8 @@
         "groups": [
           {
             "group": "Protein Engineering",
-            "href": "protein-engineering/index",
             "pages": [
+              "protein-engineering/index",
               "protein-engineering/getting-started"
             ]
           }
@@ -90,8 +90,8 @@
         "groups": [
           {
             "group": "Genomics",
-            "href": "genomics/index",
             "pages": [
+              "genomics/index",
               "genomics/getting-started"
             ]
           }
@@ -102,12 +102,12 @@
         "groups": [
           {
             "group": "Miscellaneous Bioinformatics",
-            "href": "misc-bioinfo/index",
             "pages": [
+              "misc-bioinfo/index",
               {
                 "group": "Mac Setup for Bioinformatics",
-                "href": "misc-bioinfo/mac-setup/index",
                 "pages": [
+                  "misc-bioinfo/mac-setup/index",
                   "misc-bioinfo/mac-setup/prerequisites",
                   "misc-bioinfo/mac-setup/homebrew",
                   "misc-bioinfo/mac-setup/cli-tools",
