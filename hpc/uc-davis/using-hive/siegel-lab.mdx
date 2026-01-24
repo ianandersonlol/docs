@@ -1,0 +1,184 @@
+---
+title: Siegel Lab Guide
+description: HIVE-specific information for Siegel Lab (jbsiegelgrp) members
+---
+
+This page contains HIVE configuration and best practices specific to members of the Siegel Lab (`jbsiegelgrp`). If you're not a member of the Siegel Lab, the general [Using HIVE](/hpc/uc-davis/using-hive) guides still apply to you.
+
+<Note>
+  This information is maintained by Siegel Lab members and reflects our specific account allocations and workflows.
+</Note>
+
+## Account and QOS Limits
+
+The `jbsiegelgrp` account has the following resource limits:
+
+| QOS | Max CPUs | Max Memory | Max GPUs |
+|-----|----------|------------|----------|
+| jbsiegelgrp-high-qos | 128 | 1 TB | 0 |
+
+<Warning>
+  The jbsiegelgrp account does **not** have direct GPU allocation. You must use alternative accounts for GPU jobs.
+</Warning>
+
+## Submitting Jobs
+
+### CPU Jobs
+
+For standard CPU jobs, use the lab account:
+
+```bash
+sbatch -A jbsiegelgrp job.sh
+```
+
+Or in your job script:
+
+```bash
+#SBATCH --account=jbsiegelgrp
+```
+
+### GPU Jobs
+
+Since `jbsiegelgrp` has no GPU allocation, you have two options:
+
+<Tabs>
+  <Tab title="publicgrp (Recommended)">
+    Use the public account for GPU access:
+
+    ```bash
+    sbatch -A publicgrp -p gpu-a100 --gres=gpu:a100:1 job.sh
+    ```
+
+    **publicgrp limits:**
+    - 5 GPUs
+    - 128 CPUs
+    - 2 TB memory
+
+    <Note>
+      This is the easiest option and doesn't require special access approval.
+    </Note>
+  </Tab>
+  <Tab title="genome-center-grp">
+    For higher priority GPU access, use the Genome Center account:
+
+    ```bash
+    sbatch -A genome-center-grp -p gpu-a100 --gres=gpu:a100:1 job.sh
+    ```
+
+    **genome-center-grp limits:**
+    - 8 GPUs
+    - Higher priority than publicgrp
+
+    <Warning>
+      You must request access to this account. Only Ian Korf can approve access, and as a PI he's very busy. Only request this if you genuinely need priority GPU access, and please be patient with the approval process.
+    </Warning>
+  </Tab>
+</Tabs>
+
+## Lab Storage
+
+### Directory Structure
+
+Lab storage is located at `/quobyte/jbsiegelgrp/`:
+
+```
+/quobyte/jbsiegelgrp/
+├── [member_name]/     # Personal directories
+├── databases/         # Shared databases
+└── software/          # Shared software/tools
+```
+
+Each lab member typically creates their own subdirectory for personal projects.
+
+### Best Practices
+
+<Steps>
+  <Step title="Store large files in lab storage">
+    Keep datasets, simulation outputs, and large results in `/quobyte/jbsiegelgrp/your_username/`, not in your home directory.
+  </Step>
+  <Step title="Check shared resources first">
+    Before downloading databases or installing software, check if they're already available:
+    ```bash
+    ls /quobyte/jbsiegelgrp/databases/
+    ls /quobyte/jbsiegelgrp/software/
+    ```
+  </Step>
+  <Step title="Coordinate large downloads">
+    If you need to download a large database that others might use, consider putting it in the shared `databases/` directory and letting the lab know.
+  </Step>
+</Steps>
+
+## Monitoring Lab Usage
+
+### View Current Lab Jobs
+
+```bash
+squeue -A jbsiegelgrp
+```
+
+### View Lab's Historical Usage
+
+```bash
+sreport cluster AccountUtilizationByUser Account=jbsiegelgrp Start=2026-01-01
+```
+
+This helps understand how lab resources are being used and can inform discussions about resource allocation.
+
+## Efficient Resource Usage
+
+Since the lab has limited concurrent CPU allocation (128 CPUs max), being efficient helps everyone:
+
+<AccordionGroup>
+  <Accordion title="Don't over-request resources">
+    Requesting more than you need:
+    - Slows down your queue time
+    - Counts against the lab's fair-share
+    - Blocks other lab members' jobs
+
+    Check actual usage with `sacct` after jobs complete and adjust future requests.
+  </Accordion>
+
+  <Accordion title="Use array jobs for parameter sweeps">
+    Instead of submitting 100 separate jobs:
+    ```bash
+    #SBATCH --array=1-100
+    ```
+
+    This is more efficient for the scheduler and easier to manage.
+  </Accordion>
+
+  <Accordion title="Consider the low partition">
+    For jobs that can handle restarts, the `low` partition may have faster queue times:
+    ```bash
+    #SBATCH --partition=low
+    ```
+
+    Just make sure your code can checkpoint and resume.
+  </Accordion>
+
+  <Accordion title="Cancel jobs you don't need">
+    If you realize a job has a bug or you no longer need the results, cancel it:
+    ```bash
+    scancel JOBID
+    ```
+
+    This frees resources for other lab members.
+  </Accordion>
+</AccordionGroup>
+
+## Getting Help
+
+### Lab Resources
+
+- **Siegel Lab Discord:** Ask in the drylab channel
+- **Lab members:** Don't hesitate to ask more experienced members
+
+### Cluster Support
+
+- **HPCCF Documentation:** [https://hpc.ucdavis.edu/](https://hpc.ucdavis.edu/)
+- **Submit a ticket:** hpc-help@ucdavis.edu
+- **DataLab Office Hours:** Check the [DataLab website](https://datalab.ucdavis.edu/) for schedule
+
+<Tip>
+  For cluster-specific issues, check if the answer is in the documentation or easily searchable first. For more complex problems, don't hesitate to ask for help—that's what the support resources are for.
+</Tip>

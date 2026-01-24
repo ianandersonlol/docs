@@ -1,0 +1,179 @@
+---
+title: Partitions & Hardware
+description: Understanding HIVE partitions, node types, and GPU resources
+---
+
+HIVE has heterogeneous hardware with different CPU generations, memory configurations, and GPU options. Understanding the available resources helps you request the right ones for your workload.
+
+## Partitions (Queues)
+
+HIVE has 4 main partitions. The **high** partition is the default.
+
+| Partition | Max Time | Priority | Preemption | Nodes | Description |
+|-----------|----------|----------|------------|-------|-------------|
+| **high** (default) | 30 days | 50 | OFF | 77 | Standard priority, no preemption |
+| **low** | 3 days | 10 | REQUEUE | 80 | Lower priority, jobs can be preempted |
+| **gpu-a100** | 30 days | 50 | OFF | 2 | NVIDIA A100 GPUs (8 total) |
+| **gpu-a6000** | 30 days | 50 | OFF | 1 | NVIDIA A6000 GPUs (4 total) |
+
+### Choosing a Partition
+
+<Tabs>
+  <Tab title="high vs low">
+    **Use `high` when:**
+    - Your job cannot tolerate being restarted
+    - You need predictable completion times
+    - You have tight deadlines
+
+    **Use `low` when:**
+    - Your job can checkpoint and restart gracefully
+    - You want potentially faster queue times
+    - You're running many short jobs
+
+    <Note>
+      Jobs in `low` can be preempted (stopped and requeued) when higher-priority jobs need resources. Make sure your code can handle restarts or use checkpointing.
+    </Note>
+  </Tab>
+  <Tab title="GPU Partitions">
+    **Use `gpu-a100` for:**
+    - Deep learning training
+    - Large model inference
+    - Memory-intensive GPU workloads (40-80 GB HBM2e per GPU)
+
+    **Use `gpu-a6000` for:**
+    - ML inference
+    - Visualization workloads
+    - Moderate training tasks (48 GB GDDR6 per GPU)
+
+    <Warning>
+      GPU jobs require explicit GPU requests with `--gres=gpu:N`. Simply requesting a GPU partition won't allocate GPUs automatically.
+    </Warning>
+  </Tab>
+</Tabs>
+
+### Default Memory Allocation
+
+Each partition has different default memory per CPU:
+
+| Partition | Default Memory per CPU |
+|-----------|------------------------|
+| high | 4 GB |
+| low | 4 GB |
+| gpu-a100 | 8 GB |
+| gpu-a6000 | 16 GB |
+
+## CPU Nodes
+
+HIVE has nodes with different AMD EPYC CPU generations:
+
+| CPU Type | Cores/Node | Memory | Nodes | Features |
+|----------|------------|--------|-------|----------|
+| AMD EPYC (zen) | 32 | 256 GB | 24 | cpu,ib,zen |
+| AMD EPYC (zen2) | 128 | 512 GB - 2 TB | 30 | cpu,ib,zen2 |
+| AMD EPYC (zen3) | 128 | 960 GB - 2 TB | 12 | cpu,ib,zen3 |
+| AMD EPYC (zen4) | 128 | 2 TB | 6 | cpu,ib,zen4 |
+
+### Requesting Specific Hardware
+
+Use the `--constraint` flag to target specific CPU architectures:
+
+```bash
+# Request newest AMD EPYC (zen4) nodes
+sbatch --constraint=zen4 job.sh
+
+# Request zen3 nodes with high memory
+sbatch --constraint=zen3 --mem=1500G job.sh
+
+# Request any zen2 or newer
+sbatch --constraint="zen2|zen3|zen4" job.sh
+```
+
+<Tip>
+  Newer architectures (zen3, zen4) offer better single-thread performance but have fewer nodes. If your job doesn't need the newest hardware, leaving the constraint off gives you access to more nodes and potentially faster queue times.
+</Tip>
+
+## GPU Resources
+
+### Available GPUs
+
+| GPU Type | Quantity | Memory | Partition | Best For |
+|----------|----------|--------|-----------|----------|
+| NVIDIA A100 | 8 (4 per node × 2 nodes) | 40/80 GB HBM2e | gpu-a100 | Deep learning training, large models |
+| NVIDIA A6000 | 4 (on 1 node) | 48 GB GDDR6 | gpu-a6000 | ML inference, visualization, moderate training |
+
+### GPU Node Details
+
+| Node | GPUs | CPU | Memory | Features |
+|------|------|-----|--------|----------|
+| hive-dc-7-9-70 | 4× A100 | 64 cores (Intel Ice Lake) | 1 TB | gpu,ib,gpu:a100,icelake |
+| hive-dc-7-9-74 | 4× A100 | 64 cores (Intel Ice Lake) | 1 TB | gpu,ib,gpu:a100,icelake |
+| hive-dc-7-10-58 | 4× A6000 | 128 cores (AMD zen3) | 2 TB | gpu,ib,gpu:a6000,zen3 |
+
+### Requesting GPUs
+
+```bash
+# Request 1 A100 GPU
+sbatch -p gpu-a100 --gres=gpu:a100:1 job.sh
+
+# Request 2 A100 GPUs
+sbatch -p gpu-a100 --gres=gpu:a100:2 job.sh
+
+# Request 1 A6000 GPU
+sbatch -p gpu-a6000 --gres=gpu:a6000:1 job.sh
+
+# Request any available GPU (if you don't care which type)
+sbatch -p gpu-a100 --gres=gpu:1 job.sh
+```
+
+### GPU Notes
+
+<Accordion title="CUDA Module Loading">
+  Always load the CUDA module before running GPU jobs:
+
+  ```bash
+  module load cuda/12.6.2
+  ```
+
+  **However**, if CUDA is installed via a conda environment (like PyTorch with bundled CUDA), loading the system CUDA module can cause conflicts. Test your setup and use whichever approach works for your software stack.
+</Accordion>
+
+<Accordion title="Verifying GPU Access">
+  Once your job starts on a GPU node, verify GPU access:
+
+  ```bash
+  # Check which node you're on
+  hostname
+
+  # Should show GPU info
+  nvidia-smi
+
+  # Check which GPUs are allocated to your job
+  echo $CUDA_VISIBLE_DEVICES
+  ```
+</Accordion>
+
+## Accounts and QOS
+
+Your account determines your resource limits and priority.
+
+### Check Your Accounts
+
+```bash
+sacctmgr show assoc user=$USER format=Account,User,Share,QOS -P
+```
+
+### Specifying Account and QOS
+
+```bash
+# Submit with a specific account
+sbatch -A your_account job.sh
+
+# Submit to a specific partition with account
+sbatch -A publicgrp -p gpu-a100 --gres=gpu:a100:1 job.sh
+```
+
+<Note>
+  Some accounts don't have GPU allocations. If your primary account lacks GPU access, you may need to use `publicgrp` or request access to another account with GPU allocations.
+</Note>
+
+For lab-specific account information and QOS limits, see the [Siegel Lab Guide](/hpc/uc-davis/using-hive/siegel-lab) if you're a member of that group.

@@ -32,7 +32,18 @@
                 "group": "HPC at UC Davis",
                 "pages": [
                   "hpc/uc-davis/index",
-                  "hpc/uc-davis/getting-started-hive"
+                  "hpc/uc-davis/getting-started-hive",
+                  {
+                    "group": "Using HIVE",
+                    "pages": [
+                      "hpc/uc-davis/using-hive/index",
+                      "hpc/uc-davis/using-hive/partitions-and-hardware",
+                      "hpc/uc-davis/using-hive/job-submission",
+                      "hpc/uc-davis/using-hive/software-and-storage",
+                      "hpc/uc-davis/using-hive/commands-and-troubleshooting",
+                      "hpc/uc-davis/using-hive/siegel-lab"
+                    ]
+                  }
                 ]
               }
             ]

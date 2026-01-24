@@ -1,0 +1,294 @@
+---
+title: Commands & Troubleshooting
+description: Useful SLURM commands reference and solutions to common issues
+---
+
+This page provides a quick reference for SLURM commands and solutions to common problems you might encounter on HIVE.
+
+## Job Information Commands
+
+### View Your Jobs
+
+```bash
+# See your running and pending jobs
+squeue -u $USER
+
+# See all jobs in a partition
+squeue -p high
+
+# Watch your jobs update every 30 seconds
+watch -n 30 'squeue -u $USER'
+```
+
+### Job Details
+
+```bash
+# Detailed info about a specific job
+scontrol show job JOBID
+
+# Check job priority
+sprio -j JOBID
+
+# View job efficiency after completion
+seff JOBID
+```
+
+### Job Accounting
+
+```bash
+# Your recent jobs with resource usage
+sacct -u $USER --starttime=2026-01-01 --format=JobID,JobName,State,Elapsed,MaxRSS,ReqMem
+
+# Detailed info for a specific completed job
+sacct -j JOBID --format=JobID,MaxRSS,ReqMem,Elapsed,State
+
+# Check your account usage
+sreport cluster AccountUtilizationByUser Account=your_account
+
+# View your fair share
+sshare -u $USER
+```
+
+## Cluster Status Commands
+
+### Partition Overview
+
+```bash
+# Summary of all partitions
+sinfo --summarize
+
+# Show available CPUs per partition
+sinfo -o "%P %C"
+
+# Detailed node listing
+sinfo -N -l
+
+# Find idle nodes
+sinfo -t idle
+```
+
+### Node Information
+
+```bash
+# View specific node details
+scontrol show node NODENAME
+
+# View nodes with specific features
+sinfo --constraint=zen4
+sinfo --constraint=gpu
+
+# Show nodes with GPUs
+sinfo -o "%n %G" | grep gpu
+```
+
+### Quick One-Liners
+
+```bash
+# Count pending jobs in queue
+squeue --state=PENDING | wc -l
+
+# See who's using the cluster
+squeue -o "%.8u %.9P %.8j %.8T" | sort | uniq -c
+
+# Check a specific account's jobs
+squeue -A your_account
+```
+
+## Troubleshooting
+
+### Job States
+
+| State | Code | Meaning |
+|-------|------|---------|
+| PENDING | PD | Waiting for resources |
+| RUNNING | R | Currently executing |
+| COMPLETING | CG | Finishing up |
+| COMPLETED | CD | Finished successfully |
+| FAILED | F | Job failed |
+| CANCELLED | CA | Cancelled by user or admin |
+| TIMEOUT | TO | Exceeded time limit |
+| OUT_OF_MEMORY | OOM | Ran out of memory |
+
+### Why Is My Job Pending?
+
+Check the reason:
+
+```bash
+squeue -j JOBID -o "%.18i %.9P %.8j %.8u %.2t %.10M %.6D %R"
+```
+
+<AccordionGroup>
+  <Accordion title="Priority">
+    **Meaning:** Your job is waiting for higher-priority jobs to run first.
+
+    **Solution:** This is normal. Wait, or try the `low` partition if your job can tolerate preemption. You can also reduce resource requests to make your job easier to schedule.
+  </Accordion>
+
+  <Accordion title="Resources">
+    **Meaning:** The requested resources aren't currently available.
+
+    **Solution:** Consider reducing your request (fewer CPUs, less memory, shorter time) or wait for resources to free up.
+  </Accordion>
+
+  <Accordion title="QOSGrpCpuLimit">
+    **Meaning:** Your account has reached its maximum concurrent CPU limit.
+
+    **Solution:** Wait for your other jobs to complete, or cancel some if appropriate.
+  </Accordion>
+
+  <Accordion title="QOSGrpMemLimit">
+    **Meaning:** Your account has reached its maximum memory limit.
+
+    **Solution:** Wait for your other jobs to complete, or reduce memory requests.
+  </Accordion>
+
+  <Accordion title="ReqNodeNotAvail">
+    **Meaning:** The specific node(s) you requested are down or reserved.
+
+    **Solution:** Remove node constraints if possible, or wait for the node to become available.
+  </Accordion>
+</AccordionGroup>
+
+### Job Ran Out of Memory
+
+**Symptoms:** Job state is `OUT_OF_MEMORY` or `OOM`.
+
+**Diagnose:**
+```bash
+sacct -j JOBID --format=JobID,MaxRSS,ReqMem,State
+```
+
+If `MaxRSS` (actual usage) is close to `ReqMem` (requested), your job needs more memory.
+
+**Fix:** Increase memory in your job script:
+```bash
+#SBATCH --mem=64G  # Increase this value
+```
+
+<Tip>
+  Check memory usage of completed jobs to calibrate future requests. Request 10-20% more than your typical usage to allow for variation.
+</Tip>
+
+### Job Exceeded Time Limit
+
+**Symptoms:** Job state is `TIMEOUT`.
+
+**Diagnose:**
+```bash
+sacct -j JOBID --format=JobID,Elapsed,Timelimit
+```
+
+**Fix:** Request more time:
+```bash
+#SBATCH --time=2-00:00:00  # 2 days instead of default
+```
+
+<Note>
+  If your job consistently runs close to the time limit, consider implementing checkpointing so you can restart from where you left off.
+</Note>
+
+### Can't Find a Module
+
+```bash
+# Search all available modules
+module spider keyword
+
+# Check if it's a conda-based module
+module avail conda/
+
+# List all modules (may be long)
+module avail 2>&1 | less
+```
+
+If the software isn't available as a module, consider:
+- Installing it in a conda environment
+- Using an Apptainer container
+- Requesting installation from HPCCF
+
+### GPU Not Detected
+
+<Steps>
+  <Step title="Verify you're on a GPU node">
+    ```bash
+    hostname
+    # Should be hive-dc-7-9-70, hive-dc-7-9-74, or hive-dc-7-10-58
+    ```
+  </Step>
+  <Step title="Check CUDA is loaded">
+    ```bash
+    module load cuda/12.6.2
+    nvidia-smi  # Should show GPU info
+    ```
+  </Step>
+  <Step title="Verify GPU allocation">
+    ```bash
+    echo $CUDA_VISIBLE_DEVICES
+    # Should show GPU indices like "0" or "0,1"
+    ```
+  </Step>
+  <Step title="Check your job requested GPUs">
+    Make sure your script includes:
+    ```bash
+    #SBATCH --gres=gpu:a100:1  # or gpu:a6000:1
+    ```
+  </Step>
+</Steps>
+
+### Job Fails Immediately
+
+Common causes and solutions:
+
+<AccordionGroup>
+  <Accordion title="Script has Windows line endings">
+    **Symptom:** `bad interpreter` error
+
+    **Fix:**
+    ```bash
+    dos2unix your_script.sh
+    ```
+  </Accordion>
+
+  <Accordion title="Module not available">
+    **Symptom:** `module: command not found` or module load fails
+
+    **Fix:** Make sure you're running on a compute node (not login node for heavy work) and the module exists:
+    ```bash
+    module avail | grep module_name
+    ```
+  </Accordion>
+
+  <Accordion title="Conda environment not found">
+    **Symptom:** `conda activate` fails
+
+    **Fix:** Load conda module first:
+    ```bash
+    module load conda/latest
+    conda activate myenv
+    ```
+  </Accordion>
+
+  <Accordion title="Permission denied">
+    **Symptom:** Can't execute script or access files
+
+    **Fix:** Check permissions:
+    ```bash
+    chmod +x your_script.sh  # Make script executable
+    ls -la /path/to/files    # Check file permissions
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Getting Help
+
+If you can't resolve an issue:
+
+1. **Check HPCCF documentation:** [https://hpc.ucdavis.edu/](https://hpc.ucdavis.edu/)
+2. **Submit a ticket:** hpc-help@ucdavis.edu
+3. **DataLab office hours:** Check [DataLab website](https://datalab.ucdavis.edu/) for schedule
+
+When submitting a ticket, include:
+- Your username
+- Job ID (if applicable)
+- The commands you ran
+- Any error messages
+- What you expected vs. what happened

@@ -7,9 +7,33 @@ description: Resources and guides for using high-performance computing clusters 
 
 This section covers the HPC resources available at UC Davis, including setup guides and best practices for the HIVE cluster.
 
+## HIVE Cluster
+
+HIVE is UC Davis's primary HPC resource, featuring ~80 CPU nodes with over 7,800 cores, 12 GPUs (NVIDIA A100 and A6000), and 5.7 PB of Quobyte storage. It runs SLURM for job scheduling.
+
 <CardGroup cols={2}>
-  <Card title="Setting Up Your HIVE Account" icon="server" href="/hpc/uc-davis/getting-started-hive">
+  <Card title="Setting Up Your HIVE Account" icon="user-plus" href="/hpc/uc-davis/getting-started-hive">
     Create your HIVE account and set up SSH access
+  </Card>
+  <Card title="Using HIVE" icon="server" href="/hpc/uc-davis/using-hive">
+    Complete guide to running jobs on HIVE
+  </Card>
+</CardGroup>
+
+### Quick Links
+
+<CardGroup cols={2}>
+  <Card title="Partitions & Hardware" icon="microchip" href="/hpc/uc-davis/using-hive/partitions-and-hardware">
+    Available queues, CPU nodes, and GPU resources
+  </Card>
+  <Card title="Job Submission" icon="play" href="/hpc/uc-davis/using-hive/job-submission">
+    SLURM basics and example job scripts
+  </Card>
+  <Card title="Software & Storage" icon="hard-drive" href="/hpc/uc-davis/using-hive/software-and-storage">
+    Modules, conda, containers, and storage
+  </Card>
+  <Card title="Commands & Troubleshooting" icon="terminal" href="/hpc/uc-davis/using-hive/commands-and-troubleshooting">
+    Useful commands and common issue solutions
   </Card>
 </CardGroup>
 

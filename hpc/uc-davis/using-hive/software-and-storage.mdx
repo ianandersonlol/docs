@@ -1,0 +1,235 @@
+---
+title: Software & Storage
+description: Using modules, conda, containers, and storage on HIVE
+---
+
+HIVE provides software through environment modules and supports user-managed conda environments and containers. This page covers how to find and use software, plus storage best practices.
+
+## Environment Modules
+
+HIVE uses environment modules (managed via CVMFS) to provide access to pre-installed software.
+
+### Basic Module Commands
+
+```bash
+# List available modules
+module avail
+
+# Search for specific software
+module avail conda
+module avail gromacs
+module spider keyword  # Deep search
+
+# Load a module
+module load cuda/12.6.2
+module load conda/latest
+
+# Show currently loaded modules
+module list
+
+# Unload a specific module
+module unload cuda
+
+# Unload all modules
+module purge
+```
+
+### Available Software Categories
+
+| Category | Examples |
+|----------|----------|
+| **Languages** | Python 3.11, R 4.4, Julia 1.12, Rust 1.91 |
+| **Compilers** | GCC 13.2, Intel oneAPI 2025, AOCC 5.0, Clang 19 |
+| **CUDA** | 8.0 - 12.6 (default: 12.6.2) |
+| **MPI** | OpenMPI 5.0.5, MPICH 4.2.1 |
+| **Machine Learning** | PyTorch 2.5.1, AlphaFold 2.3.2 |
+| **Molecular Dynamics** | GROMACS 2023.4, Plumed 2.8.2 |
+| **Bioinformatics** | bcftools, samtools, BLAST, BWA, GATK |
+
+<Tip>
+  Use `module spider <keyword>` for a more thorough search if `module avail` doesn't find what you're looking for.
+</Tip>
+
+## Conda Environments
+
+For software not available as modules or when you need specific versions, create your own conda environments.
+
+### Setting Up Conda
+
+```bash
+# Load the conda module
+module load conda/latest
+
+# Initialize conda for your shell (only needed once)
+conda init bash  # or zsh
+
+# Create a new environment
+conda create -n myenv python=3.11
+
+# Activate your environment
+conda activate myenv
+
+# Install packages
+conda install numpy pandas scikit-learn
+
+# Install from conda-forge
+conda install -c conda-forge package_name
+
+# Install with pip (when conda package isn't available)
+pip install package_name
+```
+
+### Conda Best Practices
+
+<AccordionGroup>
+  <Accordion title="Use environment files for reproducibility">
+    Create an `environment.yml` file:
+
+    ```yaml
+    name: myproject
+    channels:
+      - conda-forge
+      - defaults
+    dependencies:
+      - python=3.11
+      - numpy
+      - pandas
+      - pip
+      - pip:
+        - some-pip-package
+    ```
+
+    Create the environment:
+    ```bash
+    conda env create -f environment.yml
+    ```
+  </Accordion>
+
+  <Accordion title="Keep environments in your storage directory">
+    By default, conda environments go in `~/.conda/envs`. If you're running low on home directory space, create environments elsewhere:
+
+    ```bash
+    conda create -p /quobyte/your_group/your_username/envs/myenv python=3.11
+    conda activate /quobyte/your_group/your_username/envs/myenv
+    ```
+  </Accordion>
+
+  <Accordion title="Clean up conda caches periodically">
+    Conda caches downloaded packages, which can consume significant space:
+
+    ```bash
+    conda clean --all
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Apptainer (Singularity) Containers
+
+Apptainer 1.4.5 is available for running containers. This is useful for complex software stacks or when you need complete environment reproducibility.
+
+### Basic Container Usage
+
+```bash
+# Pull a container from Docker Hub
+apptainer pull docker://nvcr.io/nvidia/pytorch:24.01-py3
+
+# Run a command in the container
+apptainer exec pytorch_24.01-py3.sif python train.py
+
+# Run with GPU support
+apptainer exec --nv pytorch_24.01-py3.sif python train.py
+
+# Interactive shell in container
+apptainer shell --nv pytorch_24.01-py3.sif
+```
+
+<Note>
+  The `--nv` flag enables NVIDIA GPU support inside the container. Always use it for GPU workloads.
+</Note>
+
+### Container Job Script Example
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=container_job
+#SBATCH --partition=gpu-a100
+#SBATCH --account=your_account
+#SBATCH --time=24:00:00
+#SBATCH --gres=gpu:a100:1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+
+# Run your script inside the container
+apptainer exec --nv /path/to/container.sif python train.py
+```
+
+## Storage
+
+### Quobyte Parallel File System
+
+HIVE uses Quobyte as its primary storage system:
+
+| Property | Value |
+|----------|-------|
+| Mount Point | `/quobyte` |
+| Total Capacity | 5.7 PB |
+| Available | ~2.5 PB |
+| Network | InfiniBand |
+
+### Directory Structure
+
+```
+/quobyte/
+├── your_group/           # Your lab/group directory
+│   ├── your_username/    # Your personal directory
+│   ├── databases/        # Shared databases (if applicable)
+│   └── [other members]/
+├── publicgrp/            # Public shared space
+└── [other groups]/
+```
+
+### Home Directory
+
+| Property | Details |
+|----------|---------|
+| Location | `/home/$USER` |
+| Size Limit | 20 GB |
+| Best For | Configuration files, small scripts, conda caches |
+
+<Warning>
+  The home directory has limited space (20 GB). Store large datasets and outputs in your group's Quobyte directory instead.
+</Warning>
+
+### Storage Best Practices
+
+<Steps>
+  <Step title="Use group storage for large files">
+    Store datasets, results, and large outputs in `/quobyte/your_group/your_username/`.
+  </Step>
+  <Step title="Check for shared resources">
+    Before downloading common databases or software, check if they're already available in shared directories:
+    ```bash
+    ls /quobyte/your_group/databases/
+    ls /quobyte/your_group/software/
+    ```
+  </Step>
+  <Step title="Clean up old files">
+    Periodically review and remove files you no longer need to keep storage available for everyone.
+  </Step>
+  <Step title="Use scratch wisely">
+    For jobs that create many temporary files, consider using local scratch on compute nodes if available, then copy results back.
+  </Step>
+</Steps>
+
+### Checking Storage Usage
+
+```bash
+# Check your home directory usage
+du -sh ~
+
+# Check your group directory usage
+du -sh /quobyte/your_group/your_username/
+
+# Find large files
+find /quobyte/your_group/your_username/ -size +1G -exec ls -lh {} \;
+```

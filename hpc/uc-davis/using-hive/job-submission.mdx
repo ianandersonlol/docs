@@ -1,0 +1,290 @@
+---
+title: Job Submission
+description: SLURM job submission basics and example scripts for HIVE
+---
+
+This page covers the fundamentals of submitting jobs to HIVE using SLURM, along with ready-to-use example scripts for common workloads.
+
+## Essential SLURM Commands
+
+| Command | Description |
+|---------|-------------|
+| `sbatch script.sh` | Submit a batch job |
+| `srun` | Run a command on allocated resources |
+| `squeue -u $USER` | View your jobs |
+| `scancel JOBID` | Cancel a job |
+| `sinfo` | View partition/node status |
+| `sacct -j JOBID` | View job accounting info |
+
+## Job Script Structure
+
+A SLURM job script is a bash script with special `#SBATCH` directives that specify resource requirements:
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=my_job          # Job name
+#SBATCH --partition=high           # Partition (queue)
+#SBATCH --account=your_account     # Your account
+#SBATCH --time=1-00:00:00          # Time limit (D-HH:MM:SS)
+#SBATCH --nodes=1                  # Number of nodes
+#SBATCH --ntasks=1                 # Number of tasks
+#SBATCH --cpus-per-task=8          # CPUs per task
+#SBATCH --mem=32G                  # Memory per node
+#SBATCH --output=%x_%j.out         # Output file (%x=job name, %j=job ID)
+#SBATCH --error=%x_%j.err          # Error file
+#SBATCH --mail-user=you@ucdavis.edu
+#SBATCH --mail-type=END,FAIL       # Email notifications
+
+# Your commands here
+module load conda/latest
+conda activate myenv
+python my_script.py
+```
+
+### Time Format
+
+SLURM accepts several time formats:
+
+| Format | Example | Duration |
+|--------|---------|----------|
+| `minutes` | `60` | 60 minutes |
+| `hours:minutes:seconds` | `2:00:00` | 2 hours |
+| `days-hours` | `1-12` | 1.5 days |
+| `days-hours:minutes:seconds` | `1-12:00:00` | 1.5 days |
+
+<Tip>
+  Request slightly more time than you expect to need. Jobs that exceed their time limit are killed immediately, potentially losing unsaved work.
+</Tip>
+
+### Output File Patterns
+
+Use these placeholders in output/error filenames:
+
+| Pattern | Expands To |
+|---------|------------|
+| `%j` | Job ID |
+| `%x` | Job name |
+| `%a` | Array task ID |
+| `%A` | Array job ID |
+
+## Example Job Scripts
+
+<Tabs>
+  <Tab title="Basic CPU">
+    Standard single-node CPU job:
+
+    ```bash
+    #!/bin/bash
+    #SBATCH --job-name=cpu_job
+    #SBATCH --partition=high
+    #SBATCH --account=your_account
+    #SBATCH --time=24:00:00
+    #SBATCH --nodes=1
+    #SBATCH --ntasks=1
+    #SBATCH --cpus-per-task=16
+    #SBATCH --mem=64G
+    #SBATCH --output=%x_%j.out
+
+    # Load modules
+    module load conda/latest
+
+    # Activate your environment
+    conda activate myenv
+
+    # Run your script
+    python my_script.py
+    ```
+  </Tab>
+  <Tab title="OpenMP Parallel">
+    Multi-threaded job using OpenMP:
+
+    ```bash
+    #!/bin/bash
+    #SBATCH --job-name=openmp_job
+    #SBATCH --partition=high
+    #SBATCH --account=your_account
+    #SBATCH --time=12:00:00
+    #SBATCH --nodes=1
+    #SBATCH --ntasks=1
+    #SBATCH --cpus-per-task=32
+    #SBATCH --mem=128G
+    #SBATCH --output=%x_%j.out
+
+    # Set OpenMP threads to match allocated CPUs
+    export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+
+    ./my_openmp_program
+    ```
+
+    <Note>
+      Always set `OMP_NUM_THREADS` to match your CPU allocation. Otherwise, OpenMP may try to use all cores on the node, conflicting with other jobs.
+    </Note>
+  </Tab>
+  <Tab title="GPU (PyTorch/TensorFlow)">
+    GPU job for deep learning:
+
+    ```bash
+    #!/bin/bash
+    #SBATCH --job-name=gpu_training
+    #SBATCH --partition=gpu-a100
+    #SBATCH --account=your_account
+    #SBATCH --time=2-00:00:00
+    #SBATCH --nodes=1
+    #SBATCH --ntasks=1
+    #SBATCH --cpus-per-task=16
+    #SBATCH --mem=64G
+    #SBATCH --gres=gpu:a100:1
+    #SBATCH --output=%x_%j.out
+
+    # Load CUDA (may not be needed if using conda PyTorch)
+    module load cuda/12.6.2
+    module load conda/pytorch/2.5.1
+
+    # Or activate your own conda environment
+    # conda activate my_torch_env
+
+    python train_model.py
+    ```
+
+    <Warning>
+      Don't forget `--gres=gpu:a100:1` (or similar). Without it, you won't get GPU access even if you're in a GPU partition.
+    </Warning>
+  </Tab>
+  <Tab title="Array Job">
+    Run many similar tasks with different inputs:
+
+    ```bash
+    #!/bin/bash
+    #SBATCH --job-name=array_job
+    #SBATCH --partition=high
+    #SBATCH --account=your_account
+    #SBATCH --time=2:00:00
+    #SBATCH --array=1-100
+    #SBATCH --ntasks=1
+    #SBATCH --cpus-per-task=4
+    #SBATCH --mem=16G
+    #SBATCH --output=array_%A_%a.out
+
+    # SLURM_ARRAY_TASK_ID contains the current task number (1-100)
+    echo "Processing task $SLURM_ARRAY_TASK_ID"
+
+    python process_file.py --index $SLURM_ARRAY_TASK_ID
+    ```
+
+    **Max array size:** 50,000 tasks
+
+    <Tip>
+      Use `%A` (array job ID) and `%a` (task ID) in output filenames to keep logs organized.
+    </Tip>
+  </Tab>
+  <Tab title="MPI">
+    Multi-node MPI job:
+
+    ```bash
+    #!/bin/bash
+    #SBATCH --job-name=mpi_job
+    #SBATCH --partition=high
+    #SBATCH --account=your_account
+    #SBATCH --time=8:00:00
+    #SBATCH --nodes=2
+    #SBATCH --ntasks-per-node=64
+    #SBATCH --mem=256G
+    #SBATCH --output=%x_%j.out
+
+    module load openmpi/5.0.5
+
+    srun ./my_mpi_program
+    ```
+
+    <Note>
+      Use `srun` (not `mpirun`) to launch MPI programs on SLURM. It handles process placement correctly.
+    </Note>
+  </Tab>
+  <Tab title="GROMACS MD">
+    Molecular dynamics simulation:
+
+    ```bash
+    #!/bin/bash
+    #SBATCH --job-name=gromacs_md
+    #SBATCH --partition=high
+    #SBATCH --account=your_account
+    #SBATCH --time=7-00:00:00
+    #SBATCH --nodes=1
+    #SBATCH --ntasks=1
+    #SBATCH --cpus-per-task=64
+    #SBATCH --mem=128G
+    #SBATCH --output=%x_%j.out
+
+    module load gromacs/2023.4
+
+    gmx mdrun -deffnm production -ntomp $SLURM_CPUS_PER_TASK
+    ```
+  </Tab>
+</Tabs>
+
+## Interactive Sessions
+
+Sometimes you need an interactive shell on a compute node for debugging, testing, or exploratory work.
+
+### Quick Interactive Session
+
+```bash
+# Basic interactive session on high partition
+srun -p high -A your_account -t 4:00:00 -c 8 --mem=32G --pty bash
+
+# Interactive session with GPU
+srun -p gpu-a100 -A your_account -t 2:00:00 -c 8 --mem=32G --gres=gpu:a100:1 --pty bash
+```
+
+### Using salloc for Persistent Allocation
+
+If you need to run multiple commands within an allocation:
+
+```bash
+# Allocate resources first
+salloc -p high -A your_account -t 8:00:00 -c 16 --mem=64G
+
+# Now you have an allocation - run commands with srun
+srun python my_script.py
+srun ./another_program
+
+# Exit to release the allocation
+exit
+```
+
+<Warning>
+  Interactive allocations consume resources even when idle. Don't forget to `exit` when you're done to release them for other users.
+</Warning>
+
+## Resource Request Tips
+
+<AccordionGroup>
+  <Accordion title="Don't over-request resources">
+    Requesting more than you need:
+    - Increases your queue wait time
+    - Reduces your fair-share priority for future jobs
+    - Wastes cluster resources
+
+    Start with modest requests and scale up based on actual usage from `sacct`.
+  </Accordion>
+
+  <Accordion title="Use --mem-per-cpu for scalable jobs">
+    For jobs where memory scales with CPU count:
+
+    ```bash
+    #SBATCH --mem-per-cpu=4G
+    ```
+
+    This is better than `--mem` for jobs that might run with different CPU counts.
+  </Accordion>
+
+  <Accordion title="Check actual usage after jobs complete">
+    Use `sacct` to see what resources your job actually used:
+
+    ```bash
+    sacct -j JOBID --format=JobID,MaxRSS,ReqMem,Elapsed,State
+    ```
+
+    Adjust future requests based on actual usage.
+  </Accordion>
+</AccordionGroup>

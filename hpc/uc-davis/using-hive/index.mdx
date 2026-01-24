@@ -1,0 +1,91 @@
+---
+title: Using HIVE
+description: Comprehensive guide to using the HIVE HPC cluster at UC Davis
+---
+
+The HIVE cluster is UC Davis's primary high-performance computing resource, managed by the High-Performance Computing Core Facility (HPCCF). This guide covers everything you need to start running jobs on HIVE.
+
+<Note>
+  Before using HIVE, you'll need to set up your account. See [Setting Up Your HIVE Account](/hpc/uc-davis/getting-started-hive) if you haven't done so.
+</Note>
+
+## Cluster Overview
+
+| Property | Value |
+|----------|-------|
+| **Cluster Name** | hive |
+| **SLURM Version** | 25.11.1 |
+| **Total CPU Nodes** | ~80 nodes |
+| **Total CPUs** | ~7,800+ cores |
+| **GPU Nodes** | 3 nodes (A100 and A6000) |
+| **Total GPUs** | 12 GPUs |
+| **Storage** | Quobyte (5.7 PB total, ~2.5 PB available) |
+| **Interconnect** | InfiniBand |
+| **Scheduler** | SLURM with Backfill and Multifactor Priority |
+
+The cluster uses a **fair-share scheduling system** where job priority is influenced by past usage and account allocation.
+
+## Connecting to HIVE
+
+<Tabs>
+  <Tab title="SSH">
+    Connect via SSH from your terminal:
+
+    ```bash
+    ssh YOUR_KERBEROS@hive.hpc.ucdavis.edu
+    ```
+
+    Replace `YOUR_KERBEROS` with your UC Davis Kerberos username.
+  </Tab>
+  <Tab title="Open OnDemand">
+    Access the cluster through a web browser with Jupyter, RStudio, file browser, and terminal:
+
+    **URL:** [https://hive.hpc.ucdavis.edu/](https://hive.hpc.ucdavis.edu/)
+
+    <Warning>
+      Requires UC Davis VPN or campus network connection.
+    </Warning>
+  </Tab>
+</Tabs>
+
+## Quick Start
+
+Once connected, here's the basic workflow for running a job:
+
+<Steps>
+  <Step title="Create a job script">
+    Write a bash script with SLURM directives specifying the resources you need.
+  </Step>
+  <Step title="Submit the job">
+    Use `sbatch your_script.sh` to submit your job to the queue.
+  </Step>
+  <Step title="Monitor your job">
+    Check the status with `squeue -u $USER`.
+  </Step>
+  <Step title="View results">
+    Once complete, check output files and job logs.
+  </Step>
+</Steps>
+
+## Guide Contents
+
+<CardGroup cols={2}>
+  <Card title="Partitions & Hardware" icon="microchip" href="/hpc/uc-davis/using-hive/partitions-and-hardware">
+    Understand available queues, CPU nodes, and GPU resources
+  </Card>
+  <Card title="Job Submission" icon="play" href="/hpc/uc-davis/using-hive/job-submission">
+    Learn SLURM basics and see example job scripts
+  </Card>
+  <Card title="Software & Storage" icon="hard-drive" href="/hpc/uc-davis/using-hive/software-and-storage">
+    Use modules, conda environments, containers, and storage
+  </Card>
+  <Card title="Commands & Troubleshooting" icon="terminal" href="/hpc/uc-davis/using-hive/commands-and-troubleshooting">
+    Useful commands reference and common issue solutions
+  </Card>
+</CardGroup>
+
+## Getting Help
+
+- **HPCCF Documentation:** [https://hpc.ucdavis.edu/](https://hpc.ucdavis.edu/)
+- **Submit a Ticket:** hpc-help@ucdavis.edu
+- **DataLab Office Hours:** Check the [DataLab website](https://datalab.ucdavis.edu/) for schedule
