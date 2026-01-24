@@ -28,6 +28,7 @@
             "group": "High Performance Computing",
             "pages": [
               "hpc/index",
+              "hpc/job-submission",
               "hpc/data-transfer",
               "hpc/job-dependencies",
               "hpc/checkpointing",

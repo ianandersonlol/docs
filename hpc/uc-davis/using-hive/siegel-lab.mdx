@@ -43,10 +43,32 @@ Since `jbsiegelgrp` has no GPU allocation, you have two options:
 
 <Tabs>
   <Tab title="publicgrp (Recommended)">
-    Use the public account for GPU access:
+    Use the public account with the `low` partition for GPU access:
 
     ```bash
-    sbatch -A publicgrp -p gpu-a100 --gres=gpu:a100:1 job.sh
+    sbatch -A publicgrp -p low --gres=gpu:1 job.sh
+    ```
+
+    <Warning>
+      The `publicgrp` account cannot access the `gpu-a100` partition. You must use the `low` partition for GPU jobs, which means your jobs can be preempted (cancelled and requeued) by higher-priority jobs.
+    </Warning>
+
+    **Specifying GPU type:**
+
+    Two GPU types are available through the `low` partition:
+    - **A100s** - Newer, faster GPUs
+    - **A6000s** - Also available
+
+    You can request a specific type or any available GPU:
+    ```bash
+    # Request any available GPU
+    --gres=gpu:1
+
+    # Request specifically an A100
+    --gres=gpu:a100:1
+
+    # Request specifically an A6000
+    --gres=gpu:a6000:1
     ```
 
     **publicgrp limits:**

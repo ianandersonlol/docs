@@ -1,0 +1,284 @@
+---
+title: Job Submission Basics
+description: Fundamentals of submitting jobs with SLURM
+---
+
+This page covers the fundamentals of submitting jobs to SLURM-based HPC clusters. For cluster-specific details (partitions, accounts, modules), see your cluster's documentation.
+
+## Essential Commands
+
+| Command | Description |
+|---------|-------------|
+| `sbatch script.sh` | Submit a batch job |
+| `srun` | Run a command on allocated resources |
+| `squeue -u $USER` | View your jobs |
+| `scancel JOBID` | Cancel a job |
+| `sinfo` | View partition/node status |
+| `sacct -j JOBID` | View job accounting info |
+
+## Job Script Structure
+
+A SLURM job script is a bash script with special `#SBATCH` directives that specify resource requirements:
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=my_job          # Job name
+#SBATCH --partition=your_partition # Partition (queue) - cluster specific
+#SBATCH --account=your_account     # Your account - cluster specific
+#SBATCH --time=1-00:00:00          # Time limit (D-HH:MM:SS)
+#SBATCH --nodes=1                  # Number of nodes
+#SBATCH --ntasks=1                 # Number of tasks
+#SBATCH --cpus-per-task=8          # CPUs per task
+#SBATCH --mem=32G                  # Memory per node
+#SBATCH --output=%x_%j.out         # Output file (%x=job name, %j=job ID)
+#SBATCH --error=%x_%j.err          # Error file
+#SBATCH --mail-user=you@email.edu
+#SBATCH --mail-type=END,FAIL       # Email notifications
+
+# Load any modules you need
+module load python/3.11
+
+# Run your program
+python my_script.py
+```
+
+### Common Options Reference
+
+| Option | Description |
+|--------|-------------|
+| `--job-name=NAME` | Name for the job (shows in queue) |
+| `--partition=NAME` | Which queue to submit to |
+| `--account=NAME` | Account to charge (if required) |
+| `--time=D-HH:MM:SS` | Maximum run time |
+| `--nodes=N` | Number of nodes |
+| `--ntasks=N` | Number of tasks (usually MPI ranks) |
+| `--cpus-per-task=N` | CPUs per task (for threading) |
+| `--mem=N[G/M]` | Memory per node |
+| `--mem-per-cpu=N[G/M]` | Memory per CPU (alternative to --mem) |
+| `--gres=gpu:N` | Request N GPUs |
+| `--output=FILE` | Where to write stdout |
+| `--error=FILE` | Where to write stderr |
+| `--array=1-100` | Submit as array job |
+
+### Time Format
+
+SLURM accepts several time formats:
+
+| Format | Example | Duration |
+|--------|---------|----------|
+| `minutes` | `60` | 60 minutes |
+| `hours:minutes:seconds` | `2:00:00` | 2 hours |
+| `days-hours` | `1-12` | 1.5 days |
+| `days-hours:minutes:seconds` | `1-12:00:00` | 1.5 days |
+
+<Tip>
+  Request slightly more time than you expect to need. Jobs that exceed their time limit are killed immediately, potentially losing unsaved work.
+</Tip>
+
+### Output File Patterns
+
+Use these placeholders in `--output` and `--error` filenames:
+
+| Pattern | Expands To |
+|---------|------------|
+| `%j` | Job ID |
+| `%x` | Job name |
+| `%a` | Array task ID |
+| `%A` | Array job ID |
+| `%N` | Short hostname of first node |
+| `%u` | Username |
+
+## Example Scripts
+
+<Tabs>
+  <Tab title="Basic CPU">
+    Simple single-node job:
+
+    ```bash
+    #!/bin/bash
+    #SBATCH --job-name=cpu_job
+    #SBATCH --partition=standard    # Use your cluster's partition
+    #SBATCH --time=24:00:00
+    #SBATCH --nodes=1
+    #SBATCH --ntasks=1
+    #SBATCH --cpus-per-task=16
+    #SBATCH --mem=64G
+    #SBATCH --output=%x_%j.out
+
+    python my_script.py
+    ```
+  </Tab>
+  <Tab title="OpenMP/Threaded">
+    Multi-threaded job:
+
+    ```bash
+    #!/bin/bash
+    #SBATCH --job-name=threaded_job
+    #SBATCH --partition=standard
+    #SBATCH --time=12:00:00
+    #SBATCH --nodes=1
+    #SBATCH --ntasks=1
+    #SBATCH --cpus-per-task=32
+    #SBATCH --mem=128G
+    #SBATCH --output=%x_%j.out
+
+    # IMPORTANT: Set thread count to match allocation
+    export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+
+    ./my_threaded_program
+    ```
+
+    <Note>
+      Always set `OMP_NUM_THREADS` (and similar variables like `MKL_NUM_THREADS`) to match your CPU allocation. Otherwise, your program may try to use all cores on the node, conflicting with other jobs.
+    </Note>
+  </Tab>
+  <Tab title="GPU">
+    GPU job:
+
+    ```bash
+    #!/bin/bash
+    #SBATCH --job-name=gpu_job
+    #SBATCH --partition=gpu         # Use your cluster's GPU partition
+    #SBATCH --time=1-00:00:00
+    #SBATCH --nodes=1
+    #SBATCH --ntasks=1
+    #SBATCH --cpus-per-task=8
+    #SBATCH --mem=32G
+    #SBATCH --gres=gpu:1            # Request 1 GPU
+    #SBATCH --output=%x_%j.out
+
+    # Load CUDA if needed
+    module load cuda
+
+    python train_model.py
+    ```
+
+    <Warning>
+      Don't forget `--gres=gpu:N`. Without it, you won't get GPU access even if you're in a GPU partition.
+    </Warning>
+  </Tab>
+  <Tab title="Array Job">
+    Run many similar tasks:
+
+    ```bash
+    #!/bin/bash
+    #SBATCH --job-name=array_job
+    #SBATCH --partition=standard
+    #SBATCH --time=2:00:00
+    #SBATCH --array=1-100           # 100 tasks, IDs 1-100
+    #SBATCH --ntasks=1
+    #SBATCH --cpus-per-task=4
+    #SBATCH --mem=16G
+    #SBATCH --output=logs/%x_%A_%a.out  # %A=array job ID, %a=task ID
+
+    # Each task gets a unique SLURM_ARRAY_TASK_ID
+    echo "Processing task $SLURM_ARRAY_TASK_ID"
+
+    python process.py --index $SLURM_ARRAY_TASK_ID
+    ```
+
+    **Useful array options:**
+    - `--array=1-100` - Tasks 1 through 100
+    - `--array=1,3,5,7` - Specific task IDs
+    - `--array=1-100%10` - Max 10 tasks running at once
+  </Tab>
+  <Tab title="MPI">
+    Multi-node MPI job:
+
+    ```bash
+    #!/bin/bash
+    #SBATCH --job-name=mpi_job
+    #SBATCH --partition=standard
+    #SBATCH --time=8:00:00
+    #SBATCH --nodes=2
+    #SBATCH --ntasks-per-node=32    # 32 MPI ranks per node
+    #SBATCH --mem=128G
+    #SBATCH --output=%x_%j.out
+
+    module load openmpi
+
+    srun ./my_mpi_program
+    ```
+
+    <Note>
+      Use `srun` (not `mpirun`) to launch MPI programs on SLURM. It handles process placement correctly.
+    </Note>
+  </Tab>
+</Tabs>
+
+## Interactive Sessions
+
+For debugging, testing, or exploratory work, request an interactive session instead of submitting a batch job:
+
+```bash
+# Basic interactive session
+srun --partition=standard --time=2:00:00 --cpus-per-task=4 --mem=16G --pty bash
+
+# Interactive session with GPU
+srun --partition=gpu --time=2:00:00 --cpus-per-task=4 --mem=16G --gres=gpu:1 --pty bash
+```
+
+<Warning>
+  **Do not run computation on the login node.** The login/head node is shared by all users for editing files and submitting jobs. Running heavy computation there affects everyone.
+</Warning>
+
+For persistent allocations where you need to run multiple commands:
+
+```bash
+# Allocate resources
+salloc --partition=standard --time=4:00:00 --cpus-per-task=8 --mem=32G
+
+# Run commands within the allocation
+srun python script1.py
+srun python script2.py
+
+# Release the allocation
+exit
+```
+
+## Resource Request Tips
+
+<AccordionGroup>
+  <Accordion title="Don't over-request">
+    Requesting more than you need:
+    - Increases queue wait time
+    - Wastes cluster resources
+
+    Start modest and scale up based on actual usage.
+  </Accordion>
+
+  <Accordion title="Check actual usage">
+    After a job completes, check what it actually used:
+
+    ```bash
+    sacct -j JOBID --format=JobID,Elapsed,MaxRSS,ReqMem,State
+    ```
+
+    - `Elapsed`: How long it ran
+    - `MaxRSS`: Peak memory usage
+    - `ReqMem`: What you requested
+
+    Adjust future requests based on this.
+  </Accordion>
+
+  <Accordion title="Use --mem-per-cpu for scalable jobs">
+    If memory needs scale with CPU count:
+
+    ```bash
+    #SBATCH --mem-per-cpu=4G
+    ```
+
+    This is more flexible than `--mem` if you run the same job with different CPU counts.
+  </Accordion>
+
+  <Accordion title="Request time in reasonable increments">
+    Requesting 7 days when you need 2 hours makes scheduling harder. The scheduler has to find a slot where nothing else needs those resources for the entire requested duration.
+  </Accordion>
+</AccordionGroup>
+
+## See Also
+
+- [Job Dependencies](/hpc/job-dependencies) - Chain jobs to run in sequence
+- [Checkpointing](/hpc/checkpointing) - Save progress in long-running jobs
+- [SLURM Environment Variables](/hpc/slurm-environment-variables) - Variables available in your jobs
+- [Common Pitfalls](/hpc/common-pitfalls) - Mistakes to avoid

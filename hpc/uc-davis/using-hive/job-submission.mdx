@@ -1,73 +1,13 @@
 ---
-title: Job Submission
-description: SLURM job submission basics and example scripts for HIVE
+title: Job Submission on HIVE
+description: HIVE-specific job submission examples and interactive sessions
 ---
 
-This page covers the fundamentals of submitting jobs to HIVE using SLURM, along with ready-to-use example scripts for common workloads.
+This page covers HIVE-specific job submission details. For general SLURM fundamentals (commands, script structure, time formats), see [Job Submission Basics](/hpc/job-submission).
 
-## Essential SLURM Commands
+## HIVE Example Scripts
 
-| Command | Description |
-|---------|-------------|
-| `sbatch script.sh` | Submit a batch job |
-| `srun` | Run a command on allocated resources |
-| `squeue -u $USER` | View your jobs |
-| `scancel JOBID` | Cancel a job |
-| `sinfo` | View partition/node status |
-| `sacct -j JOBID` | View job accounting info |
-
-## Job Script Structure
-
-A SLURM job script is a bash script with special `#SBATCH` directives that specify resource requirements:
-
-```bash
-#!/bin/bash
-#SBATCH --job-name=my_job          # Job name
-#SBATCH --partition=high           # Partition (queue)
-#SBATCH --account=your_account     # Your account
-#SBATCH --time=1-00:00:00          # Time limit (D-HH:MM:SS)
-#SBATCH --nodes=1                  # Number of nodes
-#SBATCH --ntasks=1                 # Number of tasks
-#SBATCH --cpus-per-task=8          # CPUs per task
-#SBATCH --mem=32G                  # Memory per node
-#SBATCH --output=%x_%j.out         # Output file (%x=job name, %j=job ID)
-#SBATCH --error=%x_%j.err          # Error file
-#SBATCH --mail-user=you@ucdavis.edu
-#SBATCH --mail-type=END,FAIL       # Email notifications
-
-# Your commands here
-module load conda/latest
-conda activate myenv
-python my_script.py
-```
-
-### Time Format
-
-SLURM accepts several time formats:
-
-| Format | Example | Duration |
-|--------|---------|----------|
-| `minutes` | `60` | 60 minutes |
-| `hours:minutes:seconds` | `2:00:00` | 2 hours |
-| `days-hours` | `1-12` | 1.5 days |
-| `days-hours:minutes:seconds` | `1-12:00:00` | 1.5 days |
-
-<Tip>
-  Request slightly more time than you expect to need. Jobs that exceed their time limit are killed immediately, potentially losing unsaved work.
-</Tip>
-
-### Output File Patterns
-
-Use these placeholders in output/error filenames:
-
-| Pattern | Expands To |
-|---------|------------|
-| `%j` | Job ID |
-| `%x` | Job name |
-| `%a` | Array task ID |
-| `%A` | Array job ID |
-
-## Example Job Scripts
+These examples use HIVE partitions (`high`, `low`, `gpu-a100`, `gpu-a6000`) and available modules. Replace `your_account` with your actual account (e.g., `jbsiegelgrp`, `publicgrp`).
 
 <Tabs>
   <Tab title="Basic CPU">
@@ -85,13 +25,9 @@ Use these placeholders in output/error filenames:
     #SBATCH --mem=64G
     #SBATCH --output=%x_%j.out
 
-    # Load modules
     module load conda/latest
-
-    # Activate your environment
     conda activate myenv
 
-    # Run your script
     python my_script.py
     ```
   </Tab>
@@ -110,17 +46,12 @@ Use these placeholders in output/error filenames:
     #SBATCH --mem=128G
     #SBATCH --output=%x_%j.out
 
-    # Set OpenMP threads to match allocated CPUs
     export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
     ./my_openmp_program
     ```
-
-    <Note>
-      Always set `OMP_NUM_THREADS` to match your CPU allocation. Otherwise, OpenMP may try to use all cores on the node, conflicting with other jobs.
-    </Note>
   </Tab>
-  <Tab title="GPU (PyTorch/TensorFlow)">
+  <Tab title="GPU (PyTorch)">
     GPU job for deep learning:
 
     ```bash
@@ -140,15 +71,12 @@ Use these placeholders in output/error filenames:
     module load cuda/12.6.2
     module load conda/pytorch/2.5.1
 
-    # Or activate your own conda environment
-    # conda activate my_torch_env
-
     python train_model.py
     ```
 
-    <Warning>
-      Don't forget `--gres=gpu:a100:1` (or similar). Without it, you won't get GPU access even if you're in a GPU partition.
-    </Warning>
+    <Note>
+      For GPU accounts, see [Siegel Lab Guide](/hpc/uc-davis/using-hive/siegel-lab) or use `publicgrp`.
+    </Note>
   </Tab>
   <Tab title="Array Job">
     Run many similar tasks with different inputs:
@@ -165,17 +93,11 @@ Use these placeholders in output/error filenames:
     #SBATCH --mem=16G
     #SBATCH --output=array_%A_%a.out
 
-    # SLURM_ARRAY_TASK_ID contains the current task number (1-100)
     echo "Processing task $SLURM_ARRAY_TASK_ID"
-
     python process_file.py --index $SLURM_ARRAY_TASK_ID
     ```
 
-    **Max array size:** 50,000 tasks
-
-    <Tip>
-      Use `%A` (array job ID) and `%a` (task ID) in output filenames to keep logs organized.
-    </Tip>
+    **Max array size on HIVE:** 50,000 tasks
   </Tab>
   <Tab title="MPI">
     Multi-node MPI job:
@@ -195,10 +117,6 @@ Use these placeholders in output/error filenames:
 
     srun ./my_mpi_program
     ```
-
-    <Note>
-      Use `srun` (not `mpirun`) to launch MPI programs on SLURM. It handles process placement correctly.
-    </Note>
   </Tab>
   <Tab title="GROMACS MD">
     Molecular dynamics simulation:
@@ -232,7 +150,7 @@ When you SSH into HIVE, you land on the **login node** (also called the head nod
 
 Instead, use **interactive sessions** to get a shell on a compute node. Once you're on a compute node, you can treat it like a regular computer—run Python scripts, test code, install packages, debug interactively, whatever you need. The difference is you have dedicated resources that don't impact other users.
 
-Interactive sessions allocate resources on compute nodes. Here are common configurations:
+### Common Configurations
 
 <Tabs>
   <Tab title="CPU Sessions">
@@ -296,35 +214,3 @@ exit
 <Warning>
   Interactive allocations consume resources even when idle. Don't forget to `exit` when you're done to release them for other users.
 </Warning>
-
-## Resource Request Tips
-
-<AccordionGroup>
-  <Accordion title="Don't over-request resources">
-    Requesting more than you need:
-    - Increases your queue wait time
-    - Wastes cluster resources
-
-    Start with modest requests and scale up based on actual usage from `sacct`.
-  </Accordion>
-
-  <Accordion title="Use --mem-per-cpu for scalable jobs">
-    For jobs where memory scales with CPU count:
-
-    ```bash
-    #SBATCH --mem-per-cpu=4G
-    ```
-
-    This is better than `--mem` for jobs that might run with different CPU counts.
-  </Accordion>
-
-  <Accordion title="Check actual usage after jobs complete">
-    Use `sacct` to see what resources your job actually used:
-
-    ```bash
-    sacct -j JOBID --format=JobID,MaxRSS,ReqMem,Elapsed,State
-    ```
-
-    Adjust future requests based on actual usage.
-  </Accordion>
-</AccordionGroup>
