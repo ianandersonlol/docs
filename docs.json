@@ -28,7 +28,6 @@
             "group": "High Performance Computing",
             "pages": [
               "hpc/index",
-              "hpc/getting-started",
               {
                 "group": "HPC at UC Davis",
                 "pages": [
