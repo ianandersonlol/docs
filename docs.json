@@ -134,14 +134,33 @@
   "navbar": {
     "links": [
       {
-        "label": "Main Site",
-        "href": "https://ianwashere.com"
+        "label": "About Me",
+        "href": "https://ianwashere.com/#about"
+      },
+      {
+        "label": "Experience",
+        "href": "https://ianwashere.com/#experience"
+      },
+      {
+        "label": "Projects",
+        "href": "https://ianwashere.com/#projects"
+      },
+      {
+        "label": "Blog",
+        "href": "https://ianwashere.com/blog"
+      },
+      {
+        "label": "Consulting",
+        "href": "https://ianwashere.com/consulting"
       }
     ]
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/ianandersonlol"
+      "github": "https://github.com/ianandersonlol",
+      "instagram": "https://instagram.com/ianandersonlol",
+      "x": "https://x.com/ianandersonlol",
+      "website": "https://scholar.google.com/citations?user=eNjD3OcAAAAJ&hl=en&oi=ao"
     }
   }
 }
