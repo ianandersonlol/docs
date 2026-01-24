@@ -19,7 +19,7 @@ sbatch --dependency=<type>:<job_id> job.sh
 | `afternotok:job_id` | Start after job_id **fails** (non-zero exit code) |
 | `afterany:job_id` | Start after job_id finishes (success or failure) |
 | `after:job_id` | Start after job_id starts (not very common) |
-| `singleton` | Only one job with this name can run at a time |
+| `singleton` | Only one job with this name can run at a time (I'm not sure why you would use this, personally. If it was me, I would use an array job with a maximum of 1 job at a time, for instance `#SBATCH --array=1-100%1`) |
 
 ## Example: Simple Pipeline
 
