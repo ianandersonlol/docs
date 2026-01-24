@@ -1,0 +1,182 @@
+---
+title: Getting Started with HIVE
+description: Create your HIVE account and configure SSH access for the UC Davis HPC cluster
+---
+
+# Getting Started with HIVE
+
+This guide walks you through creating a HIVE account and setting up SSH key authentication.
+
+## Prerequisites
+
+- A UC Davis Kerberos account
+- An SSH key pair (instructions provided below if you don't have one)
+
+## Create Your HIVE Account
+
+1. Go to [https://hippo.ucdavis.edu/](https://hippo.ucdavis.edu/) and sign in with your Kerberos account.
+
+2. Select **HIVE** to create a HIVE account.
+
+<Frame>
+  <img src="/hpc/images/hive_setup_1.png" alt="HIVE account selection page on HiPPO" />
+</Frame>
+
+3. Fill out the account request form:
+
+   - **Sponsoring group**: Select your lab or department group from the dropdown
+   - **PI**: Enter the name of your PI
+   - **Access Type**: Choose SSH (recommended) or SafeKey
+   - **SSH Key**: Paste your public SSH key (see below for how to generate one)
+
+<Frame>
+  <img src="/hpc/images/hive_setup_2.png" alt="HIVE account request form showing fields for sponsoring group, PI, access type, and SSH key" />
+</Frame>
+
+<Note>
+  The image above shows example values. You should select your own lab group and PI.
+</Note>
+
+## Setting Up an SSH Key
+
+If you don't already have an SSH key, follow the instructions for your operating system below.
+
+<Tabs>
+  <Tab title="Windows (PowerShell)">
+    ### Check if an SSH Key Exists
+
+    Open PowerShell and run:
+
+    ```powershell
+    Test-Path "$HOME\.ssh\id_rsa.pub"
+    ```
+
+    - If it returns `True`, you already have an SSH key
+    - If it returns `False`, you need to create one
+
+    ### Create an SSH Key
+
+    In PowerShell, run:
+
+    ```powershell
+    ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+    ```
+
+    - Press **Enter** to accept the default file location
+    - Optionally, enter a passphrase for added security
+
+    ### Copy the Public Key
+
+    Run the following command to copy your public key to the clipboard:
+
+    ```powershell
+    Get-Content "$HOME\.ssh\id_rsa.pub" | Set-Clipboard
+    ```
+
+    Your public key is now copied and ready to paste into HIVE's SSH key text box.
+  </Tab>
+
+  <Tab title="macOS">
+    ### Check if an SSH Key Exists
+
+    Open Terminal and run:
+
+    ```bash
+    if [ -f ~/.ssh/id_rsa.pub ]; then echo "SSH key exists"; else echo "No SSH key found"; fi
+    ```
+
+    ### Create an SSH Key
+
+    If you need to create a key, run:
+
+    ```bash
+    ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+    ```
+
+    - Press **Enter** to confirm the default location
+    - Optionally, add a passphrase for additional security
+
+    ### Copy the Public Key
+
+    ```bash
+    pbcopy < ~/.ssh/id_rsa.pub
+    ```
+
+    This copies your public key to the clipboard.
+  </Tab>
+
+  <Tab title="Linux">
+    ### Check if an SSH Key Exists
+
+    Open Terminal and run:
+
+    ```bash
+    if [ -f ~/.ssh/id_rsa.pub ]; then echo "SSH key exists"; else echo "No SSH key found"; fi
+    ```
+
+    ### Create an SSH Key
+
+    If you need to create a key, run:
+
+    ```bash
+    ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+    ```
+
+    - Press **Enter** to confirm the default location
+    - Optionally, add a passphrase for additional security
+
+    ### Copy the Public Key
+
+    If you have `xclip` installed:
+
+    ```bash
+    xclip -selection clipboard < ~/.ssh/id_rsa.pub
+    ```
+
+    Alternatively, display the key and copy it manually:
+
+    ```bash
+    cat ~/.ssh/id_rsa.pub
+    ```
+  </Tab>
+
+  <Tab title="WSL (Windows Subsystem for Linux)">
+    <Note>
+      WSL maintains its own file system and SSH configuration separate from Windows. Follow the Linux instructions within your WSL terminal.
+    </Note>
+
+    If you need SSH keys in both environments:
+    - **PowerShell**: Follow the Windows instructions to manage native Windows SSH keys
+    - **WSL Terminal**: Follow the Linux instructions for keys within WSL
+
+    ### Check if an SSH Key Exists
+
+    In your WSL terminal, run:
+
+    ```bash
+    if [ -f ~/.ssh/id_rsa.pub ]; then echo "SSH key exists"; else echo "No SSH key found"; fi
+    ```
+
+    ### Create an SSH Key
+
+    ```bash
+    ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+    ```
+
+    ### Copy the Public Key
+
+    Display the key and copy it manually:
+
+    ```bash
+    cat ~/.ssh/id_rsa.pub
+    ```
+  </Tab>
+</Tabs>
+
+## Next Steps
+
+Once your account is approved, you can connect to HIVE via SSH:
+
+```bash
+ssh your_kerberos_id@hive.ucdavis.edu
+```

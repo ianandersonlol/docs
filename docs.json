@@ -30,6 +30,13 @@
               "hpc/index",
               "hpc/getting-started"
             ]
+          },
+          {
+            "group": "HPC at UC Davis",
+            "pages": [
+              "hpc/uc-davis/index",
+              "hpc/uc-davis/getting-started-hive"
+            ]
           }
         ]
       },
