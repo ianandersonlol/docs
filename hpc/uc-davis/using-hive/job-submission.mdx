@@ -224,17 +224,58 @@ Use these placeholders in output/error filenames:
 
 ## Interactive Sessions
 
-Sometimes you need an interactive shell on a compute node for debugging, testing, or exploratory work.
+When you SSH into HIVE, you land on the **login node** (also called the head node). This shared node is only for editing files, submitting jobs, and light tasks. Running computationally intensive work on the login node slows it down for everyone.
 
-### Quick Interactive Session
+<Warning>
+  **Do not run jobs on the login node.** It affects all users and you'll receive sad emails from cluster admins (or fellow users) asking you to stop.
+</Warning>
+
+Instead, use **interactive sessions** to get a shell on a compute node. Once you're on a compute node, you can treat it like a regular computer—run Python scripts, test code, install packages, debug interactively, whatever you need. The difference is you have dedicated resources that don't impact other users.
+
+Interactive sessions allocate resources on compute nodes. Here are common configurations:
+
+<Tabs>
+  <Tab title="CPU Sessions">
+    **High priority** (won't be preempted):
+    ```bash
+    srun -p high -c 8 --mem=16G -t 1-00:00:00 --pty bash
+    ```
+
+    **Low priority** (can be preempted, but often faster to start):
+    ```bash
+    srun -p low -c 16 --mem=32G -t 1-00:00:00 --requeue --pty bash
+    ```
+  </Tab>
+  <Tab title="GPU Sessions">
+    **High priority GPU**:
+    ```bash
+    srun -p gpu-a100 --account=your_account -c 8 --mem=16G --gres=gpu:1 -t 1-00:00:00 --pty bash
+    ```
+
+    **Low priority GPU** (can be preempted):
+    ```bash
+    srun -p gpu-a100 --account=your_account -c 8 --mem=16G --gres=gpu:1 -t 1-00:00:00 --requeue --pty bash
+    ```
+
+    <Note>
+      Replace `your_account` with your lab/department account or `publicgrp`.
+    </Note>
+  </Tab>
+</Tabs>
+
+### Shell Aliases
+
+These commands are long. Add aliases to your `~/.bashrc` or `~/.zshrc` for commands you use frequently:
 
 ```bash
-# Basic interactive session on high partition
-srun -p high -A your_account -t 4:00:00 -c 8 --mem=32G --pty bash
+# CPU interactive session - use your own lab/department account or publicgrp
+alias cacao='srun -p high -A jbsiegelgrp -c 8 --mem=16G -t 1-00:00:00 --pty bash'
 
-# Interactive session with GPU
-srun -p gpu-a100 -A your_account -t 2:00:00 -c 8 --mem=32G --gres=gpu:a100:1 --pty bash
+# GPU interactive session - use low partition or your own lab/department's resources
+alias kakawa='srun -p gpu-a100 -A genome-center-grp -c 8 --mem=16G --gres=gpu:1 -t 1-00:00:00 --pty bash'
 ```
+
+Then just type `cacao` or `kakawa` to start a session.
 
 ### Using salloc for Persistent Allocation
 
@@ -262,7 +303,6 @@ exit
   <Accordion title="Don't over-request resources">
     Requesting more than you need:
     - Increases your queue wait time
-    - Reduces your fair-share priority for future jobs
     - Wastes cluster resources
 
     Start with modest requests and scale up based on actual usage from `sacct`.

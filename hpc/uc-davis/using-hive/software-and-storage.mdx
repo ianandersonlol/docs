@@ -176,6 +176,19 @@ HIVE uses Quobyte as its primary storage system:
 | Available | ~2.5 PB |
 | Network | InfiniBand |
 
+<Warning>
+  **Critical Bug: No concurrent writes to the same file from multiple nodes.**
+
+  Quobyte has a known issue where multiple nodes writing to the same file simultaneously can cause serious problems—including taking down compute nodes entirely. This is especially painful on GPU nodes since there are only 3 of them (and some of us are trying to graduate and really need those GPUs).
+
+  **How to avoid this:**
+  - Use unique output filenames for each job/task
+  - For array jobs, use `%A_%a` in your output paths (e.g., `--output=results_%A_%a.out`)
+  - Never have multiple jobs append to a shared log file
+
+  **Note on Rosetta:** Rosetta crash reports can trigger this issue, but there's no practical workaround. Fortunately, simultaneous writes from crash reports are rare enough that it's usually fine—just be aware it can happen.
+</Warning>
+
 ### Directory Structure
 
 ```
