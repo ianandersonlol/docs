@@ -1,0 +1,106 @@
+---
+title: Using Sherlock
+description: Running jobs on Stanford's Sherlock cluster
+---
+
+<Note>
+  Need an account first? See [Getting Started with Sherlock](/hpc/stanford/getting-started-sherlock).
+</Note>
+
+## Cluster Overview
+
+| Property | Value |
+|----------|-------|
+| **Cluster Name** | Sherlock |
+| **Total CPU Cores** | 74,700+ |
+| **Total GPUs** | 1,100+ (H100, A100, L40S, V100) |
+| **Compute Nodes** | 2,060 nodes |
+| **Login Nodes** | 20 |
+| **Data Transfer Nodes** | 7 |
+| **Scratch Storage** | 9.7 PB (`$SCRATCH`) |
+| **Long-term Storage** | 77+ PB (`$OAK`, paid) |
+| **Scheduler** | SLURM |
+
+## Connecting to Sherlock
+
+<Tabs>
+  <Tab title="SSH">
+    Connect via SSH from your terminal:
+
+    ```bash
+    ssh YOUR_SUNETID@login.sherlock.stanford.edu
+    ```
+
+    Replace `YOUR_SUNETID` with your Stanford SUNet ID. You'll need to authenticate with your password and two-factor authentication.
+  </Tab>
+  <Tab title="OnDemand">
+    Access the cluster through a web browser with Jupyter, RStudio, VS Code, file browser, and terminal:
+
+    **URL:** [https://ondemand.sherlock.stanford.edu](https://ondemand.sherlock.stanford.edu)
+  </Tab>
+</Tabs>
+
+## Quick Start
+
+Once connected, here's the basic workflow for running a job:
+
+<Steps>
+  <Step title="Create a job script">
+    Write a bash script with SLURM directives specifying the resources you need.
+  </Step>
+  <Step title="Submit the job">
+    Use `sbatch your_script.sh` to submit your job to the queue.
+  </Step>
+  <Step title="Monitor your job">
+    Check the status with `squeue -u $USER`.
+  </Step>
+  <Step title="View results">
+    Once complete, check output files and job logs.
+  </Step>
+</Steps>
+
+## Key Differences from Other Clusters
+
+If you're coming from another HPC system, note these Sherlock-specific features:
+
+<AccordionGroup>
+  <Accordion title="No usage charges">
+    Unlike cloud providers and some HPC systems, Sherlock has no pay-per-use model. Submit as many jobs as you need without worrying about costs.
+  </Accordion>
+
+  <Accordion title="Ownership model">
+    PIs can purchase dedicated nodes ("owners"). Owners get priority access to their nodes and can also use other owners' idle nodes (with preemption).
+  </Accordion>
+
+  <Accordion title="Two-day default time limit">
+    Jobs on the `normal` partition have a 2-day maximum by default. Use `--qos=long` for jobs up to 7 days.
+  </Accordion>
+
+  <Accordion title="SSH keys not supported">
+    Authentication requires password + two-factor. No SSH key authentication is available.
+  </Accordion>
+</AccordionGroup>
+
+## Guide Contents
+
+<CardGroup cols={2}>
+  <Card title="Partitions & Hardware" icon="microchip" href="/hpc/stanford/using-sherlock/partitions-and-hardware">
+    Understand available queues, CPU generations, and GPU resources
+  </Card>
+  <Card title="Job Submission" icon="play" href="/hpc/stanford/using-sherlock/job-submission">
+    Learn SLURM basics and see example job scripts
+  </Card>
+  <Card title="Software & Storage" icon="hard-drive" href="/hpc/stanford/using-sherlock/software-and-storage">
+    Use modules, Python environments, containers, and storage
+  </Card>
+  <Card title="Commands & Troubleshooting" icon="terminal" href="/hpc/stanford/using-sherlock/commands-and-troubleshooting">
+    Useful commands reference and common issue solutions
+  </Card>
+</CardGroup>
+
+## Getting Help
+
+- **Documentation:** [https://www.sherlock.stanford.edu/docs/](https://www.sherlock.stanford.edu/docs/)
+- **Email Support:** srcc-support@stanford.edu
+- **Office Hours:** Check the [SRCC website](https://srcc.stanford.edu/) for schedule
+- **Onboarding Sessions:** Available for new users (see SRCC website)

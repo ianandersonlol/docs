@@ -51,6 +51,23 @@
                     ]
                   }
                 ]
+              },
+              {
+                "group": "HPC at Stanford",
+                "pages": [
+                  "hpc/stanford/index",
+                  "hpc/stanford/getting-started-sherlock",
+                  {
+                    "group": "Using Sherlock",
+                    "pages": [
+                      "hpc/stanford/using-sherlock/index",
+                      "hpc/stanford/using-sherlock/partitions-and-hardware",
+                      "hpc/stanford/using-sherlock/job-submission",
+                      "hpc/stanford/using-sherlock/software-and-storage",
+                      "hpc/stanford/using-sherlock/commands-and-troubleshooting"
+                    ]
+                  }
+                ]
               }
             ]
           }

@@ -1,0 +1,116 @@
+---
+title: Getting Started with Sherlock
+description: Request a Sherlock account and configure access to Stanford's HPC cluster
+---
+
+## Prerequisites
+
+- A **SUNet ID** (Stanford University Network ID)
+  - Base-level SUNet service is sufficient
+  - External collaborators can get a sponsored SUNet ID through their PI
+
+## Request a Sherlock Account
+
+Sherlock accounts are managed through PI groups. To get access:
+
+1. **New lab members**: Have your PI email `srcc-support@stanford.edu` requesting that your SUNet ID be added to their group.
+
+2. **Faculty/PIs**: Email `srcc-support@stanford.edu` with:
+   - Your SUNet ID
+   - The SUNet IDs of research team members to add
+
+<Note>
+  Account requests are typically processed within a few business days. You'll receive an email confirmation when your account is ready.
+</Note>
+
+## Connecting to Sherlock
+
+Once your account is approved, you can connect via SSH. Unlike some clusters, Sherlock does **not** require a VPN—you can connect from anywhere.
+
+<Tabs>
+  <Tab title="SSH">
+    Connect from your terminal:
+
+    ```bash
+    ssh YOUR_SUNETID@login.sherlock.stanford.edu
+    ```
+
+    Replace `YOUR_SUNETID` with your Stanford SUNet ID.
+  </Tab>
+  <Tab title="OnDemand (Web)">
+    Access Sherlock through a web browser with Jupyter, RStudio, VS Code, and terminal:
+
+    **URL:** [https://ondemand.sherlock.stanford.edu](https://ondemand.sherlock.stanford.edu)
+  </Tab>
+</Tabs>
+
+## Authentication
+
+Sherlock requires **two-factor authentication** (2FA) for all logins.
+
+<Warning>
+  **SSH key authentication is NOT supported on Sherlock.** You must use your SUNet ID password plus a two-factor authentication code.
+</Warning>
+
+### Two-Factor Authentication Flow
+
+1. Enter your SUNet ID password when prompted
+2. You'll receive a Duo push notification or be prompted for a code
+3. Approve the push or enter the code from your authenticator app
+
+### Setting Up Duo
+
+If you haven't set up Duo for Stanford services:
+
+1. Go to [https://accounts.stanford.edu](https://accounts.stanford.edu)
+2. Set up Duo Mobile or another 2FA method
+3. Test your setup before trying to connect to Sherlock
+
+## Login Nodes
+
+Sherlock has **20 login nodes**. When you connect, you'll be automatically assigned to one. These are shared resources—don't run computationally intensive tasks on them.
+
+<Warning>
+  Login nodes are for:
+  - Editing scripts
+  - Submitting jobs
+  - Light file management
+
+  They are **not** for:
+  - Running calculations
+  - Compiling large software
+  - Data processing
+
+  Use [interactive sessions](/hpc/stanford/using-sherlock/job-submission#interactive-sessions) for computational work.
+</Warning>
+
+## Data Transfer Nodes
+
+For transferring large files, use the dedicated data transfer nodes (DTNs):
+
+```bash
+ssh YOUR_SUNETID@dtn.sherlock.stanford.edu
+```
+
+Or use tools like `scp`, `rsync`, or Globus pointing to `dtn.sherlock.stanford.edu`.
+
+## Onboarding Sessions
+
+Stanford Research Computing offers one-hour onboarding sessions for new users covering:
+- Sherlock layout and architecture
+- Job scheduler basics
+- File systems
+- Job submission and software installation best practices
+
+Check the [SRCC website](https://srcc.stanford.edu/) for the schedule.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Using Sherlock" icon="server" href="/hpc/stanford/using-sherlock">
+    Learn the basics of running jobs
+  </Card>
+  <Card title="Partitions & Hardware" icon="microchip" href="/hpc/stanford/using-sherlock/partitions-and-hardware">
+    Understand available resources
+  </Card>
+</CardGroup>

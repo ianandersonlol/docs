@@ -1,0 +1,226 @@
+---
+title: Partitions & Hardware
+description: Understanding Sherlock partitions, node types, and GPU resources
+---
+
+Sherlock has diverse hardware spanning multiple generations of CPUs and GPUs. Understanding the available resources helps you request the right ones for your workload.
+
+## Partitions (Queues)
+
+Sherlock has several public partitions available to all users, plus owner-specific partitions.
+
+### Public Partitions
+
+| Partition | Max Time | Description |
+|-----------|----------|-------------|
+| **normal** | 2 days (7 with `long` QOS) | General-purpose CPU jobs |
+| **gpu** | 2 days (7 with `long` QOS) | GPU jobs for all users |
+| **bigmem** | 2 days (7 with `long` QOS) | High-memory nodes |
+| **dev** | 2 hours | Development and testing (faster queue times) |
+| **owners** | 7 days | Idle owner nodes (preemptible) |
+
+### Choosing a Partition
+
+<Tabs>
+  <Tab title="normal">
+    **Use `normal` for:**
+    - Standard CPU-only jobs
+    - Most general computational work
+
+    ```bash
+    #SBATCH --partition=normal
+    ```
+
+    <Note>
+      Jobs over 2 days require `--qos=long` (up to 7 days max).
+    </Note>
+  </Tab>
+  <Tab title="gpu">
+    **Use `gpu` for:**
+    - Machine learning training/inference
+    - GPU-accelerated simulations
+    - Any CUDA workloads
+
+    ```bash
+    #SBATCH --partition=gpu
+    #SBATCH --gpus=1
+    ```
+
+    <Warning>
+      The `gpu` partition is popular—expect longer queue times. For quick tests, use `dev` with `-g 1`.
+    </Warning>
+  </Tab>
+  <Tab title="dev">
+    **Use `dev` for:**
+    - Testing job scripts
+    - Interactive debugging
+    - Quick experiments
+
+    ```bash
+    #SBATCH --partition=dev
+    #SBATCH --time=1:00:00
+    ```
+
+    Limited to 2 hours max, but faster to get resources.
+  </Tab>
+  <Tab title="owners">
+    **Use `owners` when:**
+    - You can tolerate preemption (job restart)
+    - Queue times are long on other partitions
+    - Your code can checkpoint
+
+    ```bash
+    #SBATCH --partition=owners
+    ```
+
+    <Warning>
+      Jobs on `owners` can be killed and requeued when the actual owner needs their nodes. Only use if your job can handle restarts.
+    </Warning>
+  </Tab>
+</Tabs>
+
+### Time Limits and the Long QOS
+
+By default, jobs on public partitions are limited to **2 days**. For longer jobs:
+
+```bash
+#SBATCH --partition=normal
+#SBATCH --qos=long
+#SBATCH --time=7-00:00:00  # Up to 7 days
+```
+
+<Note>
+  The `long` QOS is only for users who are **not** part of an owner group. If your PI owns nodes, you already have 7-day access on your owner partition.
+</Note>
+
+## CPU Hardware
+
+Sherlock has nodes spanning multiple CPU generations:
+
+| Generation | Code | CPU Examples | Typical Cores/Node |
+|------------|------|--------------|-------------------|
+| **Sapphire Rapids** | SPR | Intel Xeon 8462Y+ | 64 |
+| **Ice Lake** | ICX | Intel Xeon 8352Y | 64 |
+| **Milan** | MLN | AMD EPYC 7543 | 64-128 |
+| **Rome** | RME | AMD EPYC 7502 | 64-128 |
+| **Skylake** | SKX | Intel Xeon Gold 6130 | 32 |
+| **Broadwell** | BDW | Intel Xeon E5-2640 | 20-24 |
+
+### Requesting Specific CPU Hardware
+
+Use node features to target specific architectures:
+
+```bash
+# List available CPU generations in normal partition
+sh_node_feat -p normal | grep CPU_GEN
+
+# Request Milan (AMD) nodes
+#SBATCH --constraint=CPU_GEN:MLN
+
+# Request Skylake or newer Intel
+#SBATCH --constraint="CPU_GEN:SKX|CPU_GEN:ICX|CPU_GEN:SPR"
+```
+
+<Tip>
+  Newer architectures offer better performance but have fewer nodes. Leaving off constraints gives access to more resources and potentially faster queue times.
+</Tip>
+
+## GPU Resources
+
+### Available GPU Types
+
+| GPU | Generation | Memory | Best For |
+|-----|------------|--------|----------|
+| **H100 SXM5** | Sherlock 4.0 | 80 GB HBM3 | LLMs, GenAI, large-scale training |
+| **L40S** | Sherlock 4.0 | 48 GB GDDR6 | CryoEM, molecular dynamics, inference |
+| **A100 SXM4** | Sherlock 3.0 | 40/80 GB HBM2e | Deep learning, HPC |
+| **V100** | Sherlock 2.0 | 32 GB HBM2 | Legacy workloads (being decommissioned) |
+
+### GPU Node Configurations
+
+| Config | CPUs | RAM | GPUs | Interconnect |
+|--------|------|-----|------|--------------|
+| **SH4_G8TF64** | 64 cores (Sapphire Rapids) | 2 TB | 8× H100 SXM5 | 4× NDR |
+| **SH4_G4TF64** | 64 cores (Sapphire Rapids) | 1 TB | 4× H100 SXM5 | 2× NDR |
+| **SH3_G8TF64** | 128 cores | 1 TB | 8× A100 SXM4 | 2× HDR |
+| **SH3_G4TF64** | 64 cores | 512 GB | 4× A100 SXM4 | HDR |
+
+### Requesting GPUs
+
+```bash
+# Request 1 GPU (any type)
+#SBATCH --partition=gpu
+#SBATCH --gpus=1
+
+# Request specific GPU type
+#SBATCH --gpus=a100:1
+#SBATCH --gpus=h100:2
+
+# Request GPU with specific memory
+#SBATCH --constraint=GPU_MEM:80GB
+#SBATCH --gpus=1
+```
+
+### GPU in Interactive Sessions
+
+```bash
+# Quick GPU session via sh_dev
+sh_dev -g 1
+
+# More resources via salloc
+salloc --partition=gpu --gpus=1 --time=2:00:00
+```
+
+<Warning>
+  GPU jobs without explicit `--gpus` requests won't get GPU access, even in GPU partitions. Always specify the number of GPUs you need.
+</Warning>
+
+## Viewing Available Resources
+
+### Check Partition Limits
+
+```bash
+sh_part
+```
+
+This shows all partitions you have access to, their time limits, and current availability.
+
+### Check Node Features
+
+```bash
+# List all features in a partition
+sh_node_feat -p normal
+
+# Filter for specific features
+sh_node_feat -p gpu | grep GPU
+```
+
+### Check Current Availability
+
+```bash
+# Overview of all partitions
+sinfo
+
+# Detailed view of specific partition
+sinfo -p normal -l
+
+# See idle nodes
+sinfo -p normal -t idle
+```
+
+## Owner Partitions
+
+If your PI has purchased nodes, you'll have access to a dedicated partition with:
+- Higher priority on your owned nodes
+- 7-day time limit (no `long` QOS needed)
+- Access to other owners' idle nodes via the `owners` partition
+
+Check your available partitions:
+
+```bash
+sh_part
+```
+
+<Note>
+  Owner nodes are a significant investment. If you need consistent, high-priority access to compute resources, talk to your PI about the possibility of purchasing nodes.
+</Note>

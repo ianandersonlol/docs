@@ -1,0 +1,239 @@
+---
+title: Software & Storage
+description: Using modules, Python environments, containers, and storage on Sherlock
+---
+
+Sherlock provides software through environment modules and supports user-managed Python virtual environments and containers. This page covers how to find and use software, plus storage best practices.
+
+## Environment Modules
+
+Sherlock uses Lmod to manage software installations. Most software must be explicitly loaded before use.
+
+### Basic Module Commands
+
+```bash
+# List available modules
+module avail
+
+# Search for specific software
+module avail python
+module spider cuda  # Deep search
+
+# Load a module
+module load python/3.9
+module load cuda/12.2
+
+# Show currently loaded modules
+module list
+
+# Unload a specific module
+module unload python
+
+# Unload all modules
+module purge
+
+# Show module details
+module show python/3.9
+```
+
+### Common Modules
+
+| Category | Examples |
+|----------|----------|
+| **Languages** | python/3.9, python/3.11, R/4.2, julia |
+| **Compilers** | gcc/12, intel-oneapi, nvhpc |
+| **CUDA** | cuda/11.8, cuda/12.2 |
+| **MPI** | openmpi/4.1, mvapich2 |
+| **ML Frameworks** | py-pytorch, py-tensorflow |
+| **Scientific** | matlab, mathematica |
+
+<Tip>
+  Use `module spider <keyword>` for a thorough search. It finds modules even if they require other modules to be loaded first.
+</Tip>
+
+## Python Environments
+
+<Warning>
+  **Stanford Research Computing recommends NOT using Anaconda/conda on Sherlock.** Conda often installs suboptimal binaries not optimized for Sherlock's hardware and can conflict with system modules.
+</Warning>
+
+### Recommended: Python Virtual Environments
+
+Use Python's built-in `venv` module with system modules:
+
+```bash
+# Load Python
+module load python/3.9
+
+# Create a virtual environment
+python3 -m venv $GROUP_HOME/envs/myproject
+
+# Activate it
+source $GROUP_HOME/envs/myproject/bin/activate
+
+# Install packages
+pip install numpy pandas torch
+
+# Deactivate when done
+deactivate
+```
+
+### Using Python Packages as Modules
+
+Some common Python packages are available as modules:
+
+```bash
+# Load Python first
+module load python/3.9
+
+# Then load Python packages
+module load py-numpy/1.24
+module load py-scipy/1.10
+module load py-matplotlib/3.7
+```
+
+### If You Must Use Conda
+
+If your workflow requires conda, follow these guidelines:
+
+1. **Don't install in `$HOME`** - it's slow and has limited space
+2. **Install in `$GROUP_HOME` or `$SCRATCH`**:
+
+```bash
+# Install miniconda to group storage
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh -b -p $GROUP_HOME/miniconda3
+
+# Initialize (add to .bashrc)
+$GROUP_HOME/miniconda3/bin/conda init bash
+```
+
+3. **Unload conflicting modules** when using conda environments
+
+## Containers (Apptainer/Singularity)
+
+Apptainer is available for running containers, useful for complex software stacks or reproducibility.
+
+### Basic Container Usage
+
+```bash
+# Pull a container from Docker Hub
+apptainer pull docker://nvcr.io/nvidia/pytorch:24.01-py3
+
+# Run a command in the container
+apptainer exec pytorch_24.01-py3.sif python3 train.py
+
+# Run with GPU support
+apptainer exec --nv pytorch_24.01-py3.sif python3 train.py
+
+# Interactive shell in container
+apptainer shell --nv pytorch_24.01-py3.sif
+```
+
+<Note>
+  The `--nv` flag enables NVIDIA GPU support inside the container. Always use it for GPU workloads.
+</Note>
+
+### Container Job Script
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=container_job
+#SBATCH --partition=gpu
+#SBATCH --time=1-00:00:00
+#SBATCH --gpus=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+
+apptainer exec --nv $GROUP_HOME/containers/pytorch.sif python3 train.py
+```
+
+## Storage
+
+Sherlock has multiple storage tiers for different purposes.
+
+### Storage Locations
+
+| Filesystem | Path | Quota | Backed Up | Purpose |
+|------------|------|-------|-----------|---------|
+| `$HOME` | `/home/users/$USER` | 15 GB | Yes (snapshots) | Config files, small scripts |
+| `$GROUP_HOME` | `/home/groups/$GROUP` | Varies | Yes (snapshots) | Shared software, environments |
+| `$SCRATCH` | `/scratch/users/$USER` | Large | **No** | Job I/O, temporary files |
+| `$GROUP_SCRATCH` | `/scratch/groups/$GROUP` | Large | **No** | Shared temporary files |
+| `$OAK` | `/oak/stanford/$GROUP` | Paid | **No** | Long-term research data |
+
+### Checking Quotas
+
+```bash
+# Check all your quotas
+sh_quota
+
+# Check specific filesystem
+sh_quota -f HOME
+sh_quota -f SCRATCH
+```
+
+### Storage Best Practices
+
+<Steps>
+  <Step title="Run jobs from $SCRATCH">
+    `$SCRATCH` has the best I/O performance. Stage input data there before running jobs:
+
+    ```bash
+    cd $SCRATCH
+    cp $GROUP_HOME/data/input.dat .
+    ./my_program
+    cp output.dat $OAK/results/
+    ```
+  </Step>
+  <Step title="Keep $HOME small">
+    Only store configuration files and small scripts in `$HOME`. Move large files to `$GROUP_HOME` or `$SCRATCH`.
+  </Step>
+  <Step title="Use $OAK for important data">
+    `$OAK` is for curated, post-processed results and datasets you need to keep. It's not backed up—keep copies of critical data elsewhere (e.g., Google Drive).
+  </Step>
+  <Step title="Clean up $SCRATCH regularly">
+    `$SCRATCH` is purged periodically. Don't store data you need to keep there long-term.
+  </Step>
+</Steps>
+
+### Directory Structure Example
+
+```
+$HOME/                     # 15 GB - config only
+├── .bashrc
+├── .ssh/
+└── scripts/
+
+$GROUP_HOME/               # Shared group storage
+├── envs/                  # Python environments
+├── software/              # Compiled software
+└── containers/            # Singularity images
+
+$SCRATCH/                  # Fast temporary storage
+├── job_12345/             # Job working directory
+└── tmp/
+
+$OAK/                      # Long-term storage (paid)
+├── datasets/
+├── results/
+└── publications/
+```
+
+### Data Transfer
+
+For large file transfers, use the Data Transfer Nodes (DTNs):
+
+```bash
+# SCP to DTN
+scp large_file.tar.gz $USER@dtn.sherlock.stanford.edu:$SCRATCH/
+
+# Rsync to DTN
+rsync -avP local_dir/ $USER@dtn.sherlock.stanford.edu:$SCRATCH/local_dir/
+```
+
+For very large transfers, consider using [Globus](https://www.globus.org/).
+
+<Warning>
+  **Don't transfer large files through login nodes.** They have limited bandwidth and you'll slow things down for everyone. Use the DTNs instead.
+</Warning>

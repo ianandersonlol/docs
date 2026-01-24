@@ -1,0 +1,252 @@
+---
+title: Commands & Troubleshooting
+description: Useful Sherlock commands and solutions to common issues
+---
+
+## Sherlock-Specific Commands
+
+Sherlock provides several helper commands that make cluster usage easier.
+
+### sh_dev - Interactive Sessions
+
+```bash
+# Default session (1 core, 4 GB, 1 hour)
+sh_dev
+
+# Custom resources
+sh_dev -c 4 -m 16G -t 2:00:00
+
+# With GPU
+sh_dev -g 1
+
+# See all options
+sh_dev -h
+```
+
+### sh_part - Partition Information
+
+```bash
+# View all accessible partitions with limits
+sh_part
+```
+
+Shows partition names, time limits, node counts, and your access level.
+
+### sh_quota - Storage Quotas
+
+```bash
+# Check all quotas
+sh_quota
+
+# Specific filesystem
+sh_quota -f HOME
+sh_quota -f SCRATCH
+sh_quota -f OAK
+```
+
+### sh_node_feat - Node Features
+
+```bash
+# List all features in a partition
+sh_node_feat -p normal
+
+# Filter for specific features
+sh_node_feat -p gpu | grep GPU_MEM
+sh_node_feat -p normal | grep CPU_GEN
+```
+
+## Standard SLURM Commands
+
+### Job Submission
+
+| Command | Description |
+|---------|-------------|
+| `sbatch script.sh` | Submit a batch job |
+| `srun command` | Run a command on allocated resources |
+| `salloc` | Allocate resources for interactive use |
+
+### Job Monitoring
+
+| Command | Description |
+|---------|-------------|
+| `squeue -u $USER` | View your jobs |
+| `squeue -u $USER -l` | Detailed view |
+| `squeue -j JOBID` | Specific job info |
+| `scontrol show job JOBID` | Full job details |
+
+### Job Control
+
+| Command | Description |
+|---------|-------------|
+| `scancel JOBID` | Cancel a job |
+| `scancel -u $USER` | Cancel all your jobs |
+| `scancel -u $USER --state=pending` | Cancel pending jobs only |
+
+### Cluster Information
+
+| Command | Description |
+|---------|-------------|
+| `sinfo` | View partition/node status |
+| `sinfo -p normal -l` | Detailed partition view |
+| `sinfo -N -l` | List all nodes |
+
+### Job History
+
+| Command | Description |
+|---------|-------------|
+| `sacct -u $USER` | Your job history |
+| `sacct -j JOBID` | Specific job details |
+| `sacct -j JOBID --format=JobID,MaxRSS,Elapsed` | Custom format |
+
+## Troubleshooting
+
+### Job Won't Start (Pending)
+
+Check why your job is pending:
+
+```bash
+squeue -u $USER -l
+```
+
+Look at the `NODELIST(REASON)` column:
+
+| Reason | Meaning | Solution |
+|--------|---------|----------|
+| `Priority` | Other jobs have higher priority | Wait, or use a different partition |
+| `Resources` | Requested resources not available | Reduce request or wait |
+| `QOSMaxJobsPerUserLimit` | Hit job limit | Wait for jobs to complete |
+| `PartitionTimeLimit` | Requested time exceeds partition limit | Reduce `--time` or use `--qos=long` |
+| `AssocGrpCPUMinutesLimit` | Group CPU allocation exhausted | Wait for allocation to reset |
+
+### Job Failed
+
+Check the job exit status:
+
+```bash
+sacct -j JOBID --format=JobID,State,ExitCode,DerivedExitCode
+```
+
+Common exit codes:
+- `0:0` - Success
+- `1:0` - Generic error (check your output file)
+- `137` or `SIGKILL` - Out of memory (request more with `--mem`)
+- `TIMEOUT` - Exceeded time limit (request more with `--time`)
+- `CANCELLED` - Job was cancelled (by you or preemption)
+
+### Out of Memory
+
+If your job was killed for using too much memory:
+
+```bash
+# Check how much memory it actually used
+sacct -j JOBID --format=JobID,MaxRSS,ReqMem
+
+# Request more memory in future jobs
+#SBATCH --mem=64G  # or --mem-per-cpu=4G
+```
+
+### GPU Not Detected
+
+If your GPU job can't see the GPU:
+
+1. **Check you requested GPUs:**
+   ```bash
+   #SBATCH --gpus=1
+   ```
+
+2. **Verify GPU allocation:**
+   ```bash
+   echo $CUDA_VISIBLE_DEVICES
+   nvidia-smi
+   ```
+
+3. **Load CUDA module:**
+   ```bash
+   module load cuda/12.2
+   ```
+
+4. **Check for driver/CUDA version mismatch** - use a CUDA version compatible with the drivers on GPU nodes.
+
+### Module Not Found
+
+```bash
+# Search more thoroughly
+module spider package_name
+
+# Check if module requires another module first
+module spider python/3.9
+```
+
+Some modules require loading dependencies first. `module spider` will tell you.
+
+### Quota Exceeded
+
+```bash
+# Check which filesystem is full
+sh_quota
+
+# Find large files
+du -sh $HOME/*
+du -sh $SCRATCH/*
+
+# Find largest files
+find $HOME -type f -size +100M -exec ls -lh {} \;
+```
+
+Solutions:
+- Clean up unnecessary files
+- Move large files to `$SCRATCH` or `$OAK`
+- Use `conda clean --all` if using conda
+
+### SSH Connection Issues
+
+**Can't connect:**
+- Verify you're using `login.sherlock.stanford.edu`
+- Check your SUNet ID is correct
+- Ensure Duo 2FA is set up
+- Try from a different network
+
+**Connection drops:**
+- Use `screen` or `tmux` for long sessions
+- Check your local network stability
+- Add to `~/.ssh/config`:
+  ```
+  Host sherlock
+      HostName login.sherlock.stanford.edu
+      User YOUR_SUNETID
+      ServerAliveInterval 60
+  ```
+
+### Job Preempted (owners partition)
+
+If your job on the `owners` partition was killed:
+
+```bash
+sacct -j JOBID --format=JobID,State,ExitCode
+```
+
+If state is `PREEMPTED`:
+- This is expected behavior on `owners`
+- The job will be requeued automatically
+- Make sure your code can handle restarts (use checkpointing)
+
+## Getting Help
+
+### Self-Service Resources
+
+- **Documentation:** [https://www.sherlock.stanford.edu/docs/](https://www.sherlock.stanford.edu/docs/)
+- **Status Page:** [https://status.sherlock.stanford.edu/](https://status.sherlock.stanford.edu/)
+- **News/Updates:** [https://news.sherlock.stanford.edu/](https://news.sherlock.stanford.edu/)
+
+### Contact Support
+
+- **Email:** srcc-support@stanford.edu
+- **Office Hours:** Check [SRCC website](https://srcc.stanford.edu/) for schedule
+
+<Tip>
+  When contacting support, include:
+  - Your SUNet ID
+  - Job ID(s) if relevant
+  - The exact error message
+  - What you were trying to do
+</Tip>

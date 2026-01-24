@@ -1,0 +1,296 @@
+---
+title: Job Submission on Sherlock
+description: SLURM job submission and example scripts for Sherlock
+---
+
+This page covers Sherlock-specific job submission details. For general SLURM fundamentals (commands, script structure, time formats), see [Job Submission Basics](/hpc/job-submission).
+
+## Sherlock Example Scripts
+
+These examples use Sherlock partitions and conventions. Replace `YOUR_GROUP` with your actual PI group name.
+
+<Tabs>
+  <Tab title="Basic CPU">
+    Standard CPU job on the normal partition:
+
+    ```bash
+    #!/bin/bash
+    #SBATCH --job-name=my_job
+    #SBATCH --partition=normal
+    #SBATCH --time=1-00:00:00
+    #SBATCH --nodes=1
+    #SBATCH --ntasks=1
+    #SBATCH --cpus-per-task=8
+    #SBATCH --mem=32G
+    #SBATCH --output=%x_%j.out
+
+    module load python/3.9
+    python3 my_script.py
+    ```
+  </Tab>
+  <Tab title="Long Job (>2 days)">
+    Jobs over 2 days need the `long` QOS:
+
+    ```bash
+    #!/bin/bash
+    #SBATCH --job-name=long_job
+    #SBATCH --partition=normal
+    #SBATCH --qos=long
+    #SBATCH --time=5-00:00:00
+    #SBATCH --nodes=1
+    #SBATCH --ntasks=1
+    #SBATCH --cpus-per-task=16
+    #SBATCH --mem=64G
+    #SBATCH --output=%x_%j.out
+
+    ./my_long_running_program
+    ```
+
+    <Note>
+      The `long` QOS allows up to 7 days. If you're in an owner group, you don't need this—owner partitions already allow 7 days.
+    </Note>
+  </Tab>
+  <Tab title="GPU (PyTorch)">
+    GPU job for deep learning:
+
+    ```bash
+    #!/bin/bash
+    #SBATCH --job-name=train_model
+    #SBATCH --partition=gpu
+    #SBATCH --time=1-00:00:00
+    #SBATCH --nodes=1
+    #SBATCH --ntasks=1
+    #SBATCH --cpus-per-task=8
+    #SBATCH --mem=64G
+    #SBATCH --gpus=1
+    #SBATCH --output=%x_%j.out
+
+    module load python/3.9
+    module load cuda/12.2
+
+    source $GROUP_HOME/envs/torch/bin/activate
+    python3 train_model.py
+    ```
+
+    For specific GPU types:
+    ```bash
+    #SBATCH --gpus=a100:1   # Request A100
+    #SBATCH --gpus=h100:2   # Request 2 H100s
+    ```
+  </Tab>
+  <Tab title="Multi-GPU">
+    Multi-GPU training job:
+
+    ```bash
+    #!/bin/bash
+    #SBATCH --job-name=multi_gpu
+    #SBATCH --partition=gpu
+    #SBATCH --time=2-00:00:00
+    #SBATCH --nodes=1
+    #SBATCH --ntasks=1
+    #SBATCH --cpus-per-task=32
+    #SBATCH --mem=256G
+    #SBATCH --gpus=4
+    #SBATCH --output=%x_%j.out
+
+    module load python/3.9
+    module load cuda/12.2
+
+    source $GROUP_HOME/envs/torch/bin/activate
+
+    # PyTorch distributed training
+    torchrun --nproc_per_node=4 train_distributed.py
+    ```
+  </Tab>
+  <Tab title="Array Job">
+    Run many similar tasks with different inputs:
+
+    ```bash
+    #!/bin/bash
+    #SBATCH --job-name=array_job
+    #SBATCH --partition=normal
+    #SBATCH --time=4:00:00
+    #SBATCH --array=1-100
+    #SBATCH --ntasks=1
+    #SBATCH --cpus-per-task=2
+    #SBATCH --mem=8G
+    #SBATCH --output=array_%A_%a.out
+
+    echo "Processing task $SLURM_ARRAY_TASK_ID"
+    python3 process_file.py --index $SLURM_ARRAY_TASK_ID
+    ```
+
+    <Tip>
+      Use `%A` (array job ID) and `%a` (task ID) in output filenames to keep logs organized.
+    </Tip>
+  </Tab>
+  <Tab title="MPI">
+    Multi-node MPI job:
+
+    ```bash
+    #!/bin/bash
+    #SBATCH --job-name=mpi_job
+    #SBATCH --partition=normal
+    #SBATCH --time=12:00:00
+    #SBATCH --nodes=4
+    #SBATCH --ntasks-per-node=32
+    #SBATCH --mem=0
+    #SBATCH --output=%x_%j.out
+
+    module load openmpi/4.1
+
+    srun ./my_mpi_program
+    ```
+
+    <Note>
+      Use `srun` (not `mpirun`) to launch MPI programs on SLURM.
+    </Note>
+  </Tab>
+</Tabs>
+
+## Interactive Sessions
+
+When you SSH into Sherlock, you land on a **login node**. These are shared and not for computation. Use interactive sessions for testing, debugging, and development work.
+
+### sh_dev (Quick Sessions)
+
+The `sh_dev` command is the fastest way to get an interactive session:
+
+```bash
+# Default: 1 core, 4 GB memory, 1 hour
+sh_dev
+
+# With more resources
+sh_dev -c 4 -m 16G -t 2:00:00
+
+# With GPU access
+sh_dev -g 1
+```
+
+<Warning>
+  `sh_dev` is limited to **2 cores and 8 GB memory** per user. For more resources, use `salloc`.
+</Warning>
+
+### salloc (Custom Sessions)
+
+For more control over resources:
+
+```bash
+# CPU session
+salloc --partition=normal --time=4:00:00 --cpus-per-task=8 --mem=32G
+
+# GPU session
+salloc --partition=gpu --time=2:00:00 --gpus=1 --cpus-per-task=8 --mem=32G
+
+# After allocation, connect to the node
+srun --pty bash
+```
+
+### srun (Direct Command)
+
+Run a single command on compute resources:
+
+```bash
+# Run a command directly
+srun --partition=normal --time=1:00:00 --mem=8G python3 test.py
+
+# Get an interactive shell
+srun --partition=normal --time=2:00:00 --pty bash
+```
+
+<Warning>
+  `srun` jobs are tied to your terminal session. If you disconnect, the job dies. For long-running interactive work, consider using `screen` or `tmux`, or just use `sbatch` instead.
+</Warning>
+
+## Job Management
+
+### Check Job Status
+
+```bash
+# Your jobs
+squeue -u $USER
+
+# Detailed job info
+squeue -u $USER -l
+
+# Specific job
+squeue -j JOBID
+```
+
+### Cancel Jobs
+
+```bash
+# Cancel specific job
+scancel JOBID
+
+# Cancel all your jobs
+scancel -u $USER
+
+# Cancel all pending jobs
+scancel -u $USER --state=pending
+
+# Cancel array job tasks
+scancel JOBID_[1-50]
+```
+
+### Job History
+
+```bash
+# Recent job history
+sacct -u $USER --starttime=2024-01-01
+
+# Detailed job info
+sacct -j JOBID --format=JobID,JobName,Partition,State,ExitCode,Elapsed,MaxRSS
+```
+
+## Sherlock-Specific Tips
+
+<AccordionGroup>
+  <Accordion title="Use $SCRATCH for job I/O">
+    Run jobs from `$SCRATCH` for best performance. Copy results to `$OAK` or `$GROUP_HOME` after completion.
+
+    ```bash
+    # In your job script
+    cd $SCRATCH
+    cp $GROUP_HOME/data/input.dat .
+    ./my_program input.dat
+    cp output.dat $GROUP_HOME/results/
+    ```
+  </Accordion>
+
+  <Accordion title="Check partition limits before submitting">
+    ```bash
+    sh_part
+    ```
+    This shows time limits, available nodes, and your access for each partition.
+  </Accordion>
+
+  <Accordion title="Use job arrays for parameter sweeps">
+    Instead of submitting hundreds of separate jobs:
+
+    ```bash
+    #SBATCH --array=1-1000%50  # Run 1000 tasks, max 50 at a time
+    ```
+  </Accordion>
+
+  <Accordion title="Profile your jobs">
+    Check actual resource usage after jobs complete:
+
+    ```bash
+    sacct -j JOBID --format=JobID,MaxRSS,ReqMem,Elapsed,State
+    ```
+
+    Use this to optimize future resource requests.
+  </Accordion>
+</AccordionGroup>
+
+## Email Notifications
+
+Get notified when jobs complete or fail:
+
+```bash
+#SBATCH --mail-user=your_email@stanford.edu
+#SBATCH --mail-type=BEGIN,END,FAIL
+```
+
+Available notification types: `BEGIN`, `END`, `FAIL`, `REQUEUE`, `ALL`
