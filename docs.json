@@ -152,6 +152,11 @@
       {
         "label": "Consulting",
         "href": "https://ianwashere.com/consulting"
+      },
+      {
+        "label": "Scholar",
+        "href": "https://scholar.google.com/citations?user=eNjD3OcAAAAJ&hl=en&oi=ao",
+        "icon": "/images/Google_Scholar_logo.svg"
       }
     ]
   },
@@ -159,8 +164,7 @@
     "socials": {
       "github": "https://github.com/ianandersonlol",
       "instagram": "https://instagram.com/ianandersonlol",
-      "x": "https://x.com/ianandersonlol",
-      "website": "https://scholar.google.com/citations?user=eNjD3OcAAAAJ&hl=en&oi=ao"
+      "x": "https://x.com/ianandersonlol"
     }
   }
 }

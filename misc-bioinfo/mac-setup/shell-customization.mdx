@@ -133,9 +133,6 @@ blastdb() {
 # Add common bioinformatics tools to PATH
 export PATH="/usr/local/bin:$PATH"
 
-# Set default editor
-export EDITOR="code"
-
 # Colorized ls output
 export CLICOLOR=1
 export LSCOLORS=ExFxBxDxCxegedabagacad
@@ -144,114 +141,62 @@ export LSCOLORS=ExFxBxDxCxegedabagacad
 export GREP_OPTIONS='--color=auto'
 ```
 
-## Conda/Mamba Initialization
-
-<Note>
-  This section is typically auto-generated when you install Mambaforge. Check your `.zshrc` to see if it's already there.
-</Note>
-
-```bash
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/opt/homebrew/Caskroom/mambaforge/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/opt/homebrew/Caskroom/mambaforge/base/etc/profile.d/conda.sh" ]; then
-        . "/opt/homebrew/Caskroom/mambaforge/base/etc/profile.d/conda.sh"
-    else
-        export PATH="/opt/homebrew/Caskroom/mambaforge/base/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-
-if [ -f "/opt/homebrew/Caskroom/mambaforge/base/etc/profile.d/mamba.sh" ]; then
-    . "/opt/homebrew/Caskroom/mambaforge/base/etc/profile.d/mamba.sh"
-fi
-# <<< conda initialize <<<
-```
-
 ## Prompt Customization
+
+Your prompt is what you see before each command in the terminal. Customizing it can provide useful information at a glance, like your current directory or active conda environment.
 
 ```bash
 # ============================================
 # PROMPT CUSTOMIZATION
 # ============================================
 
-# Show current conda environment in prompt
 setopt PROMPT_SUBST
 PROMPT='%F{green}%n@%m%f:%F{blue}%~%f${CONDA_DEFAULT_ENV:+ (%F{yellow}$CONDA_DEFAULT_ENV%f)}$ '
 ```
 
-## Project Management Function
+### Breaking Down the Prompt
 
-This function creates a standard bioinformatics project structure:
+Let's understand what each part does:
 
-```bash
-# Quick project setup for bioinformatics analysis
-newproject() {
-    if [ -z "$1" ]; then
-        echo "Usage: newproject <project_name>"
-        return 1
-    fi
+| Component | Meaning |
+|-----------|---------|
+| `setopt PROMPT_SUBST` | Enables variable substitution in the prompt (required for dynamic content) |
+| `%F{green}` | Start coloring text green |
+| `%n` | Your username |
+| `@` | Literal @ symbol |
+| `%m` | Your machine's hostname |
+| `%f` | Reset color to default |
+| `:` | Literal colon separator |
+| `%F{blue}` | Start coloring text blue |
+| `%~` | Current directory (with `~` for home) |
+| `%f` | Reset color to default |
+| `${CONDA_DEFAULT_ENV:+ (...)}` | If a conda environment is active, show it in parentheses |
+| `%F{yellow}$CONDA_DEFAULT_ENV%f` | The environment name in yellow |
+| `$ ` | The actual prompt character followed by a space |
 
-    mkdir -p "$1"/{data/{raw,processed},scripts,results,docs}
-    cd "$1"
+### Example Output
 
-    # Create README
-    cat > README.md << EOF
-# $1
+With this prompt, your terminal will look like:
 
-## Description
-[Add project description here]
-
-## Directory Structure
-- \`data/raw/\`: Raw input data
-- \`data/processed/\`: Cleaned and processed data
-- \`scripts/\`: Analysis scripts
-- \`results/\`: Output files and results
-- \`docs/\`: Documentation and reports
-
-## Usage
-[Add usage instructions here]
-
-## Dependencies
-[List required software and versions]
-EOF
-
-    # Create .gitignore
-    cat > .gitignore << EOF
-# Data files
-*.fastq
-*.fasta
-*.sam
-*.bam
-*.vcf
-data/raw/
-data/processed/
-
-# Results
-results/
-*.pdf
-*.png
-*.jpg
-
-# System files
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-
-# Conda
-environment.yml
-EOF
-
-    echo "Project '$1' created successfully!"
-    tree
-}
 ```
+yourname@MacBook:~/projects/analysis (genomics)$
+```
+
+Where:
+- `yourname@MacBook` is green (your user and machine)
+- `~/projects/analysis` is blue (current directory)
+- `(genomics)` is yellow (active conda environment, only shown if one is active)
+
+### Other Useful Prompt Variables
+
+| Variable | Description |
+|----------|-------------|
+| `%d` | Full path to current directory |
+| `%T` | Current time (24-hour HH:MM) |
+| `%t` | Current time (12-hour with am/pm) |
+| `%D` | Current date (YY-MM-DD) |
+| `%?` | Exit status of last command |
+| `%#` | Shows `#` if root, `%` otherwise |
 
 ## Reload Your Configuration
 
