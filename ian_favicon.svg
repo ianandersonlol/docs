@@ -1,0 +1,31 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+    .helix-path {
+        stroke: #3B82F6; /* A modern blue */
+        stroke-width: 16;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+    .crossbar {
+        stroke: #9CA3AF; /* A neutral gray */
+        stroke-width: 16;
+        stroke-linecap: round;
+    }
+    @media (prefers-color-scheme: dark) {
+        .helix-path {
+            stroke: #60A5FA; /* A lighter blue for dark mode */
+        }
+        .crossbar {
+            stroke: #6B7280; /* A darker gray for dark mode */
+        }
+    }
+</style>
+<title>IA Helix Logo</title>
+<desc>A stylized letter 'A' forming a double helix, representing computational biology.</desc>
+<!-- The left strand of the 'A' / helix -->
+<path d="M80 216C106.667 172.667 106.667 85.3333 80 40" class="helix-path" />
+<!-- The right strand of the 'A' / helix -->
+<path d="M176 216C149.333 172.667 149.333 85.3333 176 40" class="helix-path" />
+<!-- The crossbar of the 'A', representing a base pair -->
+<line x1="104" y1="128" x2="152" y2="128" class="crossbar" />
+</svg>
