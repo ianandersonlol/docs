@@ -16,8 +16,7 @@
           {
             "group": "Welcome",
             "pages": [
-              "index",
-              "changelog"
+              "index"
             ]
           }
         ]
@@ -120,11 +119,14 @@
                   "misc-bioinfo/mac-setup/shell-customization",
                   "misc-bioinfo/mac-setup/troubleshooting"
                 ]
-              },
-              "misc-bioinfo/getting-started"
+              }
             ]
           }
         ]
+      },
+      {
+        "tab": "Changelog",
+        "href": "/changelog"
       }
     ]
   },
@@ -136,19 +138,11 @@
     "links": [
       {
         "label": "About Me",
-        "href": "https://ianwashere.com/#about"
-      },
-      {
-        "label": "Experience",
-        "href": "https://ianwashere.com/#experience"
+        "href": "https://www.ianwashere.com"
       },
       {
         "label": "Projects",
         "href": "https://ianwashere.com/#projects"
-      },
-      {
-        "label": "Blog",
-        "href": "https://ianwashere.com/blog"
       },
       {
         "label": "Consulting",
