@@ -126,7 +126,14 @@
       },
       {
         "tab": "Changelog",
-        "href": "/changelog"
+        "groups": [
+          {
+            "group": "Changelog",
+            "pages": [
+              "changelog"
+            ]
+          }
+        ]
       }
     ]
   },
