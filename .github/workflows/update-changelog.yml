@@ -1,0 +1,59 @@
+name: Update Changelog
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'changelog.mdx'
+
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update changelog
+        run: |
+          # Get today's date
+          TODAY=$(date +%Y-%m-%d)
+
+          # Get commit messages from this push (excluding changelog updates)
+          COMMITS=$(git log --format="- %s" -n ${{ github.event.commits && github.event.commits[0] && '1' || '1' }} HEAD 2>/dev/null | grep -v "Update changelog" | grep -v "Auto-update changelog" || true)
+
+          if [ -z "$COMMITS" ]; then
+            echo "No commits to add to changelog"
+            exit 0
+          fi
+
+          # Check if today's date already exists in changelog
+          if grep -q "date=\"$TODAY\"" changelog.mdx; then
+            # Append to existing day's entry
+            # Find the line with today's date and add commits after the opening tag
+            sed -i "s|<Update date=\"$TODAY\">|<Update date=\"$TODAY\">\n$COMMITS|" changelog.mdx
+          else
+            # Create new entry for today
+            # Insert after the "Recent updates" line
+            ENTRY="<Update date=\"$TODAY\">\n$COMMITS\n</Update>\n"
+            sed -i "/^Recent updates and changes to the documentation.$/a\\
+\\
+$ENTRY" changelog.mdx
+          fi
+
+          echo "Changelog updated with:"
+          echo "$COMMITS"
+
+      - name: Commit and push changelog
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add changelog.mdx
+          git diff --staged --quiet || git commit -m "Auto-update changelog for $(date +%Y-%m-%d)"
+          git push
