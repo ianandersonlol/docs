@@ -6,6 +6,7 @@ on:
       - main
     paths-ignore:
       - 'changelog.mdx'
+      - '.github/workflows/update-changelog.yml'
 
 jobs:
   update-changelog:
@@ -22,33 +23,39 @@ jobs:
 
       - name: Update changelog
         run: |
-          # Get today's date
           TODAY=$(date +%Y-%m-%d)
 
-          # Get commit messages from this push (excluding changelog updates)
-          COMMITS=$(git log --format="- %s" -n ${{ github.event.commits && github.event.commits[0] && '1' || '1' }} HEAD 2>/dev/null | grep -v "Update changelog" | grep -v "Auto-update changelog" || true)
+          # Get the commit message from this push (excluding changelog updates)
+          COMMIT_MSG=$(git log --format="%s" -n 1 HEAD | grep -v "Auto-update changelog" || true)
 
-          if [ -z "$COMMITS" ]; then
+          if [ -z "$COMMIT_MSG" ]; then
             echo "No commits to add to changelog"
             exit 0
           fi
 
-          # Check if today's date already exists in changelog
+          # Read current changelog
+          CHANGELOG=$(cat changelog.mdx)
+
+          # Check if today's date already exists
           if grep -q "date=\"$TODAY\"" changelog.mdx; then
-            # Append to existing day's entry
-            # Find the line with today's date and add commits after the opening tag
-            sed -i "s|<Update date=\"$TODAY\">|<Update date=\"$TODAY\">\n$COMMITS|" changelog.mdx
+            # Add to existing day's entry (insert after the opening Update tag)
+            sed -i "s|<Update date=\"$TODAY\">|<Update date=\"$TODAY\">\n- $COMMIT_MSG|" changelog.mdx
           else
-            # Create new entry for today
-            # Insert after the "Recent updates" line
-            ENTRY="<Update date=\"$TODAY\">\n$COMMITS\n</Update>\n"
-            sed -i "/^Recent updates and changes to the documentation.$/a\\
-\\
-$ENTRY" changelog.mdx
+            # Create new entry after the frontmatter (after the closing ---)
+            # Find line number of second --- (end of frontmatter)
+            FRONTMATTER_END=$(grep -n "^---$" changelog.mdx | tail -1 | cut -d: -f1)
+
+            # Create the new entry
+            head -n "$FRONTMATTER_END" changelog.mdx > changelog_new.mdx
+            echo "" >> changelog_new.mdx
+            echo "<Update date=\"$TODAY\">" >> changelog_new.mdx
+            echo "- $COMMIT_MSG" >> changelog_new.mdx
+            echo "</Update>" >> changelog_new.mdx
+            tail -n +$((FRONTMATTER_END + 1)) changelog.mdx >> changelog_new.mdx
+            mv changelog_new.mdx changelog.mdx
           fi
 
-          echo "Changelog updated with:"
-          echo "$COMMITS"
+          echo "Changelog updated with: $COMMIT_MSG"
 
       - name: Commit and push changelog
         run: |
