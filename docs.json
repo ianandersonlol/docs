@@ -80,7 +80,6 @@
             "group": "Protein Engineering",
             "pages": [
               "protein-engineering/index",
-              "protein-engineering/getting-started",
               {
                 "group": "Structure Prediction",
                 "pages": [
