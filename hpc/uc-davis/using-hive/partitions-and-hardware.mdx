@@ -38,7 +38,7 @@ HIVE has 4 main partitions. The **high** partition is the default.
     **Use `gpu-a100` for:**
     - Deep learning training
     - Large model inference
-    - Memory-intensive GPU workloads (40-80 GB HBM2e per GPU)
+    - Memory-intensive GPU workloads (80 GB HBM2e per GPU)
 
     **Use `gpu-a6000` for:**
     - ML inference
@@ -98,7 +98,7 @@ sbatch --constraint="zen2|zen3|zen4" job.sh
 
 | GPU Type | Quantity | Memory | Partition | Best For |
 |----------|----------|--------|-----------|----------|
-| NVIDIA A100 | 8 (4 per node × 2 nodes) | 40/80 GB HBM2e | gpu-a100 | Deep learning training, large models |
+| NVIDIA A100 | 8 (4 per node × 2 nodes) | 80 GB HBM2e | gpu-a100 | Deep learning training, large models |
 | NVIDIA A6000 | 4 (on 1 node) | 48 GB GDDR6 | gpu-a6000 | ML inference, visualization, moderate training |
 
 ### GPU Node Details
