@@ -1,0 +1,142 @@
+---
+title: Rosetta GALigandDock
+description: Protein-ligand docking using Rosetta's GALigandDock protocol
+---
+
+# Rosetta GALigandDock
+
+GALigandDock (Genetic Algorithm Ligand Docking) is a Rosetta protocol for docking small molecule ligands into protein binding sites. It uses a genetic algorithm combined with Rosetta's energy function to find optimal binding poses.
+
+<Note>
+  **Siegel Lab:** These scripts use Siegel Lab paths and accounts on HIVE. See the [Siegel Lab HPC Guide](/hpc/uc-davis/using-hive/siegel-lab) for account setup.
+</Note>
+
+## Usage
+
+```bash
+sbatch submit.sh
+```
+
+The script uses an array job format, allowing you to run many docking trajectories in parallel.
+
+### SLURM Configuration
+
+```bash
+#!/bin/bash
+#SBATCH --partition=low
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=4G
+#SBATCH --time=48:00:00
+#SBATCH --requeue
+```
+
+### Resource Requirements
+
+| Resource | Value |
+|----------|-------|
+| GPU | None (CPU only) |
+| CPUs | 1 |
+| Memory | 4 GB |
+| Time | 48 hours |
+| Partition | `low` |
+
+## Required Files
+
+GALigandDock requires several input files:
+
+| File | Description |
+|------|-------------|
+| `input.pdb` | Protein structure with ligand |
+| `docking.xml` | Rosetta XML protocol file |
+| `constraints.cst` | Constraint file (optional but recommended) |
+| `flags` | Rosetta flags file |
+
+### Flags File
+
+Create a flags file (`flags`) with Rosetta options:
+
+```
+-s input.pdb
+-extra_res_fa ligand.params
+-use_input_sc
+-ex1
+-ex2
+```
+
+## Constraint Files
+
+Constraint files (`.cst`) define distance or angle constraints to guide docking:
+
+```
+AtomPair CA 45A O1 LIG HARMONIC 3.5 0.5
+AtomPair NZ 67A N2 LIG HARMONIC 2.8 0.3
+```
+
+This example constrains:
+- Distance between CA of residue 45 and O1 of ligand to 3.5 Å (± 0.5)
+- Distance between NZ of residue 67 and N2 of ligand to 2.8 Å (± 0.3)
+
+## Array Jobs
+
+The script supports SLURM array jobs for running multiple independent docking trajectories:
+
+```bash
+#SBATCH --array=1-100
+```
+
+Each array task produces one docked structure with suffix `_$SLURM_ARRAY_TASK_ID`.
+
+## Output
+
+Results are saved to the `results/` directory:
+- `docked_1.pdb`, `docked_2.pdb`, etc. - Docked structures
+- Score file with binding energies
+
+## Example Workflow
+
+<Steps>
+  <Step title="Prepare the protein structure">
+    Clean your PDB file and ensure the binding site is properly defined.
+  </Step>
+  <Step title="Prepare the ligand">
+    Generate Rosetta params file for your ligand using `molfile_to_params.py`.
+  </Step>
+  <Step title="Create constraint file">
+    Define distance constraints based on known interactions or desired binding mode.
+  </Step>
+  <Step title="Configure the XML protocol">
+    Set up `docking.xml` with appropriate scoring and sampling parameters.
+  </Step>
+  <Step title="Submit array job">
+    ```bash
+    sbatch --array=1-100 submit.sh
+    ```
+  </Step>
+  <Step title="Analyze results">
+    Sort docked structures by score and visually inspect top hits.
+  </Step>
+</Steps>
+
+## Ligand Parameterization
+
+Before docking, you need Rosetta params for your ligand:
+
+```bash
+# Generate params from MOL2 file
+python $ROSETTA/scripts/python/public/molfile_to_params.py \
+    ligand.mol2 \
+    -n LIG \
+    --conformers-in-one-file
+```
+
+<Tip>
+  **More trajectories = better sampling:** Docking is stochastic. Running 100+ independent trajectories improves the chance of finding the correct pose.
+</Tip>
+
+<Warning>
+  **CPU intensive:** GALigandDock runs on CPU only and can take many hours per trajectory. Plan for long runtimes when docking flexible ligands.
+</Warning>
+
+## See Also
+
+- [Rosetta Relaxation](/protein-engineering/docking/relaxation) - Energy minimize structures before or after docking

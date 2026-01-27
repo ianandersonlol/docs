@@ -1,0 +1,133 @@
+---
+title: Boltz2
+description: Biomolecular structure prediction using Boltz2
+---
+
+# Boltz2
+
+Boltz2 is a structure prediction model that handles proteins, ligands, nucleic acids, and their complexes. It uses a YAML-based input format.
+
+<Note>
+  **Siegel Lab:** These scripts use Siegel Lab paths and accounts on HIVE. See the [Siegel Lab HPC Guide](/hpc/uc-davis/using-hive/siegel-lab) for account setup.
+</Note>
+
+## Usage
+
+```bash
+sbatch run_boltz.sh input.yaml [additional_options]
+```
+
+### SLURM Configuration
+
+```bash
+#!/bin/bash
+#SBATCH --partition=gpu-a100
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=12:00:00
+#SBATCH --account=genome-center-grp
+```
+
+### Resource Requirements
+
+| Resource | Value |
+|----------|-------|
+| GPU | 1x A100 |
+| CPUs | 16 |
+| Memory | 64 GB |
+| Time | 12 hours |
+| Partition | `gpu-a100` |
+
+## Input Format
+
+Boltz2 uses YAML files to specify molecular complexes:
+
+```yaml
+version: 1
+sequences:
+  - protein:
+      id: A
+      sequence: MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH
+  - ligand:
+      id: B
+      smiles: 'CCO'
+```
+
+### Multi-chain Complex Example
+
+```yaml
+version: 1
+sequences:
+  - protein:
+      id: A
+      sequence: MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH
+  - protein:
+      id: B
+      sequence: MNIFEMLRIDEGLRLKIYKDTEGYYTIG
+  - ligand:
+      id: C
+      smiles: 'CC(=O)OC1=CC=CC=C1C(=O)O'
+```
+
+### Supported Molecule Types
+
+| Type | YAML Key | Value Format |
+|------|----------|--------------|
+| Protein | `protein` | Amino acid sequence |
+| DNA | `dna` | DNA nucleotide sequence |
+| RNA | `rna` | RNA nucleotide sequence |
+| Ligand | `ligand` | SMILES string |
+
+## Default Options
+
+The runner script enables these options by default:
+- `--use_msa_server`: Use online MSA server
+- `--use_potentials`: Apply structure potentials
+
+## Converting from Chai Format
+
+If you have sequences in Chai Discovery FASTA format, use the converter:
+
+```bash
+python chai_to_boltz.py input.fasta output.yaml
+```
+
+### Chai FASTA Input
+
+```
+>protein|chain_A
+MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH
+>ligand|small_mol
+CCO
+```
+
+### Generated YAML Output
+
+```yaml
+version: 1
+sequences:
+  - protein:
+      id: A
+      sequence: MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH
+  - ligand:
+      id: B
+      smiles: CCO
+```
+
+## Output
+
+Boltz2 outputs predicted structures to the current directory or a specified output location.
+
+## Comparison with Other Tools
+
+| Feature | Boltz2 | Chai | AlphaFold 3 |
+|---------|--------|------|-------------|
+| Input format | YAML | FASTA | JSON |
+| MSA server | Yes | Yes | Local DB |
+| Memory requirement | 64 GB | 128 GB | 64 GB |
+| Prediction time | ~12h | ~48h | ~24h |
+
+<Tip>
+  **Quick predictions:** Boltz2 is often faster than Chai for protein-ligand complexes. Consider using it for rapid screening.
+</Tip>

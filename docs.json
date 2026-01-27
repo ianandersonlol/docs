@@ -80,7 +80,31 @@
             "group": "Protein Engineering",
             "pages": [
               "protein-engineering/index",
-              "protein-engineering/getting-started"
+              "protein-engineering/getting-started",
+              {
+                "group": "Structure Prediction",
+                "pages": [
+                  "protein-engineering/structure-prediction/alphafold3",
+                  "protein-engineering/structure-prediction/alphafold2",
+                  "protein-engineering/structure-prediction/chai",
+                  "protein-engineering/structure-prediction/boltz2"
+                ]
+              },
+              {
+                "group": "Design",
+                "pages": [
+                  "protein-engineering/design/ligandmpnn",
+                  "protein-engineering/design/rf-diffusion",
+                  "protein-engineering/design/design-pipeline"
+                ]
+              },
+              {
+                "group": "Docking",
+                "pages": [
+                  "protein-engineering/docking/rosetta-galigand",
+                  "protein-engineering/docking/relaxation"
+                ]
+              }
             ]
           }
         ]

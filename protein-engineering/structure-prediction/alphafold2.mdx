@@ -1,0 +1,147 @@
+---
+title: AlphaFold 2 / ColabFold
+description: Protein structure prediction using AlphaFold 2 and ColabFold
+---
+
+# AlphaFold 2 / ColabFold
+
+This page covers two AlphaFold 2-based workflows available on HIVE:
+- **ColabFold**: Fast structure prediction using MMseqs2 for MSA generation
+- **AF2 Initial Guess**: Structure prediction with a reference template
+
+<Note>
+  **Siegel Lab:** These scripts use Siegel Lab paths and accounts on HIVE. See the [Siegel Lab HPC Guide](/hpc/uc-davis/using-hive/siegel-lab) for account setup.
+</Note>
+
+## ColabFold (Local)
+
+ColabFold provides fast AlphaFold 2 predictions by using MMseqs2 for multiple sequence alignment instead of the slower HHblits/JackHMMER pipeline.
+
+### Usage
+
+```bash
+sbatch colabfold.sh input.fasta output_directory/
+```
+
+### SLURM Configuration
+
+```bash
+#!/bin/bash
+#SBATCH --partition=gpu-a100
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=12:00:00
+#SBATCH --account=genome-center-grp
+```
+
+### Resource Requirements
+
+| Resource | Value |
+|----------|-------|
+| GPU | 1x A100 |
+| CPUs | 16 |
+| Memory | 64 GB |
+| Time | 12 hours |
+| Partition | `gpu-a100` |
+
+### Default Options
+
+The script runs with these options enabled:
+- `--num-models 1`: Generate one model per sequence
+- `--amber`: Perform AMBER relaxation
+- `--use-gpu-relax`: Use GPU for relaxation (faster)
+
+### Input Format
+
+Standard FASTA format:
+
+```
+>protein_name
+MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH
+```
+
+For multimers, separate chains with `:`:
+
+```
+>complex_name
+MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH:MNIFEMLRIDEGLRLKIYKDTEGYYTIG
+```
+
+---
+
+## AF2 Initial Guess
+
+This workflow threads sequences onto a reference structure before running AlphaFold 2 prediction. Useful for:
+- Predicting structures of sequence variants
+- Ensuring consistent structural alignment
+- Comparing mutants to a known structure
+
+### Usage
+
+```bash
+sbatch submit_af2_initial_guess.sh
+```
+
+Or run the Python script directly:
+
+```bash
+python run_af2_initial_guess.py \
+  -f sequences.fasta \
+  -r reference.pdb \
+  -o output_directory/ \
+  --recycle 3
+```
+
+### Arguments
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `-f, --fasta` | Yes | Multi-sequence FASTA file |
+| `-r, --reference` | Yes | Reference PDB structure |
+| `-o, --output_dir` | Yes | Output directory |
+| `--recycle` | No | Number of AF2 recycles (default: 3) |
+| `--force_monomer` | No | Force monomer prediction without template |
+
+### SLURM Configuration
+
+```bash
+#!/bin/bash
+#SBATCH --partition=gpu-a100
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=24:00:00
+#SBATCH --account=genome-center-grp
+```
+
+### Workflow
+
+1. **Threading**: Each sequence is threaded onto the reference structure using PyRosetta
+2. **Input generation**: Creates individual PDB files in `input_pdbs/`
+3. **Prediction**: Runs AF2 on all threaded structures
+4. **Output**: Predicted structures saved as `*_af2pred.pdb`
+
+### Output Files
+
+```
+output_directory/
+├── input_pdbs/          # Threaded structures
+├── runlist.txt          # List of processed sequences
+├── af2_scores.sc        # Scoring file
+└── *_af2pred.pdb        # Predicted structures
+```
+
+<Warning>
+  **Sequence length:** The reference PDB and input sequences must have the same number of residues. The script will skip sequences that don't match.
+</Warning>
+
+## Choosing Between Methods
+
+| Use Case | Recommended Method |
+|----------|-------------------|
+| General structure prediction | ColabFold |
+| Predicting many sequence variants | AF2 Initial Guess |
+| Fast predictions | ColabFold |
+| Need consistent alignment to reference | AF2 Initial Guess |
+| Multimer prediction | ColabFold |

@@ -1,0 +1,154 @@
+---
+title: Rosetta Relaxation
+description: Structure energy minimization using Rosetta's relax protocol
+---
+
+# Rosetta Relaxation
+
+Rosetta relax performs energy minimization on protein structures. It's commonly used to:
+- Prepare structures for downstream analysis
+- Remove clashes in modeled structures
+- Refine structures after docking or design
+
+<Note>
+  **Siegel Lab:** These scripts use Siegel Lab paths and accounts on HIVE. See the [Siegel Lab HPC Guide](/hpc/uc-davis/using-hive/siegel-lab) for account setup.
+</Note>
+
+## Usage
+
+```bash
+sbatch relax.sh
+```
+
+The script runs as an array job, generating multiple relaxed structures in parallel.
+
+### SLURM Configuration
+
+```bash
+#!/bin/bash
+#SBATCH --partition=low
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=8G
+#SBATCH --time=12:00:00
+#SBATCH --requeue
+#SBATCH --array=1-100
+```
+
+### Resource Requirements
+
+| Resource | Value |
+|----------|-------|
+| GPU | None (CPU only) |
+| CPUs | 4 |
+| Memory | 8 GB |
+| Time | 12 hours |
+| Partition | `low` |
+| Array tasks | 100 (default) |
+
+## Output
+
+With default settings (100 array tasks × 5 structures each), you get 500 relaxed structures:
+
+```
+relax_results/
+├── input_0001.pdb
+├── input_0002.pdb
+├── ...
+└── input_0500.pdb
+```
+
+## Key Options
+
+The script includes these Rosetta options:
+
+| Option | Description |
+|--------|-------------|
+| `-ex1 -ex2` | Extra chi angle rotamer sampling |
+| `-use_input_sc` | Use input side chain conformations as starting point |
+| `-flip_HNQ` | Allow flipping of His, Asn, Gln rotamers |
+| `-no_optH false` | Optimize hydrogen positions |
+| `-nstruct 5` | Generate 5 structures per task |
+
+### Constraint Options
+
+```bash
+-relax:constrain_relax_to_start_coords
+-relax:coord_constrain_sidechains
+-relax:ramp_constraints false
+```
+
+These options constrain the relaxation to stay close to the input structure, preventing large conformational changes.
+
+## Customizing the Script
+
+### Change Input Structure
+
+Edit the script to use your PDB file:
+
+```bash
+# Original
+-s hello.pdb
+
+# Your structure
+-s your_structure.pdb
+```
+
+### Adjust Number of Structures
+
+Modify array size and nstruct:
+
+```bash
+#SBATCH --array=1-50      # 50 tasks instead of 100
+...
+-nstruct 10               # 10 structures per task (500 total)
+```
+
+### Unconstrained Relaxation
+
+For more aggressive minimization, remove constraint flags:
+
+```bash
+# Remove these lines for unconstrained relax
+# -relax:constrain_relax_to_start_coords
+# -relax:coord_constrain_sidechains
+```
+
+## Example Workflow
+
+<Steps>
+  <Step title="Prepare input structure">
+    Ensure your PDB file is clean and contains only the atoms you want to relax.
+  </Step>
+  <Step title="Configure the script">
+    Edit `relax.sh` to point to your input PDB and set desired output location.
+  </Step>
+  <Step title="Submit the job">
+    ```bash
+    sbatch relax.sh
+    ```
+  </Step>
+  <Step title="Select best structures">
+    Sort relaxed structures by Rosetta score and select lowest-energy models.
+    ```bash
+    grep "^SCORE:" relax_results/*.pdb | sort -k2 -n | head -10
+    ```
+  </Step>
+</Steps>
+
+## When to Use Relaxation
+
+| Use Case | Recommendation |
+|----------|----------------|
+| Before docking | Relax to remove input biases |
+| After homology modeling | Relax to fix clashes |
+| After design | Relax to optimize new sequences |
+| Before MD simulation | Relax to prepare starting structure |
+| Comparing structures | Relax both to same energy well |
+
+<Tip>
+  **Constrained vs unconstrained:** Use constrained relaxation when you want to preserve the overall structure. Use unconstrained relaxation when you want Rosetta to find the best energy conformation.
+</Tip>
+
+<Warning>
+  **Score variability:** Rosetta scores are relative, not absolute. Compare scores within the same run, not across different experiments.
+</Warning>

@@ -1,0 +1,125 @@
+---
+title: AlphaFold 3
+description: Structure prediction for proteins, nucleic acids, and small molecules using AlphaFold 3
+---
+
+# AlphaFold 3
+
+AlphaFold 3 predicts the joint structure of complexes including proteins, nucleic acids (DNA/RNA), small molecules, ions, and modified residues.
+
+<Note>
+  **Siegel Lab:** These scripts use Siegel Lab paths and accounts on HIVE. See the [Siegel Lab HPC Guide](/hpc/uc-davis/using-hive/siegel-lab) for account setup.
+</Note>
+
+## Input Format
+
+AlphaFold 3 uses JSON input files to specify sequences and molecules. Here's an example:
+
+```json
+{
+  "name": "my_prediction",
+  "modelSeeds": [42],
+  "sequences": [
+    {
+      "protein": {
+        "id": "A",
+        "sequence": "MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH"
+      }
+    },
+    {
+      "ligand": {
+        "id": "B",
+        "smiles": "CCO"
+      }
+    }
+  ]
+}
+```
+
+### Supported Molecule Types
+
+| Type | Field | Description |
+|------|-------|-------------|
+| Protein | `protein` | Amino acid sequence |
+| DNA | `dna` | DNA nucleotide sequence |
+| RNA | `rna` | RNA nucleotide sequence |
+| Ligand | `ligand` | SMILES string for small molecules |
+
+## Single Job Submission
+
+For predicting a single structure:
+
+```bash
+sbatch submit_af3_single.sh /path/to/input.json
+```
+
+### SLURM Configuration
+
+```bash
+#!/bin/bash
+#SBATCH --partition=gpu-a100
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=64G
+#SBATCH --time=24:00:00
+#SBATCH --account=genome-center-grp
+```
+
+### Resource Requirements
+
+| Resource | Value |
+|----------|-------|
+| GPU | 1x A100 |
+| CPUs | 16 |
+| Memory | 64 GB |
+| Time | 24 hours |
+| Partition | `gpu-a100` |
+
+## Bulk Submission
+
+For predicting multiple structures, use the bulk submission script which creates an array job:
+
+```bash
+python submit_af3_bulk.py /path/to/json_directory/
+```
+
+This will:
+1. Find all `.json` files in the directory
+2. Submit them as a SLURM array job
+3. Process them in parallel (one GPU per job)
+
+## Converting from Chai Format
+
+If you have sequences in Chai Discovery FASTA format, use the converter:
+
+```bash
+python chai_to_af3_converter.py input.fasta output.json --name "my_job" --seeds 42
+```
+
+### Chai FASTA Format
+
+```
+>protein|chain_A
+MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH
+>ligand|small_mol
+CCO
+```
+
+The converter automatically detects molecule types from the header prefix.
+
+## Output
+
+AlphaFold 3 outputs:
+- Predicted structure files (CIF format)
+- Confidence scores (pLDDT, PAE)
+- GPU performance metrics (peak VRAM usage, average utilization)
+
+## Tips
+
+<Tip>
+  **Memory usage:** Complex structures with many chains or large ligands may require more memory. Monitor GPU VRAM usage in the output logs.
+</Tip>
+
+<Warning>
+  **Database access:** AF3 requires access to sequence databases. These are pre-configured on HIVE at `/quobyte/jbsiegelgrp/software/alphafold3/public_databases`.
+</Warning>

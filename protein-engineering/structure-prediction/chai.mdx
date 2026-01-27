@@ -1,0 +1,113 @@
+---
+title: Chai
+description: Structure prediction using Chai Discovery's Chai-1 model
+---
+
+# Chai
+
+Chai-1 is a multi-modal foundation model for molecular structure prediction from Chai Discovery. It predicts structures of proteins, nucleic acids, small molecules, and their complexes.
+
+<Note>
+  **Siegel Lab:** These scripts use Siegel Lab paths and accounts on HIVE. See the [Siegel Lab HPC Guide](/hpc/uc-davis/using-hive/siegel-lab) for account setup.
+</Note>
+
+## Basic Usage
+
+For standard predictions without pre-computed MSAs:
+
+```bash
+sbatch submit_chai.sh input.fasta output_directory/
+```
+
+### SLURM Configuration
+
+```bash
+#!/bin/bash
+#SBATCH --partition=gpu-a100
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=128G
+#SBATCH --time=48:00:00
+#SBATCH --account=genome-center-grp
+```
+
+### Resource Requirements
+
+| Resource | Value |
+|----------|-------|
+| GPU | 1x A100 |
+| CPUs | 16 |
+| Memory | 128 GB |
+| Time | 48 hours |
+| Partition | `gpu-a100` |
+
+## With Pre-computed MSAs
+
+For predictions using pre-computed multiple sequence alignments:
+
+```bash
+sbatch submit_chai_with_msa.sh input.fasta output_directory/ msa_directory/
+```
+
+The MSA directory argument is optional. If not provided, Chai will use the ColabFold MMseqs2 server for MSA generation.
+
+## Input Format
+
+Chai uses a specialized FASTA format with molecule type prefixes:
+
+```
+>protein|chain_A
+MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH
+>protein|chain_B
+MNIFEMLRIDEGLRLKIYKDTEGYYTIGIGHLLTKSPSLNAAKSELDKAIGRNCNGVITKDEAEKLFNQDVDAAVRGILRNAKLKPVYDSLDAVRRCALINMVFQMGETGVAGFTNSLRMLQQKRWDEAAVNLAKSRWYNQTPNRAKRVITTFRTGTWDAYKNL
+>ligand|small_molecule
+CCO
+```
+
+### Supported Molecule Types
+
+| Type | Prefix | Format |
+|------|--------|--------|
+| Protein | `protein\|name` | Amino acid sequence |
+| DNA | `dna\|name` | DNA nucleotide sequence |
+| RNA | `rna\|name` | RNA nucleotide sequence |
+| Ligand | `ligand\|name` | SMILES string |
+
+## Model Parameters
+
+The scripts use these default parameters:
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `num_trunk_recycles` | 3 | Number of recycling iterations |
+| `num_diffn_timesteps` | 200 | Diffusion sampling steps |
+| `seed` | 42 | Random seed for reproducibility |
+| `use_esm_embeddings` | True | Use ESM language model embeddings |
+
+## Output
+
+Chai outputs predicted structures in PDB format to the specified output directory.
+
+## Converting to Other Formats
+
+Chai's FASTA format can be converted to other tools:
+
+### To AlphaFold 3
+
+```bash
+python chai_to_af3_converter.py input.fasta output.json
+```
+
+### To Boltz2
+
+```bash
+python chai_to_boltz.py input.fasta output.yaml
+```
+
+<Tip>
+  **Memory usage:** Chai requires 128 GB of system memory. For very large complexes, you may need to adjust the memory request.
+</Tip>
+
+<Warning>
+  **GPU requirements:** Chai requires an A100 GPU. It will not run on older GPU architectures.
+</Warning>

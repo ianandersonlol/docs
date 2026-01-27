@@ -1,0 +1,134 @@
+---
+title: LigandMPNN
+description: Structure-conditioned protein sequence design using LigandMPNN
+---
+
+# LigandMPNN
+
+LigandMPNN designs protein sequences conditioned on a backbone structure, with awareness of bound ligands, nucleic acids, and other molecules. It's an extension of ProteinMPNN that handles non-protein contexts.
+
+<Note>
+  **Siegel Lab:** These scripts use Siegel Lab paths and accounts on HIVE. See the [Siegel Lab HPC Guide](/hpc/uc-davis/using-hive/siegel-lab) for account setup.
+</Note>
+
+## Usage
+
+```bash
+sbatch submit_ligandmpnn.sh input.pdb output_directory/
+```
+
+### SLURM Configuration
+
+```bash
+#!/bin/bash
+#SBATCH --partition=gpu-a100
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=128G
+#SBATCH --time=12:00:00
+#SBATCH --account=genome-center-grp
+```
+
+### Resource Requirements
+
+| Resource | Value |
+|----------|-------|
+| GPU | 1x A100 |
+| CPUs | 16 |
+| Memory | 128 GB |
+| Time | 12 hours |
+| Partition | `gpu-a100` |
+
+## Key Parameters
+
+The script includes several important parameters you should customize:
+
+### Batch Settings
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `--batch_size` | 100 | Sequences per batch |
+| `--number_of_batches` | 100 | Number of batches to generate |
+
+This default configuration generates 10,000 sequences (100 × 100).
+
+### Residue Selection
+
+```bash
+--redesigned_residues "A10,A15,A20,A25"  # Residues to redesign
+```
+
+Specify which residues to redesign using chain and residue number format (e.g., `A10` for chain A, residue 10).
+
+### Symmetry Constraints
+
+For symmetric designs, specify residues that should have the same sequence:
+
+```bash
+--symmetry_residues "A1,A2,A3"
+--symmetry_weights "0.1,0.3,0.5"
+```
+
+## Input Format
+
+LigandMPNN accepts PDB files containing:
+- Protein backbone (required)
+- Ligands (optional, will be considered in design)
+- Nucleic acids (optional)
+- Metal ions (optional)
+
+## Output
+
+LigandMPNN outputs designed sequences in FASTA format. Each sequence includes:
+- Sequence ID
+- Designed amino acid sequence
+- Per-residue confidence scores
+
+## Example Workflow
+
+<Steps>
+  <Step title="Prepare your structure">
+    Ensure your PDB file contains the protein backbone and any ligands/cofactors you want the design to accommodate.
+  </Step>
+  <Step title="Identify design positions">
+    Determine which residues you want to redesign. Consider:
+    - Active site residues
+    - Interface residues
+    - Residues for stability improvement
+  </Step>
+  <Step title="Configure the script">
+    Edit `submit_ligandmpnn.sh` to set your `--redesigned_residues` and batch parameters.
+  </Step>
+  <Step title="Submit the job">
+    ```bash
+    sbatch submit_ligandmpnn.sh your_structure.pdb designs/
+    ```
+  </Step>
+  <Step title="Validate designs">
+    Use structure prediction tools (AlphaFold, Chai, etc.) to validate that designed sequences fold correctly.
+  </Step>
+</Steps>
+
+## Customizing the Script
+
+To redesign specific residues, edit the script:
+
+```bash
+# Original (placeholder)
+--redesigned_residues "your residues you care about"
+
+# Example: redesigning active site residues
+--redesigned_residues "A45,A67,A89,A120,A145"
+```
+
+<Tip>
+  **Batch size tuning:** If you run out of GPU memory, reduce `--batch_size`. If jobs finish too quickly, increase `--number_of_batches`.
+</Tip>
+
+<Warning>
+  **Design validation:** Always validate LigandMPNN designs with structure prediction. Not all designed sequences will fold as expected.
+</Warning>
+
+## See Also
+
+- [Design Pipeline](/protein-engineering/design/design-pipeline) - Automated pipeline that includes LigandMPNN with conservation analysis and validation
