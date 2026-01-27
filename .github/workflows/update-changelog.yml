@@ -37,9 +37,9 @@ jobs:
           CHANGELOG=$(cat changelog.mdx)
 
           # Check if today's date already exists
-          if grep -q "date=\"$TODAY\"" changelog.mdx; then
+          if grep -q "label=\"$TODAY\"" changelog.mdx; then
             # Add to existing day's entry (insert after the opening Update tag)
-            sed -i "s|<Update date=\"$TODAY\">|<Update date=\"$TODAY\">\n- $COMMIT_MSG|" changelog.mdx
+            sed -i "s|<Update label=\"$TODAY\">|<Update label=\"$TODAY\">\n- $COMMIT_MSG|" changelog.mdx
           else
             # Create new entry after the frontmatter (after the closing ---)
             # Find line number of second --- (end of frontmatter)
@@ -48,7 +48,7 @@ jobs:
             # Create the new entry
             head -n "$FRONTMATTER_END" changelog.mdx > changelog_new.mdx
             echo "" >> changelog_new.mdx
-            echo "<Update date=\"$TODAY\">" >> changelog_new.mdx
+            echo "<Update label=\"$TODAY\">" >> changelog_new.mdx
             echo "- $COMMIT_MSG" >> changelog_new.mdx
             echo "</Update>" >> changelog_new.mdx
             tail -n +$((FRONTMATTER_END + 1)) changelog.mdx >> changelog_new.mdx
