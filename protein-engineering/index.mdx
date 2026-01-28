@@ -3,10 +3,6 @@ title: Overview
 description: Tools and workflows for protein structure prediction, design, and analysis
 ---
 
-# Protein Engineering
-
-This section covers computational tools and workflows for protein structure prediction, protein design, and molecular docking.
-
 <Note>
   **Siegel Lab users:** The example scripts in this section use Siegel Lab accounts and file paths on UC Davis HIVE. See the [Siegel Lab HPC Guide](/hpc/uc-davis/using-hive/siegel-lab) for account configuration.
 </Note>
@@ -58,33 +54,3 @@ Dock ligands and refine protein structures with Rosetta.
     Energy minimization and structure refinement
   </Card>
 </CardGroup>
-
-## Typical Workflows
-
-### Structure Prediction
-```mermaid
-graph LR
-    A[Sequence] --> B[AlphaFold/Chai/Boltz]
-    B --> C[Predicted Structure]
-    C --> D[Relaxation]
-```
-
-### Protein Design
-```mermaid
-graph LR
-    A[Target Structure] --> B[RFdiffusion]
-    B --> C[New Backbone]
-    C --> D[LigandMPNN]
-    D --> E[Designed Sequences]
-    E --> F[Structure Validation]
-```
-
-### Complete Design Pipeline
-```mermaid
-graph LR
-    A[Sequence] --> B[MSA + Conservation]
-    B --> C[Reference Structure]
-    C --> D[LigandMPNN Design]
-    D --> E[ColabFold Validation]
-    E --> F[RMSD Analysis]
-```
