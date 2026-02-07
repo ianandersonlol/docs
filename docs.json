@@ -127,6 +127,7 @@
             "group": "Miscellaneous Bioinformatics",
             "pages": [
               "misc-bioinfo/index",
+              "misc-bioinfo/ordering-from-twist",
               {
                 "group": "Mac Setup for Bioinformatics",
                 "pages": [
