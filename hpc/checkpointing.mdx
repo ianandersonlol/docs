@@ -83,6 +83,7 @@ def main():
 ## PyTorch Checkpointing
 
 ```python
+import os
 import torch
 
 CHECKPOINT_PATH = "model_checkpoint.pt"
@@ -117,7 +118,7 @@ for epoch in range(start_epoch, num_epochs):
 
 ### Handling Preemption Signals
 
-When SLURM preempts your job, it sends a signal before killing it. You can catch this signal to save a final checkpoint:
+When a job is preempted or approaches its time limit, clusters commonly send `SIGTERM` first. Some sites also configure an early warning signal (often `SIGUSR1`). Catch these so you can save a final checkpoint:
 
 ```python
 import signal
@@ -130,7 +131,8 @@ def handle_preemption(signum, frame):
 
 # Register signal handlers
 signal.signal(signal.SIGTERM, handle_preemption)
-signal.signal(signal.SIGCONT, handle_preemption)  # SLURM preemption
+if hasattr(signal, "SIGUSR1"):
+    signal.signal(signal.SIGUSR1, handle_preemption)
 ```
 
 ### Job Script for Resumable Work

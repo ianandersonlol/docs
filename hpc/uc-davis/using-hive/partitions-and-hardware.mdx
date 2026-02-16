@@ -121,9 +121,13 @@ sbatch -p gpu-a100 --gres=gpu:a100:2 job.sh
 # Request 1 A6000 GPU
 sbatch -p gpu-a6000 --gres=gpu:a6000:1 job.sh
 
-# Request any available GPU (if you don't care which type)
+# Request any available GPU in the selected partition
 sbatch -p gpu-a100 --gres=gpu:1 job.sh
 ```
+
+<Note>
+  HIVE separates A100 and A6000 GPUs into different partitions. Choose `gpu-a100` or `gpu-a6000` based on the GPU family you want.
+</Note>
 
 ### GPU Notes
 

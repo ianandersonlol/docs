@@ -44,7 +44,7 @@ SSH keys provide a more secure and convenient way to log in without entering you
     Open Terminal and run:
 
     ```bash
-    if [ -f ~/.ssh/id_rsa.pub ]; then echo "SSH key exists"; else echo "No SSH key found"; fi
+    if [ -f ~/.ssh/id_ed25519.pub ]; then echo "SSH key exists"; else echo "No SSH key found"; fi
     ```
 
     ### Create an SSH Key
@@ -52,7 +52,7 @@ SSH keys provide a more secure and convenient way to log in without entering you
     If you need to create a key, run:
 
     ```bash
-    ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+    ssh-keygen -t ed25519 -a 100 -C "your_email@example.com"
     ```
 
     - Press **Enter** to confirm the default location
@@ -61,7 +61,7 @@ SSH keys provide a more secure and convenient way to log in without entering you
     ### Copy the Public Key
 
     ```bash
-    pbcopy < ~/.ssh/id_rsa.pub
+    pbcopy < ~/.ssh/id_ed25519.pub
     ```
 
     This copies your public key to the clipboard.
@@ -81,13 +81,13 @@ SSH keys provide a more secure and convenient way to log in without entering you
     In your WSL terminal, run:
 
     ```bash
-    if [ -f ~/.ssh/id_rsa.pub ]; then echo "SSH key exists"; else echo "No SSH key found"; fi
+    if [ -f ~/.ssh/id_ed25519.pub ]; then echo "SSH key exists"; else echo "No SSH key found"; fi
     ```
 
     ### Create an SSH Key
 
     ```bash
-    ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+    ssh-keygen -t ed25519 -a 100 -C "your_email@example.com"
     ```
 
     ### Copy the Public Key
@@ -95,7 +95,7 @@ SSH keys provide a more secure and convenient way to log in without entering you
     Display the key and copy it manually:
 
     ```bash
-    cat ~/.ssh/id_rsa.pub
+    cat ~/.ssh/id_ed25519.pub
     ```
   </Tab>
 
@@ -105,7 +105,7 @@ SSH keys provide a more secure and convenient way to log in without entering you
     Open PowerShell and run:
 
     ```powershell
-    Test-Path "$HOME\.ssh\id_rsa.pub"
+    Test-Path "$HOME\.ssh\id_ed25519.pub"
     ```
 
     - If it returns `True`, you already have an SSH key
@@ -116,7 +116,7 @@ SSH keys provide a more secure and convenient way to log in without entering you
     In PowerShell, run:
 
     ```powershell
-    ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+    ssh-keygen -t ed25519 -a 100 -C "your_email@example.com"
     ```
 
     - Press **Enter** to accept the default file location
@@ -127,7 +127,7 @@ SSH keys provide a more secure and convenient way to log in without entering you
     Run the following command to copy your public key to the clipboard:
 
     ```powershell
-    Get-Content "$HOME\.ssh\id_rsa.pub" | Set-Clipboard
+    Get-Content "$HOME\.ssh\id_ed25519.pub" | Set-Clipboard
     ```
 
     Your public key is now copied and ready to paste into HIVE's SSH key text box.
@@ -139,7 +139,7 @@ SSH keys provide a more secure and convenient way to log in without entering you
     Open Terminal and run:
 
     ```bash
-    if [ -f ~/.ssh/id_rsa.pub ]; then echo "SSH key exists"; else echo "No SSH key found"; fi
+    if [ -f ~/.ssh/id_ed25519.pub ]; then echo "SSH key exists"; else echo "No SSH key found"; fi
     ```
 
     ### Create an SSH Key
@@ -147,7 +147,7 @@ SSH keys provide a more secure and convenient way to log in without entering you
     If you need to create a key, run:
 
     ```bash
-    ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+    ssh-keygen -t ed25519 -a 100 -C "your_email@example.com"
     ```
 
     - Press **Enter** to confirm the default location
@@ -158,13 +158,13 @@ SSH keys provide a more secure and convenient way to log in without entering you
     If you have `xclip` installed:
 
     ```bash
-    xclip -selection clipboard < ~/.ssh/id_rsa.pub
+    xclip -selection clipboard < ~/.ssh/id_ed25519.pub
     ```
 
     Alternatively, display the key and copy it manually:
 
     ```bash
-    cat ~/.ssh/id_rsa.pub
+    cat ~/.ssh/id_ed25519.pub
     ```
   </Tab>
 </Tabs>
@@ -174,5 +174,5 @@ SSH keys provide a more secure and convenient way to log in without entering you
 Once your account is approved, you can connect to HIVE via SSH:
 
 ```bash
-ssh your_kerberos_id@hive.ucdavis.edu
+ssh your_kerberos_id@hive.hpc.ucdavis.edu
 ```
