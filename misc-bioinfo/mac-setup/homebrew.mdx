@@ -31,7 +31,7 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 
 - **Dependency Management**: Automatically handles complex dependencies between tools
 - **Version Control**: Easy to install specific versions of bioinformatics tools
-- **Bioinformatics Tap**: The `brewsci/bio` tap contains hundreds of specialized bioinformatics packages
+- **Large Package Catalog**: Many common bioinformatics tools are available directly as core formulas
 - **Easy Updates**: Keep all your tools up to date with simple commands
 - **Binary Distribution**: Pre-compiled packages mean faster installation than building from source
 
@@ -86,8 +86,8 @@ brew install samtools
 # Install a cask (GUI application)
 brew install --cask rstudio
 
-# Install from a specific tap
-brew install brewsci/bio/blast
+# Install another bioinformatics formula
+brew install blast
 ```
 
 ### Searching for Packages
@@ -102,8 +102,8 @@ brew search --formula blast
 # Search only casks
 brew search --cask genome
 
-# Search in specific tap
-brew search brewsci/bio/
+# Search by description text
+brew search --desc alignment
 ```
 
 ### Getting Information
@@ -173,26 +173,25 @@ brew help
 
 ## Bioinformatics-Specific Tips
 
-### Add Important Taps
+### Prefer Core Formulas First
+
+Most bioinformatics tools you need on macOS are available directly in Homebrew core formulas and casks.
 
 ```bash
-# Bioinformatics packages
-brew tap brewsci/bio
-
-# R packages and tools
-brew tap brewsci/science
-
-# List your taps
-brew tap
+# Search before adding taps
+brew search samtools
+brew search blast
+brew search bwa
 ```
+
+If a tool is missing from Homebrew, install it via bioconda in a dedicated environment instead of adding old/unmaintained taps.
 
 ### Common Bioinformatics Installations
 
 ```bash
 # Essential bioinformatics tools (formulas)
 brew install samtools bcftools bedtools
-brew install brewsci/bio/blast
-brew install brewsci/bio/bwa
+brew install blast bwa
 
 # GUI applications (casks)
 brew install --cask igv

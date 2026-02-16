@@ -6,7 +6,7 @@ icon: wand-magic-sparkles
 
 # Customizing Your Shell: The Power of .zshrc
 
-Now that you have all the tools installed, we can customize your shell to make your workflow better and more efficient. The `.zshrc` file is your shell's configuration file that runs every time you open a new terminal session. Think of this as your settings file. `rc` stands for "run commands" which is essentially the commands that get run when zsh (Apple's version of bash) runs at the start!
+Now that you have all the tools installed, we can customize your shell to make your workflow better and more efficient. The `.zshrc` file is your shell's configuration file that runs every time you open a new terminal session. Think of this as your settings file. `rc` stands for "run commands" which is essentially the commands that get run when zsh (the default shell on modern macOS) starts.
 
 ## Basic .zshrc Setup
 
@@ -54,7 +54,7 @@ alias cin="mamba install"
 # SYSTEM MONITORING
 # ============================================
 
-alias meminfo="free -h"
+alias meminfo="vm_stat | head -n 15"
 alias diskspace="df -h"
 alias processes="htop"
 
@@ -130,15 +130,16 @@ blastdb() {
 # ENVIRONMENT SETUP
 # ============================================
 
-# Add common bioinformatics tools to PATH
-export PATH="/usr/local/bin:$PATH"
+# Homebrew paths (Apple Silicon + Intel)
+[ -d /opt/homebrew/bin ] && export PATH="/opt/homebrew/bin:$PATH"
+[ -d /usr/local/bin ] && export PATH="/usr/local/bin:$PATH"
 
 # Colorized ls output
 export CLICOLOR=1
 export LSCOLORS=ExFxBxDxCxegedabagacad
 
 # Better grep colors
-export GREP_OPTIONS='--color=auto'
+alias grep='grep --color=auto'
 ```
 
 ## Prompt Customization

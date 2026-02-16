@@ -11,20 +11,23 @@ Here are solutions to common issues you might encounter when setting up your bio
 ## Permission Issues
 
 <Warning>
-  Avoid using `sudo` with Homebrew or conda. This can cause permission problems and break your installation.
+  Avoid using `sudo` with Homebrew or conda unless official docs/support explicitly tell you to fix a specific path.
 </Warning>
 
 If you encounter permission errors:
 
 1. **For Homebrew**: Run `brew doctor` to diagnose issues
-2. **For conda/mamba**: Ensure you're using user-local installations (Mambaforge installs to your home directory by default)
+2. **For conda/mamba**: Ensure you're using user-local installations (Miniforge defaults to your home directory)
 
 ```bash
-# Check Homebrew permissions
+# Diagnose first
 brew doctor
 
-# Fix common Homebrew permission issues
-sudo chown -R $(whoami) /opt/homebrew
+# Check current Homebrew ownership
+ls -ld /opt/homebrew
+
+# Last resort: only run this if `brew doctor` explicitly says to fix ownership
+sudo chown -R "$(whoami)":admin /opt/homebrew/Cellar /opt/homebrew/Homebrew
 ```
 
 ## Path Issues
@@ -110,8 +113,11 @@ brew update
 # Search for the package
 brew search <package_name>
 
-# Check if it's in a tap
-brew search brewsci/bio/<package_name>
+# Search formulas only
+brew search --formula <package_name>
+
+# If not available in Homebrew, check bioconda instead
+mamba search -c bioconda <package_name>
 ```
 
 ### Upgrade Issues
@@ -162,9 +168,18 @@ ssh-keygen -t ed25519 -C "your_email@example.com"
 ### Repository Issues
 
 ```bash
-# Reset to match remote (careful - loses local changes!)
+# Inspect current state
+git status
+git log --oneline --decorate -n 5
+
+# Safer option: preserve current work before syncing to remote
+git switch -c backup-before-sync-$(date +%Y%m%d-%H%M%S)
+git switch main
 git fetch origin
-git reset --hard origin/main
+git pull --rebase
+
+# Only if you intentionally want to discard local commits/changes on main:
+# git reset --hard origin/main
 ```
 
 ## Getting Help
