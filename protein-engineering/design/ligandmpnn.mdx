@@ -110,11 +110,11 @@ LigandMPNN outputs designed sequences in FASTA format. Each sequence includes:
 To redesign specific residues, edit the script:
 
 ```bash
-# Original (placeholder)
---redesigned_residues "your residues you care about"
-
 # Example: redesigning active site residues
 --redesigned_residues "A45,A67,A89,A120,A145"
+
+# Example: redesigning an interface patch
+--redesigned_residues "A12,A16,A20,B34,B38,B42"
 ```
 
 <Tip>
