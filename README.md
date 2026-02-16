@@ -1,43 +1,54 @@
-# Mintlify Starter Kit
+# Ian's Docs (Mintlify)
 
-Use the starter kit to get your docs deployed and ready to customize.
+This repository contains documentation for bioinformatics, HPC, protein engineering, and lab workflows.
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+## Local Development
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
+1. Install the Mintlify CLI:
 
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
-
-## Development
-
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
-
-```
+```bash
 npm i -g mint
 ```
 
-Run the following command at the root of your documentation, where your `docs.json` is located:
+2. Run the local docs server from the repo root:
 
-```
+```bash
 mint dev
 ```
 
-View your local preview at `http://localhost:3000`.
+3. Open `http://localhost:3000`.
 
-## Publishing changes
+## Repository Structure
 
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
+- `docs.json`: Mintlify site config and navigation.
+- `index.mdx`: Homepage.
+- `hpc/`: General SLURM docs plus UC Davis HIVE and Stanford Sherlock guides.
+- `protein-engineering/`: Structure prediction, design, and docking workflows.
+- `genomics/`: Genomics section.
+- `misc-bioinfo/`: Miscellaneous guides including Mac setup and ordering workflows.
+- `images/`: Shared image assets used by docs pages.
+- `changelog.mdx`: Human-readable changelog for notable docs updates.
 
-## Need help?
+## Authoring Conventions
 
-### Troubleshooting
+- Use frontmatter (`title`, `description`, and optional `icon`, `toc`, `mode`) on each page.
+- Keep examples copy-pasteable and avoid user-specific values unless explicitly labeled.
+- Prefer placeholders like `YOUR_USERNAME`, `your_account`, and `JOBID` for commands.
+- Use section overview pages (`index.mdx`) with cards to route readers to detailed pages.
+- Add changelog entries for meaningful reader-facing documentation changes.
 
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
+## Pre-PR Checklist
 
-### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
+- Run `mint dev` and click through edited pages.
+- Verify internal links and image paths.
+- Confirm commands are accurate and safe (especially anything destructive).
+- Check for stale placeholders (`TODO`, `placeholder`, outdated hostnames, and unintended personal usernames).
+
+## Deployment
+
+Docs are deployed via Mintlify/GitHub integration when changes are pushed to the default branch.
+
+## Useful Links
+
+- [Mintlify docs](https://mintlify.com/docs)
+- [Site repository](https://github.com/ianandersonlol/docs)
