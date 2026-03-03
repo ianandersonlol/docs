@@ -93,7 +93,12 @@
                 "group": "Design",
                 "pages": [
                   "protein-engineering/design/ligandmpnn",
-                  "protein-engineering/design/rf-diffusion",
+                  "protein-engineering/design/rf-diffusion"
+                ]
+              },
+              {
+                "group": "Pipelines",
+                "pages": [
                   "protein-engineering/design/design-pipeline"
                 ]
               },
