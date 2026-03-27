@@ -4,25 +4,28 @@ description: Install the essential development tools that form the foundation of
 icon: hammer
 ---
 
-# Prerequisites: Xcode Command Line Tools
+<Frame>
+  ![Xcode](/images/Xcode.png)
+</Frame>
 
-<div style={{textAlign: 'center'}}>
+Before installing anything else, you need the **Xcode Command Line Tools** — a collection of development utilities provided by Apple that form the foundation of your bioinformatics environment.
 
-![Xcode](/images/Xcode.png)
+## What's Included
 
-</div>
-
-Before installing anything else, you need the Xcode Command Line Tools. These are essential development tools that form the foundation of your bioinformatics environment.
-
-## What are Xcode Command Line Tools?
-
-Xcode Command Line Tools are a collection of development utilities provided by Apple that include:
-
-- **Compilers**: `gcc`, `clang`, and `g++` for compiling C/C++ code (many bioinformatics tools are written in C/C++)
-- **Version Control**: `git` for managing code and downloading bioinformatics software from repositories
-- **Build Tools**: `make`, `cmake`, and other build systems used by bioinformatics packages
-- **Development Libraries**: Essential system libraries that bioinformatics software depends on
-- **Command Line Utilities**: Tools like `ld` (linker) and `ar` (archiver) for building software from source
+<CardGroup cols={2}>
+  <Card title="Compilers" icon="microchip">
+    `gcc`, `clang`, and `g++` for compiling C/C++ code — many bioinformatics tools are written in these languages.
+  </Card>
+  <Card title="Version Control" icon="code-branch">
+    `git` for managing code and downloading bioinformatics software from repositories.
+  </Card>
+  <Card title="Build Tools" icon="wrench">
+    `make`, `cmake`, and other build systems used by bioinformatics packages.
+  </Card>
+  <Card title="Libraries & Utilities" icon="book">
+    Essential system libraries, plus tools like `ld` (linker) and `ar` (archiver) for building software from source.
+  </Card>
+</CardGroup>
 
 ## Why They're Critical for Bioinformatics
 
@@ -30,7 +33,7 @@ Many bioinformatics tools are distributed as source code that needs to be compil
 
 - **Package managers** like Homebrew and conda won't work properly
 - **Source installations** of tools like BLAST, BWA, or GATK will fail
-- **Dependencies** for Python packages (like those requiring compilation) won't install
+- **Python packages** that require compilation won't install
 - **Git repositories** containing bioinformatics pipelines can't be cloned
 
 ## Installation
