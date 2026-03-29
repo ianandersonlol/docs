@@ -1,0 +1,58 @@
+---
+title: What is Agentic AI?
+description: What makes an AI agent different from a chatbot — and why the answer is more nuanced than you'd think
+---
+
+## The Simple Version
+
+An **AI agent** is a language model that can take actions in the world. Instead of just generating text in response to your prompt, an agent can:
+
+- **Use tools** — run code, search the web, read files, call APIs
+- **Make decisions** — choose which tools to use and in what order
+- **Loop** — observe the results of its actions and decide what to do next
+- **Operate autonomously** — complete multi-step tasks without you holding its hand at every step
+
+A chatbot gives you text. An agent *does things*.
+
+## The Honest Version
+
+Here's the thing nobody in the AI industry wants to admit: **chatbots have been agents for a lot longer than people realize**.
+
+When ChatGPT gained the ability to search the web in late 2023, that was agentic. It was deciding to use a tool (web search), executing it, reading the results, and synthesizing an answer. When it got Code Interpreter (now Advanced Data Analysis), it was writing Python, executing it in a sandbox, looking at the output, and iterating — that's a textbook agent loop.
+
+The industry retroactively decided to call these things "agents" once it became a marketing term worth billions, but the underlying pattern — **LLM observes → decides → acts → observes again** — has been present in production systems since 2023.
+
+### The Spectrum
+
+It's more useful to think of "agentic-ness" as a spectrum than a binary:
+
+| Level | What it does | Example |
+|-------|-------------|---------|
+| **Chatbot** | Responds to a prompt with text | "What is a PDB file?" → gets explanation |
+| **Tool-augmented chatbot** | Can invoke tools when asked | "Search PubMed for CRISPR reviews" → searches, summarizes |
+| **Agent** | Uses tools autonomously, loops, makes decisions | "Set up an AlphaFold run for this sequence" → writes script, checks dependencies, submits job |
+| **Autonomous agent** | Operates over extended periods with minimal supervision | "Monitor this docking pipeline overnight and restart failed jobs" |
+
+Most of what you'll work with as a scientist falls in the **agent** category — you give it a task, it figures out the steps, executes them, and comes back with results. You're in the loop for important decisions, but you're not micromanaging every keystroke.
+
+## Why This Matters for Science
+
+If you're a wet lab scientist, agentic AI means you don't need to become a software engineer to leverage computation. You can describe what you want in plain English, and the agent handles the implementation details — writing scripts, parsing files, managing environments.
+
+If you're a bioinformatician, agentic AI means you stop doing boring glue work. Instead of writing yet another argparse wrapper or debugging a path issue in your pipeline, you describe the intent and let the agent handle the tedium while you focus on the science.
+
+Either way, the shift is the same: **you describe the *what*, the agent handles the *how***.
+
+## Key Concepts
+
+Before we go further, here are the terms you'll see throughout this guide:
+
+- **Tool use / function calling** — The mechanism by which an LLM invokes external capabilities (running code, reading files, calling APIs). This is the foundation of all agentic behavior.
+- **Agent loop** — The cycle of observe → think → act → observe. An agent keeps looping until the task is complete or it needs your input.
+- **Context window** — The total amount of text an agent can "see" at once. This matters because tools, conversation history, and system prompts all compete for space.
+- **System prompt** — Instructions given to the agent before the conversation begins. This is where you define behavior, personality, and constraints. Some frameworks go *hilariously* overboard with this (more on that later).
+- **MCP (Model Context Protocol)** — A standard for connecting agents to external tools and data sources. Think of it as USB for AI. [More on this later](/agentic-ai/mcp).
+
+## Next Up
+
+Now that you know what agentic AI is, let's look at [how we got here](/agentic-ai/history) — from AutoGPT's infinite loops to the tools you'll actually use.

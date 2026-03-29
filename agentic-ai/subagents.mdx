@@ -1,0 +1,208 @@
+---
+title: Subagents
+description: Spawn specialized agents for parallel and complex workflows
+---
+
+## What is a Subagent?
+
+A **subagent** is a separate agent instance that your main agent spawns to handle a specific task. The main agent delegates work, the subagent goes off and does it, and the results come back. It's like asking a colleague to handle one part of a project while you focus on another.
+
+The key difference from just asking your agent to do things sequentially: **subagents run in parallel**. While one subagent is analyzing your sequencing data, another can be setting up a docking pipeline, and a third can be searching literature — all at the same time.
+
+## When to Use Subagents
+
+Use subagents when:
+- You have **genuinely parallel work** — tasks that don't depend on each other
+- A task requires **deep focus** that would eat up your main agent's context window
+- You want to **protect your main conversation** from getting cluttered with intermediate results
+- You need **different expertise** for different parts of a problem
+
+Don't use subagents when:
+- Tasks are sequential and each depends on the previous result — just do them in order
+- The task is simple enough for your main agent — spawning a subagent has overhead
+- You want to feel like a feudal lord managing an army of AI servants (go use OpenClaw for that, then go to therapy)
+
+## How Subagents Work in Claude Code
+
+<Tabs>
+  <Tab title="Claude Code">
+    In Claude Code, you can define custom subagents in `.claude/agents/`:
+
+    ```markdown
+    <!-- .claude/agents/literature-search.md -->
+    ---
+    name: literature-search
+    description: Search scientific literature and summarize findings
+    tools:
+      - WebSearch
+      - WebFetch
+      - Read
+      - Write
+    ---
+
+    # Literature Search Agent
+
+    You are a scientific literature research assistant. When given a topic:
+
+    1. Search for recent papers (prioritize last 3 years)
+    2. Focus on high-impact journals and preprint servers
+    3. For each relevant paper found:
+       - Title, authors, journal, year
+       - One-sentence summary of the key finding
+       - Relevance to the query
+    4. Synthesize findings into a brief overview
+    5. Suggest 2-3 follow-up questions or related searches
+
+    ## Search strategy
+    - Start broad, then narrow based on initial results
+    - Check both PubMed and Google Scholar
+    - Include preprints from bioRxiv/arXiv if relevant
+    - Note if a finding is from a preprint vs. peer-reviewed
+    ```
+
+    Claude Code will use this agent when it determines literature search is needed, or you can request it explicitly:
+
+    ```
+    > Use the literature-search agent to find recent papers on de novo enzyme design using diffusion models
+    ```
+  </Tab>
+  <Tab title="Codex">
+    Codex handles parallelism through async task execution. You can fire off multiple Codex tasks that run simultaneously in the cloud, each working on a different piece of your problem.
+  </Tab>
+  <Tab title="Gemini CLI">
+    Gemini CLI supports spawning sub-tasks through its orchestration features. The configuration is less granular than Claude Code's agent definitions.
+  </Tab>
+  <Tab title="Cursor">
+    Cursor doesn't have a native subagent concept. It's fundamentally a single-agent experience embedded in an editor.
+  </Tab>
+  <Tab title="OpenClaw">
+    <Warning>
+      OpenClaw users don't need subagents — they already have 36 of them and $200/day in API costs to show for it.
+    </Warning>
+  </Tab>
+</Tabs>
+
+## Science-Relevant Examples
+
+### Data Validation Agent
+
+```markdown
+<!-- .claude/agents/data-validator.md -->
+---
+name: data-validator
+description: Validate experimental data files for common issues
+tools:
+  - Read
+  - Bash
+  - Glob
+---
+
+# Data Validation Agent
+
+When given data files to validate:
+
+## For CSV/TSV files:
+- Check for consistent column counts across rows
+- Identify missing values and their frequency
+- Flag outliers (>3 standard deviations from mean for numeric columns)
+- Check for duplicate rows
+- Verify expected column headers are present
+
+## For FASTA files:
+- Verify format (> header lines, sequence lines)
+- Check for non-standard characters
+- Report sequence count and length distribution
+- Flag duplicate sequence IDs
+
+## For PDB files:
+- Check for missing atoms in residues
+- Identify chain breaks
+- Report resolution and R-factors
+- Flag unusual B-factors
+
+## Output
+Write a validation report to `validation_report.md` with:
+- Summary: pass/fail with issue count
+- Details: each issue with line numbers
+- Recommendations: suggested fixes
+```
+
+### Parallel Analysis Agent
+
+```markdown
+<!-- .claude/agents/structure-analyzer.md -->
+---
+name: structure-analyzer
+description: Analyze protein structure predictions in batch
+tools:
+  - Read
+  - Bash
+  - Write
+  - Glob
+---
+
+# Structure Analysis Agent
+
+When given a directory of protein structure predictions:
+
+1. Identify all PDB/mmCIF files
+2. For each structure:
+   - Extract pLDDT scores (AlphaFold) or confidence metrics
+   - Calculate overall and per-domain confidence
+   - Identify well-predicted vs. disordered regions
+   - Check for clashes
+3. Generate a summary table sorted by overall confidence
+4. Flag structures that need manual review (pLDDT < 70 in functional regions)
+5. Write results to `analysis_summary.csv`
+```
+
+### Usage: Combining Multiple Agents
+
+Here's what a real workflow looks like — you're designing a new enzyme variant and want to parallelize the analysis:
+
+```
+> I just finished running AlphaFold on 50 TEM-1 variants. The predictions are
+> in ./af_predictions/. I need three things done:
+>
+> 1. Validate all the output files for completeness
+> 2. Analyze the structure predictions and rank by confidence
+> 3. Search for recent papers on TEM-1 omega loop mutations
+>
+> Run these in parallel using the appropriate agents.
+```
+
+Claude Code will:
+- Spawn `data-validator` to check the AlphaFold outputs
+- Spawn `structure-analyzer` to rank predictions by confidence
+- Spawn `literature-search` to find omega loop mutation papers
+- Coordinate the results and present a unified summary
+
+All three run simultaneously. What would take you 30+ minutes of sequential work happens in the time it takes for the slowest task to complete.
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Define clear boundaries">
+    Each agent should have a specific, well-defined job. "Analyze stuff" is bad. "Validate FASTA files for format and content issues" is good. Clear boundaries prevent agents from stepping on each other's work.
+  </Accordion>
+
+  <Accordion title="Specify tools explicitly">
+    List exactly which tools each agent can use. A literature search agent doesn't need file write access. A data validator doesn't need web search. Minimal permissions = fewer surprises.
+  </Accordion>
+
+  <Accordion title="Define output format">
+    Every agent should know where and how to write its results. "Write a summary to validation_report.md" is better than "tell me what you found." Structured output is easier for your main agent to synthesize.
+  </Accordion>
+
+  <Accordion title="Don't over-parallelize">
+    Three parallel agents for genuinely independent tasks? Great. Fifteen agents for a task that could be done sequentially? You're OpenClaw-brained. Parallelism has overhead — spawn agents only when the tasks are truly independent and substantial enough to justify it.
+  </Accordion>
+
+  <Accordion title="Use subagents for context protection">
+    Even for sequential tasks, subagents are useful when a task would dump a huge amount of intermediate data into your main conversation. Analyzing 50 PDB files generates a lot of text — better to do that in a subagent and get a clean summary back.
+  </Accordion>
+</AccordionGroup>
+
+## Next Up
+
+Now you know about skills, slash commands, and subagents. But when should you use which? Check out [Choosing the Right Tool](/agentic-ai/when-to-use-what) for a practical decision guide.

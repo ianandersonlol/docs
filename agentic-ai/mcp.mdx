@@ -1,0 +1,112 @@
+---
+title: Model Context Protocol (MCP)
+description: How MCP connects agents to external tools and data sources
+---
+
+## What is MCP?
+
+**Model Context Protocol (MCP)** is an open standard that lets AI agents connect to external tools and data sources through a unified interface. Think of it as **USB for AI** — instead of every agent needing custom integrations for every tool, MCP provides a standard plug that works everywhere.
+
+Before MCP, if you wanted Claude Code to interact with your database, you'd need to write a custom tool or script. With MCP, someone writes a database server once, and any MCP-compatible agent can use it.
+
+## How It Works
+
+MCP follows a client-server architecture:
+
+1. **MCP Servers** expose capabilities — tools, resources, prompts — through a standard protocol
+2. **MCP Clients** (like Claude Code, Claude Desktop) connect to servers and make those capabilities available to the LLM
+3. The LLM decides when and how to use the available tools, just like any other agent tool
+
+```
+You → Agent (Claude Code) → MCP Client → MCP Server → External Tool
+                                                          ↓
+You ← Agent (Claude Code) ← MCP Client ← MCP Server ← Results
+```
+
+## Setting Up MCP in Claude Code
+
+MCP servers are configured in your Claude Code settings. You can set them up at the project level or globally:
+
+```json
+// .claude/settings.json (project-level)
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-filesystem-server", "/path/to/allowed/directory"]
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-postgres-server", "postgresql://localhost/mydb"]
+    }
+  }
+}
+```
+
+Once configured, Claude Code automatically discovers the available tools and can use them during your conversation.
+
+## Science-Relevant MCP Servers
+
+Here are MCP servers that are particularly useful for scientific workflows:
+
+### Data & Databases
+
+| Server | What it does |
+|--------|-------------|
+| **PostgreSQL** | Query and modify PostgreSQL databases — great for storing experimental results |
+| **SQLite** | Lightweight database access for local data |
+| **Filesystem** | Controlled read/write access to specific directories |
+
+### Research Tools
+
+| Server | What it does |
+|--------|-------------|
+| **Fetch** | Make HTTP requests — pull data from APIs, download files, query web services |
+| **Brave Search** | Web search for literature discovery and troubleshooting |
+| **GitHub** | Interact with repositories, issues, and pull requests |
+
+### Building Your Own
+
+If you have a tool or data source that doesn't have an MCP server, you can build one. MCP servers can be written in Python or TypeScript:
+
+```python
+# A minimal MCP server in Python
+from mcp.server import Server
+from mcp.types import Tool, TextContent
+
+server = Server("my-science-tool")
+
+@server.tool("parse_pdb")
+async def parse_pdb(pdb_path: str) -> list[TextContent]:
+    """Parse a PDB file and return structure summary."""
+    # Your parsing logic here
+    with open(pdb_path) as f:
+        content = f.read()
+
+    # Parse and summarize
+    summary = analyze_structure(content)
+    return [TextContent(type="text", text=summary)]
+
+if __name__ == "__main__":
+    server.run()
+```
+
+<Tip>
+  Building custom MCP servers is one of the most powerful things you can do with agentic AI in a science context. If your lab has internal tools or databases, wrapping them in MCP makes them accessible to any agent.
+</Tip>
+
+## MCP vs. Skills vs. Slash Commands
+
+MCP serves a different purpose than skills and slash commands:
+
+| Mechanism | What it does | When to use |
+|-----------|-------------|-------------|
+| **MCP** | Connects agents to external tools/data via a standard protocol | When you need to interface with an external system (database, API, service) |
+| **Skills** | Teach the agent reusable behaviors and knowledge | When you want the agent to know *how* to do something specific |
+| **Slash Commands** | Quick prompt templates | When you have a common prompt you want to reuse |
+
+These are complementary. You might have an MCP server that connects to your lab's database, a skill that knows how to analyze the data it returns, and a slash command that kicks off the whole workflow.
+
+## Next Up
+
+Now let's dive into [Skills](/agentic-ai/skills) — how to teach your agent reusable capabilities.

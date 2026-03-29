@@ -1,0 +1,143 @@
+---
+title: The Landscape
+description: An opinionated comparison of every major agentic AI platform — and one that should not exist
+---
+
+There are now more agentic AI platforms than anyone can keep track of. Here's my honest assessment of what's worth your time, what's situationally useful, and what is an active menace to your wallet and your sanity.
+
+## The Ones That Matter
+
+### Claude Code
+
+**What it is:** A terminal-based AI agent from Anthropic that operates in your actual development environment.
+
+**My take:** This is the gold standard. Claude Code reads your files, understands your project, runs commands, writes code, and iterates — all from your terminal. It's customizable via `CLAUDE.md` files, extendable with skills and subagents, and it just *works*. No framework to learn, no YAML to configure, no "soul" to write. You type what you want, it does it.
+
+For scientists, Claude Code is particularly powerful because it operates in your real environment. It can see your conda environments, your SLURM scripts, your data files. It doesn't need you to copy-paste things into a web UI — it's already *there*.
+
+**Best for:** Everything. Seriously. If you're doing computational work and can use a terminal, start here. This is what we'll primarily use throughout the rest of this guide.
+
+### OpenAI Codex
+
+**What it is:** OpenAI's cloud-based coding agent, accessible through ChatGPT or the API.
+
+**My take:** Codex is solid, especially if you're already in the OpenAI ecosystem. Its biggest differentiator is async execution — you can fire off a task and come back later, which is nice for long-running analysis jobs. The downside is that it runs in a cloud sandbox rather than your local environment, so there's more friction getting your data and tools in front of it. Its ability to create branches and PRs directly is genuinely useful for collaborative workflows.
+
+**Best for:** Async tasks, quick prototyping when you don't want to set up a local environment, teams already using ChatGPT.
+
+### Gemini CLI
+
+**What it is:** Google's terminal-based agent, powered by Gemini models.
+
+**My take:** It's fine. Google was late to this game and Gemini CLI feels like it — competent but not inspired. The integration with Google Cloud and BigQuery is nice if you're in that ecosystem. The models are capable but I find Claude more reliable for complex multi-step tasks, especially anything involving nuanced scientific reasoning.
+
+**Best for:** Teams deep in the Google Cloud ecosystem, BigQuery-heavy workflows.
+
+### Cursor
+
+**What it is:** An AI-native code editor (fork of VS Code) with built-in agentic capabilities.
+
+**My take:** Cursor is great if you live in an editor. The inline code generation, tab-completion, and chat-with-codebase features are genuinely useful. Where it falls short compared to Claude Code is flexibility — you're locked into the Cursor UI, and extending it with custom capabilities is more limited. It's also a GUI application, which means it doesn't compose as well with other tools (you can't pipe Cursor into a bash script).
+
+**Best for:** People who want AI assistance while editing code, don't want to leave their editor.
+
+### Claude Desktop / Claude Cowork
+
+**What it is:** Anthropic's desktop application with agentic capabilities built in, including a multi-agent collaboration mode.
+
+**My take:** Claude Desktop with tool use is great for people who aren't comfortable in a terminal. It can read files, search the web, write code, and use MCP integrations. Claude Cowork takes this further with multi-agent coordination — you can have multiple Claude instances working on different aspects of a problem simultaneously. It's more accessible than Claude Code but less flexible.
+
+**Best for:** Scientists who want agentic capabilities without the terminal, collaborative workflows.
+
+### Antigravity
+
+**What it is:** Google's IDE, basically their answer to Cursor.
+
+**My take:** It's Google's attempt at an AI-native code editor. It integrates well with Gemini models and Google Cloud services. If Cursor is the market leader, Antigravity is the well-funded challenger. It's fine. I don't have strong feelings about it. Use it if you're a Google shop.
+
+**Best for:** Teams in the Google ecosystem who want an AI editor.
+
+### Conductor
+
+**What it is:** A Mac app for running multiple AI agents in parallel across different tasks.
+
+**My take:** Conductor is in a different category — it's an orchestration layer. Instead of running one agent at a time, you can spin up multiple workspaces and have agents working on different things simultaneously. It's particularly useful for science workflows where you might want one agent setting up a docking pipeline while another analyzes sequencing data. Think of it as a project manager for your agents.
+
+**Best for:** Power users managing multiple tasks, parallel computational workflows.
+
+---
+
+## And Then There's OpenClaw
+
+<Warning>
+The following section contains strong opinions. If you are an OpenClaw user, I recommend sitting down, possibly with a therapist.
+</Warning>
+
+### What It Is
+
+OpenClaw (formerly Clawdbot, then Moltbot after Anthropic's lawyers got involved) is an open-source "autonomous AI agent" created by Peter Steinberger. It has 247,000 GitHub stars. It is, in my considered professional opinion, one of the most absurd pieces of software ever created, and the fact that a quarter million people starred it is a damning indictment of our industry's relationship with hype.
+
+### The Architecture of Madness
+
+Let me walk you through what OpenClaw asks you to do:
+
+1. **Write a `SOUL.md`** — This is the agent's "personality, values, tone, and behavioral boundaries." You are literally writing a *character sheet* for a language model. You are giving it a *soul*. We are doing D&D character creation for API calls.
+
+2. **Write an `AGENTS.md`** — This defines your multi-agent routing. Because one agent wasn't enough. You need an *army*.
+
+3. **Write a `TOOLS.md`** — What your agents can do.
+
+4. **Write an `IDENTITY.md`** — Personalization for your agent. Because SOUL.md wasn't personal enough, apparently.
+
+5. **Write a `HEARTBEAT.md`** — Configures how often your agent "beats." I genuinely cannot make this up.
+
+This is **five configuration files** before your agent does a single useful thing. And every one of them gets injected into the system prompt. OpenClaw's own documentation shows that a basic conversation prompt is **9,600+ tokens before the user says anything**. You are paying real money — money that could fund actual research — to give a language model a backstory.
+
+By contrast, Claude Code needs *one file* (`CLAUDE.md`), and it's optional.
+
+### The Feudal Lord Fantasy
+
+Here's what really gets me. OpenClaw's big selling point is multi-agent orchestration. You can create a "team" of specialized agents — one for coding, one for research, one for testing, one for whatever else makes you feel important. Someone literally built a team of **36 agents** and wrote a blog post about it like it was an achievement.
+
+You don't need 36 agents. You don't need 5 agents. You need **one good agent** that can use tools. That's it. Claude Code is one agent, and it can read files, write code, run tests, search the web, and do basically anything you need. The multi-agent pattern in OpenClaw exists to let you **LARP as a feudal lord with a bunch of robo-serfs**. It satisfies some deep psychological need to feel like you're *managing* something, when in reality you're just burning tokens on system prompts.
+
+Every agent in your little kingdom has its own SOUL.md. Every agent sends the full conversation history on every request. You are paying a **40% token premium** so you can pretend you're delegating to subordinates. Go to therapy instead. It's cheaper and you'll actually get something out of it.
+
+### The Security Dumpster Fire
+
+If the architecture didn't scare you off, the security should.
+
+- **CVE-2026-25253 (CVSS 8.8)** — A critical remote code execution vulnerability. The UI accepted a `gatewayUrl` parameter without validation, meaning a crafted link in an email or blog post could hijack your agent and steal your auth token. Over **40,000 instances** were found exposed on the internet. Sixty-three percent were vulnerable.
+
+- **ClawJacked** — Discovered by Oasis Security. Any website you visited could silently take **full control** of your agent with no plugins, no extensions, no user interaction. The gateway accepted WebSocket connections from localhost without CORS restrictions, the rate limiter exempted localhost (enabling brute force), and device pairings from localhost were auto-approved. A website could just... take over.
+
+- **The Skill Marketplace from Hell** — OpenClaw has ClawHub, a marketplace for community-contributed skills (think plugins). An independent audit found that **12% of all skills were confirmed malicious**. Not suspicious — *confirmed malicious*. Keyloggers, credential stealers, prompt injection payloads, and delivery of Atomic macOS Stealer (a commodity infostealer sold as Malware-as-a-Service). 335 malicious skills were traced to a single coordinated operation called **ClawHavoc**.
+
+- **China banned it** in government agencies and state-run enterprises. When the *People's Republic of China* thinks your software is a security risk, maybe take a step back.
+
+Steinberger's response to the security concerns? He said security **"isn't something he wants to prioritize."** Days later, OpenAI hired him. Sam Altman called him "a genius."
+
+### The Bottom Line on OpenClaw
+
+OpenClaw exists to satisfy a fantasy. The fantasy is that you are an important person who manages a team of AI agents, each with carefully crafted souls and identities, working tirelessly on your behalf. In reality, you are a person who spent 3 hours writing YAML to give a language model a personality, are paying 40% more per request than necessary, and have a 12% chance of installing malware every time you download a skill.
+
+Use Claude Code. It's one agent. It works. It doesn't need a soul.
+
+---
+
+## Quick Comparison
+
+| Platform | Interface | Strengths | Weaknesses |
+|----------|-----------|-----------|------------|
+| **Claude Code** | CLI | Flexible, customizable, works in your environment | Terminal only (some scientists find this intimidating) |
+| **Codex** | Web / CLI | Async execution, cloud sandbox | Not in your local environment |
+| **Gemini CLI** | CLI | Google Cloud integration | Playing catch-up |
+| **Cursor** | Editor | Great inline experience | Locked into GUI, less composable |
+| **Claude Desktop** | GUI app | Accessible, MCP support | Less flexible than CLI |
+| **Antigravity** | Editor | Google ecosystem integration | New, less mature |
+| **Conductor** | GUI app | Parallel agent orchestration | Mac only |
+| **OpenClaw** | Messaging apps | 247K GitHub stars | Everything else |
+
+## Next Up
+
+Now that you know what's out there, let's talk about [how to actually interact with these agents](/agentic-ai/interaction-modes) — and why I think the terminal is the best way to do it.

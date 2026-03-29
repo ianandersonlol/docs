@@ -1,0 +1,228 @@
+---
+title: Skills
+description: Teach your agent reusable capabilities with custom skills
+---
+
+## What is a Skill?
+
+A **skill** is a reusable capability you teach your agent. It's a markdown file that contains instructions, context, and optionally tool definitions that the agent loads when the skill is relevant. Think of it as giving your agent specialized training for a specific task.
+
+Skills are different from just typing instructions into the chat because:
+- They **persist** across conversations — you write them once, use them forever
+- They **trigger automatically** when relevant — you don't have to remember to ask
+- They **encapsulate domain knowledge** — the skill can contain detailed context that would be tedious to re-explain every time
+
+## When to Use a Skill
+
+Use a skill when:
+- You find yourself explaining the same thing to Claude Code repeatedly
+- A task requires domain-specific knowledge or conventions
+- You want consistent behavior across conversations (e.g., "always parse PDB files this way")
+- The task involves multiple steps that should be done in a specific order
+
+Don't use a skill when:
+- It's a one-off task — just type it out
+- The instruction is short and simple — put it in `CLAUDE.md` instead
+- You just need a quick prompt template — use a [slash command](/agentic-ai/slash-commands) instead
+
+## Anatomy of a Skill
+
+Skills live in `.claude/skills/` in your project directory. Each skill is a markdown file:
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```markdown
+    <!-- .claude/skills/parse-pdb.md -->
+    ---
+    name: parse-pdb
+    description: Parse PDB files and summarize protein structure information
+    ---
+
+    # PDB File Parser
+
+    When asked to parse or analyze a PDB file, follow these steps:
+
+    1. Read the PDB file and identify:
+       - Number of chains and their IDs
+       - Residue count per chain
+       - Ligands present (HETATM records)
+       - Resolution (from REMARK 2)
+       - Experimental method (from EXPDTA)
+
+    2. For each chain, report:
+       - Chain ID, length, and sequence (one-letter codes)
+       - Secondary structure summary (from HELIX/SHEET records)
+       - Any modified residues
+
+    3. For ligands:
+       - Identify each unique ligand by residue name
+       - Report which chains they interact with
+       - List coordinating residues within 4Å
+
+    4. Output format:
+       - Start with a one-line summary
+       - Then structured details per chain
+       - Then ligand details
+       - Finally, any warnings (missing residues, alternate conformations, etc.)
+
+    ## Important conventions
+    - Always use one-letter amino acid codes unless asked otherwise
+    - Report distances in Ångströms
+    - Flag any chain breaks or missing density
+    ```
+  </Tab>
+  <Tab title="Codex">
+    Codex uses a similar concept through its system prompt customization. You'd include PDB parsing instructions in your Codex configuration or as part of a custom agent setup through the API.
+
+    The core instructions would be the same — Codex just doesn't have a dedicated skill file format.
+  </Tab>
+  <Tab title="Gemini CLI">
+    Gemini CLI supports custom instructions through configuration files. The equivalent would be adding PDB parsing rules to your Gemini settings:
+
+    ```json
+    // .gemini/settings.json
+    {
+      "customInstructions": "When parsing PDB files, always identify chains, ligands, resolution..."
+    }
+    ```
+
+    Less structured than Claude Code's skill system, but functional.
+  </Tab>
+  <Tab title="Cursor">
+    In Cursor, you'd add this to your `.cursorrules` file:
+
+    ```markdown
+    ## PDB Parsing
+    When asked to parse PDB files, identify chains, ligands, resolution...
+    ```
+
+    Cursor rules are global to the project — there's no concept of individually triggered skills.
+  </Tab>
+  <Tab title="OpenClaw">
+    <Warning>
+      Ask one of your robo-servants. You're already wasting tokens giving it a stupid SOUL.md anyway.
+    </Warning>
+  </Tab>
+</Tabs>
+
+## Example: BLAST Search Skill
+
+Here's a more complex skill that teaches Claude Code how to run BLAST searches in your local environment:
+
+```markdown
+<!-- .claude/skills/local-blast.md -->
+---
+name: local-blast
+description: Run BLAST searches against local databases
+---
+
+# Local BLAST Search
+
+When asked to run a BLAST search or find sequence homologs:
+
+## Prerequisites
+- BLAST+ is installed via conda: `conda activate blast_env`
+- Local databases are at: ~/blast_db/
+- Available databases: nr_subset, pdb_seqres, swissprot, custom_lab_db
+
+## Workflow
+
+1. **Determine search type:**
+   - Protein query → protein DB: use `blastp`
+   - Nucleotide query → nucleotide DB: use `blastn`
+   - Protein query → translated nucleotide DB: use `tblastn`
+   - Nucleotide query → protein DB: use `blastx`
+
+2. **Write the query to a temp FASTA file** if given raw sequence
+
+3. **Run the search:**
+   ```bash
+   blastp -query input.fasta \
+     -db ~/blast_db/DATABASE \
+     -out results.txt \
+     -outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore" \
+     -evalue 1e-5 \
+     -max_target_seqs 50 \
+     -num_threads 8
+   ```
+
+4. **Parse and present results:**
+   - Sort by e-value
+   - Highlight hits with >30% identity and >80% query coverage
+   - Flag any hits from the custom_lab_db (these are our own constructs)
+   - Suggest follow-up analyses if relevant (MSA, phylogeny, structure prediction)
+
+## Defaults
+- E-value cutoff: 1e-5 (adjust if user specifies)
+- Output format: tabular (outfmt 6) for parsing, switch to full (outfmt 0) if user wants alignment details
+- Always report the database used and the number of hits
+```
+
+## Example: Sequence Analysis Skill
+
+```markdown
+<!-- .claude/skills/sequence-analysis.md -->
+---
+name: sequence-analysis
+description: Analyze protein or nucleotide sequences with standard bioinformatics tools
+---
+
+# Sequence Analysis
+
+When asked to analyze a sequence:
+
+## Identification
+1. Determine if it's protein or nucleotide:
+   - Only A, T/U, G, C, N → nucleotide
+   - Contains other letters → protein
+   - If ambiguous, ask
+
+## Protein Analysis
+- **Basic properties:** Length, molecular weight, pI (use BioPython ProtParam)
+- **Composition:** Amino acid frequencies, charge at pH 7
+- **Motifs:** Check for common motifs (signal peptides, NLS, transmembrane domains)
+- **Disorder:** Note stretches of >10 consecutive disorder-promoting residues (P, E, S, Q, K)
+
+## Nucleotide Analysis
+- **Basic properties:** Length, GC content, melting temperature
+- **ORF detection:** Find open reading frames, report longest ORF
+- **Codon usage:** If coding sequence, report codon usage bias
+
+## Tools available in this environment
+- BioPython: `from Bio import SeqIO, SeqUtils`
+- Conda env: `conda activate bioinfo`
+
+## Output conventions
+- Always show the sequence length first
+- Use one-letter codes for amino acids
+- Report molecular weights in kDa
+- Show GC content as a percentage
+```
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Keep skills focused">
+    One skill, one job. A skill for PDB parsing, a skill for BLAST, a skill for sequence analysis — not one mega-skill that tries to do everything. Focused skills are easier to maintain and the agent can combine them as needed.
+  </Accordion>
+
+  <Accordion title="Include your environment details">
+    Skills should reference your actual setup — where databases live, what conda environments to use, what modules to load. This is what makes a skill more useful than a generic prompt.
+  </Accordion>
+
+  <Accordion title="Specify output format">
+    Tell the skill exactly how you want results presented. "Sort by e-value, highlight hits above 30% identity" is much better than "show the results." Consistent output makes your life easier.
+  </Accordion>
+
+  <Accordion title="Document defaults and overrides">
+    State the defaults (e-value 1e-5, max 50 hits) so the agent uses them automatically, but make it clear these can be overridden when you ask.
+  </Accordion>
+
+  <Accordion title="Version control your skills">
+    Skills in `.claude/skills/` are just markdown files. Commit them to your repo. Share them with your lab. When someone new joins, they get all your agent knowledge for free.
+  </Accordion>
+</AccordionGroup>
+
+## Next Up
+
+Skills are for complex, multi-step behaviors. For simpler, quick-fire prompt templates, check out [Slash Commands](/agentic-ai/slash-commands).

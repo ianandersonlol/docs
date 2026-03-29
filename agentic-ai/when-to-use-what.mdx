@@ -1,0 +1,131 @@
+---
+title: Choosing the Right Tool
+description: When to use a skill vs. a slash command vs. a subagent vs. just talking to Claude
+---
+
+You now know about skills, slash commands, subagents, and MCP. The natural question: **when do I use which?**
+
+Here's the honest answer: most of the time, you should just talk to your agent directly. The customization tools exist for when you hit a pattern you're repeating, not for over-engineering your setup on day one.
+
+## The Decision Guide
+
+### "I need to do something once"
+
+**Just type it out.**
+
+Seriously. The most underrated agentic AI technique is just describing what you want in plain English. No skill file, no slash command, no configuration. Just:
+
+```
+> Parse this PDB file and tell me about the binding site residues
+```
+
+Claude Code will figure it out. If it doesn't do it exactly the way you want, tell it. Iterate. This is the fastest path to getting something done.
+
+**Use this when:** it's a one-off task, you're exploring, or you haven't done this enough times to know your preferred format.
+
+### "I keep asking for the same thing"
+
+**Make a slash command.**
+
+If you've asked Claude to "analyze this sequence and give me MW, pI, and charge at pH 7" three times this week, that's a pattern. Save it:
+
+```markdown
+<!-- .claude/commands/analyze-seq.md -->
+Analyze the following sequence: $ARGUMENTS
+Report: type, length, MW (kDa), pI, charge at pH 7, notable features.
+Be concise. One-line summary first.
+```
+
+Now you type `/analyze-seq MVLSPADKTN...` and get consistent results every time.
+
+**Use this when:** you have a prompt you use repeatedly, it's relatively short, and you want consistent output format.
+
+### "This task requires specialized knowledge"
+
+**Write a skill.**
+
+If the task involves domain-specific conventions, multi-step workflows, or knowledge about your environment that Claude wouldn't know by default, that's a skill:
+
+```markdown
+<!-- .claude/skills/local-blast.md -->
+When running BLAST: use the conda blast_env, databases are at ~/blast_db/,
+default e-value 1e-5, always use outfmt 6 for parsing...
+```
+
+Skills are richer than slash commands — they encode *how* to do something, not just *what* to do.
+
+**Use this when:** the task requires environment-specific knowledge, has multiple steps that should be done in a specific order, or involves conventions that would be tedious to re-explain.
+
+### "I need to connect to an external system"
+
+**Set up an MCP server.**
+
+If you need your agent to interact with a database, API, or external tool, MCP is the right mechanism:
+
+```json
+{
+  "mcpServers": {
+    "lab-database": {
+      "command": "python",
+      "args": ["./mcp-servers/lab-db-server.py"]
+    }
+  }
+}
+```
+
+**Use this when:** you need persistent connections to external systems — databases, APIs, internal tools.
+
+### "I have genuinely parallel work"
+
+**Spawn subagents.**
+
+If you have multiple independent tasks — validate data, analyze structures, search literature — and they don't depend on each other, run them in parallel:
+
+```
+> Run these in parallel:
+> 1. Validate the AlphaFold outputs in ./predictions/
+> 2. Search for papers on TEM-1 omega loop stability
+> 3. Check if my SLURM jobs from yesterday completed successfully
+```
+
+**Use this when:** you have 2+ independent tasks that would take meaningful time if done sequentially.
+
+## Quick Reference
+
+| Situation | Tool | Effort to set up |
+|-----------|------|-----------------|
+| One-off task | Just type it | None |
+| Repeated prompt | Slash command | 2 minutes |
+| Complex domain task | Skill | 10-15 minutes |
+| External system access | MCP server | 30 min - few hours |
+| Parallel independent tasks | Subagents | 10-15 min per agent |
+
+## Common Mistakes
+
+<AccordionGroup>
+  <Accordion title="Over-engineering too early">
+    Don't write skills and slash commands on day one. Use Claude Code for a week first. See what patterns emerge. Then codify the ones you actually repeat. Premature optimization applies to agent configuration too.
+  </Accordion>
+
+  <Accordion title="Making everything a subagent">
+    Not every task needs to be parallelized. If tasks are sequential (step 2 needs the output of step 1), subagents add overhead for no benefit. Just do them in order.
+  </Accordion>
+
+  <Accordion title="Putting environment details in slash commands instead of skills">
+    A slash command says "do X." A skill says "here's how to do X in our environment." If your slash command is growing past 10 lines because you're explaining where databases live and what conda environments to use, it should be a skill.
+  </Accordion>
+
+  <Accordion title="Ignoring CLAUDE.md">
+    Before you write any skills or commands, put your project-wide conventions in `CLAUDE.md`. Things like "always use mamba instead of conda" or "our lab uses one-letter amino acid codes" belong there, not duplicated across every skill.
+  </Accordion>
+
+  <Accordion title="The OpenClaw trap">
+    The temptation to build an elaborate multi-agent system with specialized agents for everything is real. Resist it. One good agent with well-defined skills will outperform an army of poorly-configured agents every time — and cost a fraction of the tokens.
+  </Accordion>
+</AccordionGroup>
+
+## The Bottom Line
+
+Start simple. Type what you want. When you notice a pattern, save it as a slash command. When you need domain expertise, write a skill. When you need external tools, set up MCP. When you have parallel work, use subagents.
+
+That's it. No souls, no heartbeats, no identity files. Just a capable agent and a clear way to extend it when you need to.

@@ -1,0 +1,124 @@
+---
+title: Interaction Modes
+description: CLI vs. native apps vs. editor plugins — and why the terminal wins
+---
+
+There are fundamentally four ways to interact with an AI agent. Each has trade-offs, but I have a strong preference — and after you try them all, I think you will too.
+
+## The Four Modes
+
+### 1. Command Line Interface (CLI)
+
+**Examples:** Claude Code, Gemini CLI, Codex CLI
+
+You open a terminal, type a command, and talk to the agent in a conversational loop. The agent can see your filesystem, run commands, and work directly in your environment.
+
+```bash
+# Start Claude Code in your project directory
+cd ~/projects/my-protein-pipeline
+claude
+```
+
+That's it. You're now talking to an agent that can see your entire project, run your scripts, and modify your files.
+
+**Why this is my recommendation:**
+
+- **Composability** — CLI tools play nicely with everything else. You can pipe output, use them in scripts, chain them with other tools. Try doing that with a GUI.
+- **Environment access** — The agent sees your real conda environments, your real data, your real SLURM config. No uploading, no copy-pasting.
+- **Flexibility** — You can customize behavior with config files, skills, and slash commands. You can run multiple instances. You can background tasks.
+- **Speed** — No app to open, no UI to navigate. You're already in the terminal (you're a scientist, of course you are).
+- **Reproducibility** — Everything you do is in text. You can save conversations, share commands, version-control your agent configuration.
+
+**The downside:** If you've never used a terminal before, there's a learning curve. But if you're doing computational science, you already use the terminal. And if you don't, the [Mac Setup guide](/misc-bioinfo/mac-setup) will get you there.
+
+### 2. Native Applications
+
+**Examples:** Claude Desktop, ChatGPT, Conductor
+
+Dedicated apps with their own UI. You interact through a chat interface, sometimes with file upload, sometimes with tool integrations.
+
+**The good:**
+- Lower barrier to entry — if you can use iMessage, you can use Claude Desktop
+- Visual features — image generation, file previews, rich formatting
+- MCP integrations in Claude Desktop give it genuine agentic capabilities
+
+**The less good:**
+- You're copying and pasting between the app and your actual work environment
+- Harder to automate or integrate into workflows
+- The app controls the experience — you can't extend it the way you want
+
+**When to use this:** If you're a wet lab scientist who wants to ask Claude to help interpret some data or write a script, Claude Desktop is perfectly fine. You don't need the CLI for everything. But for sustained computational work, you'll eventually want more flexibility.
+
+### 3. Editor Plugins / AI Editors
+
+**Examples:** Cursor, Antigravity, GitHub Copilot, VS Code + Continue
+
+AI capabilities embedded directly in your code editor. The agent can see your open files, suggest completions, and make edits inline.
+
+**The good:**
+- Tight integration with your editing workflow
+- See suggestions in context, accept/reject inline
+- Tab completion is genuinely useful for boilerplate
+
+**The less good:**
+- You're limited to what the editor exposes — can't easily run arbitrary shell commands or complex multi-step workflows
+- Editor plugins tend to be code-focused, not great for broader research tasks
+- Cursor in particular locks you into their fork of VS Code
+
+**When to use this:** If you're spending most of your time writing code in an editor (as opposed to running pipelines, analyzing data, etc.), an AI editor is a nice complement to a CLI agent. I often use Claude Code for the heavy lifting and occasionally lean on editor suggestions for boilerplate.
+
+### 4. Orchestration Layers
+
+**Examples:** Conductor, Claude Cowork
+
+Meta-tools that manage multiple agents working in parallel.
+
+**The good:**
+- Run several tasks simultaneously — one agent on your docking pipeline, another on your analysis scripts
+- Project-level overview of what all your agents are doing
+- Shared context between workspaces
+
+**The less good:**
+- Additional complexity — now you're managing the manager
+- Overkill for single-task workflows
+
+**When to use this:** When you have genuinely parallel work. If you're setting up three different computational experiments, having them run simultaneously instead of sequentially is a real time saver.
+
+## My Setup
+
+Here's what I actually use day-to-day:
+
+1. **Claude Code** as the primary workhorse — 90% of my agent interactions happen here
+2. **Conductor** when I'm running multiple tasks in parallel
+3. **Claude Desktop** for quick questions when I'm away from the terminal
+4. **Cursor** occasionally for editor-level suggestions when writing code
+
+Your mileage will vary. The beauty of the CLI-first approach is that it doesn't lock you out of anything else — Claude Code works great alongside any editor, any app, any other tool.
+
+## For the Rest of This Guide
+
+The examples and tutorials in the following sections will primarily use **Claude Code**. Where relevant, we'll include tabs showing how to accomplish the same thing in other platforms:
+
+<Tabs>
+  <Tab title="Claude Code">
+    This is where the real examples will be. Clear, direct, no unnecessary configuration.
+  </Tab>
+  <Tab title="Codex">
+    We'll show the Codex equivalent where applicable.
+  </Tab>
+  <Tab title="Gemini CLI">
+    And the Gemini CLI version.
+  </Tab>
+  <Tab title="Cursor">
+    And how to do it in Cursor.
+  </Tab>
+  <Tab title="OpenClaw">
+    <Warning>
+      You chose this tab voluntarily. That's between you and your therapist. For the rest of this guide, the OpenClaw tab will be here to remind you that you could be spending those tokens on something useful.
+    </Warning>
+  </Tab>
+</Tabs>
+
+## Next Up
+
+Let's get into the building blocks. First up: [Model Context Protocol (MCP)](/agentic-ai/mcp) — how agents connect to external tools and data.
