@@ -154,6 +154,41 @@
         ]
       },
       {
+        "tab": "Agentic AI",
+        "groups": [
+          {
+            "group": "Agentic AI",
+            "pages": [
+              "agentic-ai/index",
+              {
+                "group": "Foundations",
+                "pages": [
+                  "agentic-ai/what-is-agentic-ai",
+                  "agentic-ai/history"
+                ]
+              },
+              {
+                "group": "The Ecosystem",
+                "pages": [
+                  "agentic-ai/the-landscape",
+                  "agentic-ai/interaction-modes",
+                  "agentic-ai/mcp"
+                ]
+              },
+              {
+                "group": "Hands-On",
+                "pages": [
+                  "agentic-ai/skills",
+                  "agentic-ai/slash-commands",
+                  "agentic-ai/subagents",
+                  "agentic-ai/when-to-use-what"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Changelog",
         "groups": [
           {

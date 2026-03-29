@@ -1,0 +1,95 @@
+---
+title: A Brief History of Agents
+description: From AutoGPT's infinite loops to Claude Code — how agentic AI evolved
+---
+
+The history of agentic AI is a story of people repeatedly discovering the same idea, hyping it beyond reason, watching it fail, and then quietly making it work a year later. Here's how it actually played out.
+
+## 2023: The AutoGPT Era (The Hype That Didn't Work)
+
+In March 2023, a developer named Toran Bruce Richards published **AutoGPT** — a Python script that let GPT-4 call itself in a loop. You'd give it a goal like "research the best restaurants in San Francisco and make a spreadsheet," and it would:
+
+1. Think about what to do
+2. Decide to search the web
+3. Read the results
+4. Decide it needed more information
+5. Search again
+6. Get confused about what it already did
+7. Search again
+8. Run out of money
+
+AutoGPT became the fastest-growing GitHub repo in history at the time. It spawned an entire ecosystem of imitators — **BabyAGI**, **AgentGPT**, **SuperAGI**, and a dozen others. The premise was intoxicating: give an AI a goal and let it figure out the rest.
+
+The reality was... less intoxicating. These early agents had fundamental problems:
+
+- **No reliable tool use** — GPT-4 wasn't fine-tuned for function calling yet, so agents would hallucinate tool invocations, forget their output format, or get stuck in loops
+- **Context window starvation** — With only 8K tokens, the agent would fill its memory with its own ramblings and forget what it was supposed to be doing
+- **No guardrails** — These things would happily try to `rm -rf /` if their chain of thought led there
+- **Astronomical costs** — Each loop iteration was an expensive GPT-4 API call, and agents loved to loop
+
+The AutoGPT era proved the concept was compelling but the execution wasn't there yet. Most people tried it once, burned $20, got garbage results, and went back to ChatGPT.
+
+## Late 2023: ChatGPT Becomes an Agent (Quietly)
+
+While the open-source agent community was chasing the autonomous dream, OpenAI was quietly making ChatGPT agentic in ways that actually worked:
+
+- **Web Browsing** (September 2023) — ChatGPT could search Bing, navigate to pages, and read content. It decided *when* to search and *what* to look for. That's agentic.
+- **Code Interpreter** (July 2023) — ChatGPT could write Python, execute it in a sandbox, see the output, and iterate. It would try something, see an error, fix it, and try again. That's an agent loop.
+- **DALL-E Integration** (October 2023) — ChatGPT could decide to generate images as part of a response without being explicitly asked.
+
+None of this was marketed as "agentic AI." It was just ChatGPT getting better. But functionally, ChatGPT had tool use, decision-making, and iterative loops — the exact definition of an agent.
+
+The difference from AutoGPT was that these tools were **reliable**. OpenAI fine-tuned their models specifically for tool use, the tools were sandboxed and safe, and the context window could handle the overhead. The boring, incremental approach worked; the flashy autonomous approach didn't.
+
+## 2024: The API Gets Agentic
+
+OpenAI formalized the agent pattern for developers:
+
+- **Assistants API** (late 2023) — Gave developers persistent threads, file handling, and tool use in an API. It was clunky and slow, but it worked.
+- **Responses API with Agent Tooling** (2024) — OpenAI replaced the Assistants API with something more flexible. The Responses API included native support for tool definitions, multi-turn tool use, and agent-style workflows. This was effectively OpenAI saying "yes, agents are a real pattern, here's how to build them."
+
+Meanwhile, **Anthropic** shipped tool use for Claude (mid-2024), and the model was *good* at it. Claude's longer context windows and instruction-following ability made it especially well-suited for agent workflows.
+
+Google shipped Gemini function calling. Meta open-sourced Llama models that could do tool use. The infrastructure for agents was becoming table stakes.
+
+## 2025: Agents That Actually Work
+
+This is when things got real. Two major shifts happened:
+
+### Claude Code (Early 2025)
+
+Anthropic released **Claude Code** — a terminal-based agent that could read your codebase, write code, run commands, and iterate on the results. It was the first agent that felt like a genuinely useful collaborator rather than a tech demo.
+
+What made Claude Code different:
+
+- **It worked in your actual environment** — not a sandbox, not a web UI, your real terminal with your real files
+- **Customizable via CLAUDE.md** — you could give it project-specific instructions that persisted across sessions
+- **Sensible defaults** — it asked before doing anything destructive, it understood git workflows, it could recover from errors
+- **Skills and subagents** — you could extend it with custom capabilities without writing a framework around it
+
+Claude Code proved that the right approach wasn't "autonomous AI that does everything" — it was "capable AI that works with you."
+
+### The Cambrian Explosion
+
+Once Claude Code proved the model, everyone jumped in:
+
+- **OpenAI Codex** — OpenAI's answer to Claude Code, cloud-based with async task execution
+- **Google Gemini CLI** — Google's terminal agent, later supplemented by Antigravity (their Cursor competitor)
+- **Cursor** — AI-native code editor that baked agentic behavior into the editing experience
+- **Claude Desktop / Claude Cowork** — Anthropic brought agentic capabilities to their desktop app and multi-agent collaboration
+- **Conductor** — Orchestration layer for running multiple agents in parallel (you may be reading this in it)
+
+And then there was OpenClaw. We'll get to OpenClaw.
+
+## 2025-2026: Where We Are Now
+
+The dust is settling and a few things are clear:
+
+1. **The models are good enough** — Tool use, long context, instruction following — the foundation works now
+2. **The interface matters more than the model** — How you interact with an agent (CLI, editor, app) shapes what you can accomplish more than which LLM is under the hood
+3. **Customization is everything** — The ability to teach an agent about *your* project, *your* workflows, and *your* preferences is what separates useful tools from toys
+4. **Autonomous is overrated** — The best agents keep you in the loop. Full autonomy sounds cool until it burns $200 in API calls chasing its own tail (looking at you, OpenClaw)
+
+## Next Up
+
+Now that you know the history, let's look at [the current landscape](/agentic-ai/the-landscape) — what's out there, what's good, what's bad, and what should be launched into the sun.

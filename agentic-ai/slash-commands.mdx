@@ -1,0 +1,204 @@
+---
+title: Slash Commands
+description: Quick-fire prompt templates you can invoke with a keystroke
+---
+
+## What is a Slash Command?
+
+A **slash command** is a reusable prompt template that you invoke by typing `/command-name`. It's the simplest form of agent customization — no complex configuration, no multi-step workflows, just a canned prompt that you use often enough to justify saving.
+
+Think of slash commands as keyboard shortcuts for your brain. Instead of typing out "please analyze this sequence and tell me the molecular weight, pI, charge at pH 7, and check for signal peptides" every time, you type `/analyze-seq` and the prompt expands.
+
+## When to Use a Slash Command
+
+Use a slash command when:
+- You type the same prompt frequently (more than 2-3 times)
+- The prompt is relatively short and self-contained
+- You don't need complex multi-step logic — just a template
+- You want to standardize how you ask for something
+
+Don't use a slash command when:
+- The task requires detailed multi-step instructions → use a [skill](/agentic-ai/skills) instead
+- You need the agent to connect to external systems → use [MCP](/agentic-ai/mcp) instead
+- You need parallel execution or autonomous behavior → use a [subagent](/agentic-ai/subagents) instead
+
+## Creating Slash Commands
+
+<Tabs>
+  <Tab title="Claude Code">
+    Slash commands in Claude Code are markdown files in `.claude/commands/`:
+
+    ```markdown
+    <!-- .claude/commands/analyze-seq.md -->
+    Analyze the following sequence: $ARGUMENTS
+
+    Report:
+    1. Whether it's protein or nucleotide
+    2. Length
+    3. If protein: molecular weight (kDa), isoelectric point, charge at pH 7
+    4. If nucleotide: GC content, longest ORF
+    5. Any notable features (signal peptides, transmembrane domains, unusual composition)
+
+    Be concise. Start with a one-line summary.
+    ```
+
+    Then use it:
+
+    ```
+    > /analyze-seq MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH
+    ```
+
+    The `$ARGUMENTS` variable gets replaced with whatever you type after the command name.
+  </Tab>
+  <Tab title="Codex">
+    Codex doesn't have a native slash command system. The equivalent would be saving prompt templates in your project and referencing them, or using the API with predefined prompts.
+  </Tab>
+  <Tab title="Gemini CLI">
+    Gemini CLI supports custom commands through its configuration. You can define prompt templates that expand when invoked.
+  </Tab>
+  <Tab title="Cursor">
+    Cursor doesn't have user-defined slash commands in the same way. You'd use Cursor's built-in commands or create snippets in your editor configuration.
+  </Tab>
+  <Tab title="OpenClaw">
+    <Warning>
+      You could configure this in OpenClaw, but you'd need a SOUL.md, an AGENTS.md, an IDENTITY.md, a HEARTBEAT.md, and a therapist.
+    </Warning>
+  </Tab>
+</Tabs>
+
+## Science-Relevant Examples
+
+### Quick Sequence Lookup
+
+```markdown
+<!-- .claude/commands/uniprot.md -->
+Look up the UniProt entry for: $ARGUMENTS
+
+Report: protein name, organism, function summary, length,
+any known structures (PDB IDs), and subcellular location.
+Keep it to one short paragraph.
+```
+
+Usage: `/uniprot P00533` or `/uniprot human EGFR`
+
+### SLURM Job Template
+
+```markdown
+<!-- .claude/commands/slurm-script.md -->
+Write a SLURM job script for: $ARGUMENTS
+
+Use these defaults unless I specify otherwise:
+- Partition: high2
+- Account: siegellab
+- Time: 24 hours
+- CPUs: 8
+- Memory: 32G
+- Output: logs/%x_%j.out
+
+Include proper module loads and conda activation as needed.
+```
+
+Usage: `/slurm-script AlphaFold3 prediction with 2 GPU on the gpu partition`
+
+### Explain a Paper
+
+```markdown
+<!-- .claude/commands/explain-paper.md -->
+I'm going to give you a paper or section of a paper. Explain it to me like I'm a
+scientist in a related field who is NOT an expert in this specific topic.
+
+Focus on:
+- What problem they're solving and why it matters
+- The key insight or method (one paragraph)
+- Main results (bullet points)
+- Limitations they acknowledge
+- What I'd need to know to use this in my own work
+
+Paper/section: $ARGUMENTS
+```
+
+Usage: `/explain-paper [paste abstract or section]`
+
+### Format for Lab Meeting
+
+```markdown
+<!-- .claude/commands/lab-meeting.md -->
+I'm presenting the following at lab meeting. Help me organize it into a clear
+5-minute summary:
+
+$ARGUMENTS
+
+Structure:
+1. One-sentence context (why we care)
+2. What I did this week (3-4 bullet points, be specific)
+3. Key result or finding (with numbers if available)
+4. What's next / what I need help with
+
+Keep it casual but precise. No jargon that wouldn't be understood by the whole lab.
+```
+
+Usage: `/lab-meeting ran 50 AlphaFold predictions for the TEM-1 variants, 30 converged with pLDDT >80, noticed the L76 mutations all have lower confidence in the omega loop region...`
+
+### Quick Stats Check
+
+```markdown
+<!-- .claude/commands/stats.md -->
+I need a quick statistical sanity check on: $ARGUMENTS
+
+Tell me:
+1. What test is appropriate and why
+2. Whether my sample size is reasonable
+3. Any assumptions I should check
+4. A one-liner in Python (scipy or statsmodels) to run it
+
+Be direct. Don't lecture me on statistics, just answer the question.
+```
+
+Usage: `/stats comparing enzyme activity between wild-type (n=12) and mutant (n=10), data looks roughly normal`
+
+## Slash Commands with Bash Execution
+
+You can make slash commands that execute shell commands using the `$` prefix:
+
+```markdown
+<!-- .claude/commands/check-jobs.md -->
+$squeue -u $USER --format="%.18i %.9P %.50j %.8u %.8T %.10M %.9l %.6D %R"
+
+Summarize my running and pending SLURM jobs. For each:
+- Job name and ID
+- How long it's been running vs. time limit
+- Current status
+- If pending, estimated start time
+
+Flag any jobs that are using >80% of their time limit.
+```
+
+Usage: `/check-jobs` — the squeue command runs automatically, and Claude analyzes the output.
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Use $ARGUMENTS for flexibility">
+    Almost every slash command should accept `$ARGUMENTS`. This turns a static prompt into a flexible template. Without arguments, your command does the same thing every time — usually not what you want.
+  </Accordion>
+
+  <Accordion title="Specify output format explicitly">
+    "Be concise" is good. "Start with a one-line summary, then bullet points, keep it under 200 words" is better. Slash commands should produce predictable output.
+  </Accordion>
+
+  <Accordion title="Keep them short">
+    If your slash command is more than ~15 lines, it's probably a skill. Slash commands are for quick prompts, not comprehensive instructions.
+  </Accordion>
+
+  <Accordion title="Name them well">
+    You'll forget what `/sc7` does. You won't forget what `/analyze-seq` does. Use descriptive names, use hyphens for multi-word names.
+  </Accordion>
+
+  <Accordion title="Share them with your lab">
+    Like skills, slash commands are just markdown files in `.claude/commands/`. Commit them to your repo and your whole team gets the same shortcuts.
+  </Accordion>
+</AccordionGroup>
+
+## Next Up
+
+Slash commands are great for simple templates. For truly autonomous parallel work, you need [Subagents](/agentic-ai/subagents).
