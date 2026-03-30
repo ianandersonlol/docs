@@ -1,6 +1,6 @@
 ---
 title: Model Context Protocol (MCP)
-description: How MCP connects agents to external tools and data sources
+description: What MCP is, why it matters in theory, and why I'm skeptical of it for bioinformatics
 ---
 
 ## What is MCP?
@@ -45,68 +45,40 @@ MCP servers are configured in your Claude Code settings. You can set them up at 
 
 Once configured, Claude Code automatically discovers the available tools and can use them during your conversation.
 
-## Science-Relevant MCP Servers
+## My Honest Take: MCP and Bioinformatics
 
-Here are MCP servers that are particularly useful for scientific workflows:
+MCP has a lot of promise. In other fields — web development, enterprise software, DevOps — it's genuinely useful for connecting agents to databases, APIs, and cloud services. The standard is well-designed and the ecosystem is growing.
 
-### Data & Databases
+**For bioinformatics, I don't think MCPs are remotely useful.** (Hehe, pun intended.)
 
-| Server | What it does |
-|--------|-------------|
-| **PostgreSQL** | Query and modify PostgreSQL databases — great for storing experimental results |
-| **SQLite** | Lightweight database access for local data |
-| **Filesystem** | Controlled read/write access to specific directories |
+Here's why: most bioinformatics tools are command-line programs. AlphaFold, BLAST, GROMACS, samtools, bedtools — you run them from a terminal. There's an AlphaFold 2 MCP out there. AlphaFold 2 is *run via the command line*. Why do you need an MCP server wrapping a CLI tool when your agent already has access to the command line? It's an extra layer of abstraction that adds complexity without adding capability.
 
-### Research Tools
+Even if you're using cloud compute for heavy jobs, there are better ways to implement that than an MCP server. A skill that knows how to submit SLURM jobs, or a simple wrapper script, will get you further with less overhead.
 
-| Server | What it does |
-|--------|-------------|
-| **Fetch** | Make HTTP requests — pull data from APIs, download files, query web services |
-| **Brave Search** | Web search for literature discovery and troubleshooting |
-| **GitHub** | Interact with repositories, issues, and pull requests |
+In my experience, **skills and CLIs are almost always more useful than MCPs** for science workflows. A skill that teaches Claude how to run BLAST is simpler, more transparent, and easier to debug than an MCP server that wraps BLAST. The skill lives in a markdown file you can read and edit. The MCP server is a running process that adds a network layer between your agent and your tool.
 
-### Building Your Own
+<Warning>
+  Be very wary of MCP servers in bioinformatics. Before installing one, ask yourself: "Could I just teach my agent to run the command directly?" If the answer is yes — and it almost always is — skip the MCP and write a skill instead.
+</Warning>
 
-If you have a tool or data source that doesn't have an MCP server, you can build one. MCP servers can be written in Python or TypeScript:
+### Where MCPs *might* make sense in science
 
-```python
-# A minimal MCP server in Python
-from mcp.server import Server
-from mcp.types import Tool, TextContent
+To be fair, there are a few scenarios where MCP could add value:
 
-server = Server("my-science-tool")
+- **Lab databases** — If your lab has a PostgreSQL or SQLite database storing experimental results, an MCP server gives your agent structured access to it
+- **Internal APIs** — If your institution has REST APIs for instrument data, sample tracking, etc.
+- **Persistent services** — Things that genuinely need a running server, like a local language model or a monitoring dashboard
 
-@server.tool("parse_pdb")
-async def parse_pdb(pdb_path: str) -> list[TextContent]:
-    """Parse a PDB file and return structure summary."""
-    # Your parsing logic here
-    with open(pdb_path) as f:
-        content = f.read()
-
-    # Parse and summarize
-    summary = analyze_structure(content)
-    return [TextContent(type="text", text=summary)]
-
-if __name__ == "__main__":
-    server.run()
-```
-
-<Tip>
-  Building custom MCP servers is one of the most powerful things you can do with agentic AI in a science context. If your lab has internal tools or databases, wrapping them in MCP makes them accessible to any agent.
-</Tip>
+But for the 90% case of "I want my agent to run a bioinformatics tool" — just use the command line. That's what it's there for.
 
 ## MCP vs. Skills vs. Slash Commands
 
-MCP serves a different purpose than skills and slash commands:
-
 | Mechanism | What it does | When to use |
 |-----------|-------------|-------------|
-| **MCP** | Connects agents to external tools/data via a standard protocol | When you need to interface with an external system (database, API, service) |
-| **Skills** | Teach the agent reusable behaviors and knowledge | When you want the agent to know *how* to do something specific |
+| **MCP** | Connects agents to external tools/data via a standard protocol | When you need to interface with a genuinely external system (database, API, running service) |
+| **Skills** | Teach the agent reusable behaviors and knowledge | When you want the agent to know *how* to do something specific — this is usually what you want in bioinfo |
 | **Slash Commands** | Quick prompt templates | When you have a common prompt you want to reuse |
-
-These are complementary. You might have an MCP server that connects to your lab's database, a skill that knows how to analyze the data it returns, and a slash command that kicks off the whole workflow.
 
 ## Next Up
 
-Now let's dive into [Skills](/agentic-ai/skills) — how to teach your agent reusable capabilities.
+Now let's dive into Skills — how to teach your agent reusable capabilities. This is where things get really useful for science.

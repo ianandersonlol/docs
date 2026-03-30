@@ -1,6 +1,6 @@
 ---
 title: Choosing the Right Tool
-description: When to use a skill vs. a slash command vs. a subagent vs. just talking to Claude
+description: When to use a skill vs. a slash command vs. a subagent vs. just talking to Claude — or nothing at all
 ---
 
 You now know about skills, slash commands, subagents, and MCP. The natural question: **when do I use which?**
@@ -58,22 +58,11 @@ Skills are richer than slash commands — they encode *how* to do something, not
 
 ### "I need to connect to an external system"
 
-**Set up an MCP server.**
+**Maybe set up an MCP server. But probably just use a skill.**
 
-If you need your agent to interact with a database, API, or external tool, MCP is the right mechanism:
+As discussed in the MCP section, for bioinformatics specifically, skills and direct CLI access almost always get you further than MCP. Reserve MCP for genuinely external systems like databases or institutional APIs.
 
-```json
-{
-  "mcpServers": {
-    "lab-database": {
-      "command": "python",
-      "args": ["./mcp-servers/lab-db-server.py"]
-    }
-  }
-}
-```
-
-**Use this when:** you need persistent connections to external systems — databases, APIs, internal tools.
+**Use this when:** you need persistent connections to external systems — databases, APIs, internal services — and the tool doesn't have a CLI.
 
 ### "I have genuinely parallel work"
 
@@ -88,7 +77,19 @@ If you have multiple independent tasks — validate data, analyze structures, se
 > 3. Check if my SLURM jobs from yesterday completed successfully
 ```
 
-**Use this when:** you have 2+ independent tasks that would take meaningful time if done sequentially.
+**Use this when:** you have 2+ independent tasks that would take meaningful time if done sequentially, and the results don't need your deep engagement.
+
+### "I do this all the time and it never changes"
+
+**Write a script.**
+
+This is the one people forget. If a task is fully repeatable — same inputs, same steps, same outputs — and doesn't require any judgment or setup from the agent, it's a better use of tokens to have Claude write you a Python script or bash script and then just *run the script*. You don't need an agent to do something a cron job could handle.
+
+<Warning>
+  Tokens are currently **heavily subsidized** by model makers. The prices you pay today are a fraction of the actual cost. This will not last forever, and it will end sooner than most people realize. Build habits now that are token-efficient. If something can be a script instead of an agent interaction, make it a script.
+</Warning>
+
+**Use this when:** the task is deterministic, repeatable, and doesn't benefit from AI judgment.
 
 ## Quick Reference
 
@@ -97,7 +98,8 @@ If you have multiple independent tasks — validate data, analyze structures, se
 | One-off task | Just type it | None |
 | Repeated prompt | Slash command | 2 minutes |
 | Complex domain task | Skill | 10-15 minutes |
-| External system access | MCP server | 30 min - few hours |
+| Fully repeatable task | A script | 5-30 minutes |
+| External system access | MCP server (maybe) | 30 min - few hours |
 | Parallel independent tasks | Subagents | 10-15 min per agent |
 
 ## Common Mistakes
@@ -108,7 +110,11 @@ If you have multiple independent tasks — validate data, analyze structures, se
   </Accordion>
 
   <Accordion title="Making everything a subagent">
-    Not every task needs to be parallelized. If tasks are sequential (step 2 needs the output of step 1), subagents add overhead for no benefit. Just do them in order.
+    Not every task needs to be parallelized. If tasks are sequential (step 2 needs the output of step 1), subagents add overhead for no benefit. And if the output is something you need to think about scientifically, keep it in your main conversation.
+  </Accordion>
+
+  <Accordion title="Using an agent when a script would do">
+    If you're running the same BLAST search with the same parameters on a new sequence every day, that's not an agent task — that's a bash one-liner. Have Claude write the script once, then run it yourself. Save the agent for tasks that actually require intelligence.
   </Accordion>
 
   <Accordion title="Putting environment details in slash commands instead of skills">
@@ -124,8 +130,18 @@ If you have multiple independent tasks — validate data, analyze structures, se
   </Accordion>
 </AccordionGroup>
 
+## A Note on AI Agents and Science
+
+I want to end with something that I think is important and that gets lost in the hype.
+
+For science specifically, I think it is better to treat these agentic systems as a **collaborator** you're working alongside, not a workforce you're managing. The human-in-the-loop component is really important. Keep the interaction conversational.
+
+It's easy — and tempting — to offload more and more of your workflow to skills and subagents that just run automatically. That's great in industry, and great for other fields, but in science it might not be the best approach. **Your value as a scientist is your ability to do science** — to think critically, to notice patterns, to ask the right questions, to solve hard problems. Using AI agents is easy to learn. Work on a side project over a weekend and you can be close to an expert, or at least enough of one that your job prospects are safe. Being a good scientist is the differentiator. Keep doing that.
+
+Don't let people who tell you "these are totally different from chatbots and shouldn't be treated like chatbots" lead you astray. Sure, minimize how much you have to explain to your agent — use skills, use CLAUDE.md, set up your environment. But always keep the human in the loop. The agent handles the *doing*. You handle the *thinking*. That's the partnership that works.
+
 ## The Bottom Line
 
-Start simple. Type what you want. When you notice a pattern, save it as a slash command. When you need domain expertise, write a skill. When you need external tools, set up MCP. When you have parallel work, use subagents.
+Start simple. Type what you want. When you notice a pattern, save it as a slash command. When you need domain expertise, write a skill. When you have parallel work, use subagents. When something is fully repeatable, write a script.
 
 That's it. No souls, no heartbeats, no identity files. Just a capable agent and a clear way to extend it when you need to.

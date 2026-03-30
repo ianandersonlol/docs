@@ -16,11 +16,11 @@ A chatbot gives you text. An agent *does things*.
 
 ## The Honest Version
 
-Here's the thing nobody in the AI industry wants to admit: **chatbots have been agents for a lot longer than people realize**.
+Here's the thing that e/acc weirdos and LinkedIn influencers don't want to admit: **chatbots have been agents for a lot longer than people realize**.
 
 When ChatGPT gained the ability to search the web in late 2023, that was agentic. It was deciding to use a tool (web search), executing it, reading the results, and synthesizing an answer. When it got Code Interpreter (now Advanced Data Analysis), it was writing Python, executing it in a sandbox, looking at the output, and iterating — that's a textbook agent loop.
 
-The industry retroactively decided to call these things "agents" once it became a marketing term worth billions, but the underlying pattern — **LLM observes → decides → acts → observes again** — has been present in production systems since 2023.
+The industry began leaning on the term "agents" once it became a marketing term worth billions, but the underlying pattern — **LLM observes → decides → acts → observes again** — has been present in production systems since 2023.
 
 ### The Spectrum
 
@@ -43,6 +43,21 @@ If you're a bioinformatician, agentic AI means you stop doing boring glue work. 
 
 Either way, the shift is the same: **you describe the *what*, the agent handles the *how***.
 
+## The Human in the Loop
+
+This is important enough to get its own section: **keep yourself in the loop**.
+
+Agents are excellent at handling the *doing* — running commands, writing boilerplate, parsing files, setting up environments. But the *thinking* is where you, the scientist, add value. The trap is that you can also offload the thinking to your agent, and sometimes that's fine, but you need to be deliberate about when you do.
+
+Think carefully about what you do and do not need to actually think about:
+
+- **Offload freely:** Running a BLAST search, formatting data, writing a SLURM script, setting up a conda environment. These are mechanical tasks where the agent saves you time without any loss of understanding.
+- **Stay in the loop:** Analyzing BLAST results, interpreting structure predictions, choosing which variants to test next, designing experiments. These are the decisions where your scientific judgment matters.
+
+The key is *how you set things up*. If you ask an agent to "run BLAST and analyze the results and pick the top candidates," you've outsourced the entire workflow including the parts you should be thinking about. If instead you ask it to "run BLAST and present the results organized by identity and coverage," you get the mechanical work done for you while keeping the analysis in your hands.
+
+We'll come back to this throughout the guide — it's a recurring theme.
+
 ## Key Concepts
 
 Before we go further, here are the terms you'll see throughout this guide:
@@ -51,8 +66,8 @@ Before we go further, here are the terms you'll see throughout this guide:
 - **Agent loop** — The cycle of observe → think → act → observe. An agent keeps looping until the task is complete or it needs your input.
 - **Context window** — The total amount of text an agent can "see" at once. This matters because tools, conversation history, and system prompts all compete for space.
 - **System prompt** — Instructions given to the agent before the conversation begins. This is where you define behavior, personality, and constraints. Some frameworks go *hilariously* overboard with this (more on that later).
-- **MCP (Model Context Protocol)** — A standard for connecting agents to external tools and data sources. Think of it as USB for AI. [More on this later](/agentic-ai/mcp).
+- **MCP (Model Context Protocol)** — A standard for connecting agents to external tools and data sources. Think of it as USB for AI.
 
 ## Next Up
 
-Now that you know what agentic AI is, let's look at [how we got here](/agentic-ai/history) — from AutoGPT's infinite loops to the tools you'll actually use.
+Now that you know what agentic AI is, let's look at how we got here — from AutoGPT's infinite loops to the tools you'll actually use.

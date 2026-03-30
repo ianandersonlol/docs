@@ -23,7 +23,7 @@ Use a skill when:
 Don't use a skill when:
 - It's a one-off task — just type it out
 - The instruction is short and simple — put it in `CLAUDE.md` instead
-- You just need a quick prompt template — use a [slash command](/agentic-ai/slash-commands) instead
+- You just need a quick prompt template — use a slash command instead
 
 ## Anatomy of a Skill
 
@@ -109,7 +109,7 @@ Skills live in `.claude/skills/` in your project directory. Each skill is a mark
 
 Here's a more complex skill that teaches Claude Code how to run BLAST searches in your local environment:
 
-```markdown
+````markdown
 <!-- .claude/skills/local-blast.md -->
 ---
 name: local-blast
@@ -156,7 +156,7 @@ When asked to run a BLAST search or find sequence homologs:
 - E-value cutoff: 1e-5 (adjust if user specifies)
 - Output format: tabular (outfmt 6) for parsing, switch to full (outfmt 0) if user wants alignment details
 - Always report the database used and the number of hits
-```
+````
 
 ## Example: Sequence Analysis Skill
 
@@ -225,4 +225,4 @@ When asked to analyze a sequence:
 
 ## Next Up
 
-Skills are for complex, multi-step behaviors. For simpler, quick-fire prompt templates, check out [Slash Commands](/agentic-ai/slash-commands).
+Skills are for complex, multi-step behaviors. For simpler, quick-fire prompt templates, check out Slash Commands.

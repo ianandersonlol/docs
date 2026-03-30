@@ -33,7 +33,7 @@ That's it. You're now talking to an agent that can see your entire project, run 
 
 ### 2. Native Applications
 
-**Examples:** Claude Desktop, ChatGPT, Conductor
+**Examples:** Claude Desktop, ChatGPT
 
 Dedicated apps with their own UI. You interact through a chat interface, sometimes with file upload, sometimes with tool integrations.
 
@@ -65,11 +65,11 @@ AI capabilities embedded directly in your code editor. The agent can see your op
 - Editor plugins tend to be code-focused, not great for broader research tasks
 - Cursor in particular locks you into their fork of VS Code
 
-**When to use this:** If you're spending most of your time writing code in an editor (as opposed to running pipelines, analyzing data, etc.), an AI editor is a nice complement to a CLI agent. I often use Claude Code for the heavy lifting and occasionally lean on editor suggestions for boilerplate.
+**When to use this:** If you're spending most of your time writing code in an editor (as opposed to running pipelines, analyzing data, etc.), an AI editor is a nice complement to a CLI agent.
 
 ### 4. Orchestration Layers
 
-**Examples:** Conductor, Claude Cowork
+**Examples:** Claude Cowork
 
 Meta-tools that manage multiple agents working in parallel.
 
@@ -88,10 +88,10 @@ Meta-tools that manage multiple agents working in parallel.
 
 Here's what I actually use day-to-day:
 
-1. **Claude Code** as the primary workhorse — 90% of my agent interactions happen here
-2. **Conductor** when I'm running multiple tasks in parallel
-3. **Claude Desktop** for quick questions when I'm away from the terminal
-4. **Cursor** occasionally for editor-level suggestions when writing code
+1. **Claude Code** as the primary workhorse — the vast majority of my agent interactions happen here
+2. **Codex** for certain tasks that involve holding a lot of information in the context window, or when I want to compare approaches with Claude Code
+3. **Antigravity / Gemini CLI** occasionally, when I want Google's opinion on something. There are certain things Gemini is just a better model at, though that gap is slowly becoming less relevant
+4. **Claude Desktop** for quick questions when I'm away from the terminal
 
 Your mileage will vary. The beauty of the CLI-first approach is that it doesn't lock you out of anything else — Claude Code works great alongside any editor, any app, any other tool.
 
@@ -121,4 +121,4 @@ The examples and tutorials in the following sections will primarily use **Claude
 
 ## Next Up
 
-Let's get into the building blocks. First up: [Model Context Protocol (MCP)](/agentic-ai/mcp) — how agents connect to external tools and data.
+Let's get into the building blocks. First up: Model Context Protocol (MCP) — how agents connect to external tools and data.
