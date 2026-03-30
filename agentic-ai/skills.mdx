@@ -72,9 +72,22 @@ Skills live in `.claude/skills/` in your project directory. Each skill is a mark
     ```
   </Tab>
   <Tab title="Codex">
-    Codex uses a similar concept through its system prompt customization. You'd include PDB parsing instructions in your Codex configuration or as part of a custom agent setup through the API.
+    Codex has a formal skills system using `.agents/skills/` directories. Each skill is a `SKILL.md` file with metadata, instructions, and optionally helper scripts and reference assets. You can also include an `openai.yaml` for UI and policy configuration.
 
-    The core instructions would be the same — Codex just doesn't have a dedicated skill file format.
+    ```markdown
+    <!-- .agents/skills/parse-pdb/SKILL.md -->
+    ---
+    name: parse-pdb
+    description: Parse PDB files and summarize protein structure information
+    ---
+
+    # PDB File Parser
+
+    When asked to parse or analyze a PDB file, follow these steps:
+    ...
+    ```
+
+    Skills are discovered automatically when relevant. Project-scoped skills live in `.agents/skills/` in your repo, and personal skills go in `~/.codex/skills/`. The structure is similar to Claude Code's — the main difference is the directory convention and the optional `openai.yaml` config.
   </Tab>
   <Tab title="Gemini CLI">
     Gemini CLI supports custom instructions through configuration files. The equivalent would be adding PDB parsing rules to your Gemini settings:

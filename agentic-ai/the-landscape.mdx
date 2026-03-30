@@ -19,13 +19,15 @@ For scientists, Claude Code is particularly powerful because it operates in your
 
 ### OpenAI Codex
 
-**What it is:** OpenAI's cloud-based coding agent, accessible through ChatGPT or the API.
+**What it is:** OpenAI's coding agent, available as a CLI (`codex`), a desktop app (`codex app`), and a cloud service through ChatGPT.
 
-**My take:** Codex is solid, especially if you're already in the OpenAI ecosystem. Its biggest differentiator is async execution — you can fire off a task and come back later, which is nice for long-running analysis jobs. The downside is that it runs in a cloud sandbox rather than your local environment, so there's more friction getting your data and tools in front of it. Its ability to create branches and PRs directly is genuinely useful for collaborative workflows.
+**My take:** Codex is solid, especially if you're already in the OpenAI ecosystem. The CLI is a direct competitor to Claude Code — it runs in your terminal, reads your files, executes commands, and works in your local environment with configurable sandboxing. It's written in Rust, so it's fast, and it supports `AGENTS.md` files (their version of `CLAUDE.md`), subagent spawning, and MCP integrations.
 
-Codex is also really good when you're filling up the context window. If you need the agent to ingest a large codebase and just *understand* it — the architecture, how things connect, where the bodies are buried — Codex handles that well. The cloud sandbox means it can chew through a lot of code without your local machine breaking a sweat.
+Where Codex really shines is its three-surface approach. The **CLI** is your everyday workhorse, the **desktop app** gives you a visual command center for managing multiple agent threads in parallel (with built-in worktree support), and the **cloud mode** (`codex cloud`) lets you fire off async tasks in isolated containers and come back later. That cloud mode is nice for long-running jobs you don't want to babysit.
 
-**Best for:** Async tasks, large codebase comprehension, quick prototyping when you don't want to set up a local environment, teams already using ChatGPT.
+Codex also has a formal skills system (`.agents/skills/` directories with `SKILL.md` files) and can spawn multiple subagents in parallel with configurable thread limits. Its built-in `/review` command for code review is genuinely useful. The main trade-off is that custom slash commands aren't user-definable yet (unlike Claude Code's system), and I find Claude more reliable for complex multi-step refactoring tasks.
+
+**Best for:** Teams already in the OpenAI ecosystem, parallel agent workflows via the desktop app, async cloud tasks, and anyone who wants the flexibility of CLI + desktop + cloud in one tool.
 
 ### Gemini CLI
 
@@ -105,9 +107,9 @@ If the architecture didn't scare you off, the security should.
 
 - [**CVE-2026-25253**](https://nvd.nist.gov/vuln/detail/CVE-2026-25253) **(CVSS 8.8)** — A critical remote code execution vulnerability. The UI accepted a `gatewayUrl` parameter without validation, meaning a crafted link in an email or blog post could hijack your agent and steal your auth token. Over **40,000 instances** were found exposed on the internet. Sixty-three percent were vulnerable.
 
-- [**ClawJacked**](https://www.oasis.security/resources/blog/clawjacked-how-open-claw-was-compromised) — Discovered by Oasis Security. Any website you visited could silently take **full control** of your agent with no plugins, no extensions, no user interaction. The gateway accepted WebSocket connections from localhost without CORS restrictions, the rate limiter exempted localhost (enabling brute force), and device pairings from localhost were auto-approved. A website could just... take over.
+- [**ClawJacked**](https://www.oasis.security/blog/openclaw-vulnerability) — Discovered by Oasis Security. Any website you visited could silently take **full control** of your agent with no plugins, no extensions, no user interaction. The gateway accepted WebSocket connections from localhost without CORS restrictions, the rate limiter exempted localhost (enabling brute force), and device pairings from localhost were auto-approved. A website could just... take over.
 
-- [**The Skill Marketplace from Hell**](https://blog.seclify.com/openclaw-clawhub-malicious-skills/) — OpenClaw has ClawHub, a marketplace for community-contributed skills (think plugins). An independent audit found that **12% of all skills were confirmed malicious**. Not suspicious — *confirmed malicious*. Keyloggers, credential stealers, prompt injection payloads, and delivery of Atomic macOS Stealer (a commodity infostealer sold as Malware-as-a-Service). 335 malicious skills were traced to a single coordinated operation called **ClawHavoc**.
+- [**The Skill Marketplace from Hell**](https://www.koi.ai/blog/clawhavoc-341-malicious-clawedbot-skills-found-by-the-bot-they-were-targeting) — OpenClaw has ClawHub, a marketplace for community-contributed skills (think plugins). Koi Security found that **341 skills were confirmed malicious** — 335 of them from a single coordinated operation called **ClawHavoc**. Keyloggers, credential stealers, prompt injection payloads, and delivery of Atomic macOS Stealer (a commodity infostealer sold as Malware-as-a-Service). A [separate study by Snyk](https://snyk.io/blog/toxicskills-malicious-ai-agent-skills-clawhub/) found that 13.4% of all ClawHub skills contained at least one critical security issue.
 
 Steinberger's response to the security concerns? He said security **"isn't something he wants to prioritize."** Days later, OpenAI hired him. Sam Altman called him "a genius."
 
@@ -124,7 +126,7 @@ Use Claude Code. It's one agent. It works. It doesn't need a soul.
 | Platform | Interface | Strengths | Weaknesses |
 |----------|-----------|-----------|------------|
 | **Claude Code** | CLI | Flexible, customizable, works in your environment | Terminal only (some scientists find this intimidating) |
-| **Codex** | Web / CLI | Async execution, large codebase comprehension | Not in your local environment |
+| **Codex** | CLI / Desktop / Web | Local environment, subagent parallelism, async cloud mode | No custom slash commands, less reliable on complex refactors |
 | **Gemini CLI** | CLI | Google Cloud integration | Playing catch-up |
 | **Cursor** | Editor | Free student accounts | Limited, less subsidized, locked into GUI |
 | **Claude Desktop** | GUI app | Accessible, MCP support | Less flexible than CLI |

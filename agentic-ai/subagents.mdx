@@ -126,7 +126,11 @@ The rule of thumb: **if the output of a task is something you want to think abou
     Note the `model: haiku` in the frontmatter — this runs the subagent on a cheaper model since literature search and summarization don't need the most powerful model.
   </Tab>
   <Tab title="Codex">
-    Codex handles parallelism through async task execution. You can fire off multiple Codex tasks that run simultaneously in the cloud, each working on a different piece of your problem.
+    Codex CLI supports explicit subagent spawning with three built-in agent types: **default**, **worker** (execution-focused), and **explorer** (read-heavy analysis). You can also define custom agents as TOML files in `~/.codex/agents/` (personal) or `.codex/agents/` (project-scoped).
+
+    Subagents run in parallel with configurable limits — `max_threads` (default 6) controls how many run simultaneously, and `max_depth` (default 1) prevents recursive delegation. You manage active subagents with the `/agent` slash command.
+
+    The desktop app makes this especially visual — you can see all your agent threads running in parallel with their own terminals and worktrees. For cloud-based async work, `codex cloud` lets you fire off tasks in isolated containers and come back later.
   </Tab>
   <Tab title="Gemini CLI">
     Gemini CLI supports spawning sub-tasks through its orchestration features. The configuration is less granular than Claude Code's agent definitions.

@@ -51,7 +51,9 @@ Don't use a slash command when:
     The `$ARGUMENTS` variable gets replaced with whatever you type after the command name.
   </Tab>
   <Tab title="Codex">
-    Codex doesn't have a native slash command system. The equivalent would be saving prompt templates in your project and referencing them, or using the API with predefined prompts.
+    Codex CLI has 30+ built-in slash commands — `/review` for code review, `/compact` to summarize context, `/model` to switch models, `/plan` for plan mode, `/diff` for git diffs, `/agent` to manage subagents, and more.
+
+    However, Codex does **not** currently support user-defined custom slash commands. You can't create your own `/analyze-seq` the way you can in Claude Code. The workaround is to put reusable prompts in your `AGENTS.md` file or use skills, but it's not as frictionless as Claude Code's custom command system.
   </Tab>
   <Tab title="Gemini CLI">
     Gemini CLI supports custom commands through its configuration. You can define prompt templates that expand when invoked.
