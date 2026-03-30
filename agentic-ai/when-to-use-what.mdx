@@ -66,9 +66,9 @@ As discussed in the MCP section, for bioinformatics specifically, skills and dir
 
 ### "I have genuinely parallel work"
 
-**Spawn subagents.**
+**Just ask — Claude will spawn subagents on its own.**
 
-If you have multiple independent tasks — validate data, analyze structures, search literature — and they don't depend on each other, run them in parallel:
+If you have multiple independent tasks, describe them and Claude will figure out the parallelization:
 
 ```
 > Run these in parallel:
@@ -76,6 +76,10 @@ If you have multiple independent tasks — validate data, analyze structures, se
 > 2. Search for papers on TEM-1 omega loop stability
 > 3. Check if my SLURM jobs from yesterday completed successfully
 ```
+
+You don't need to define anything in `.claude/agents/` for this to work. Claude reads the conversation, decides what to parallelize, and spawns subagents dynamically.
+
+**Define custom agents when:** you need cost control (pinning to a cheaper model), consistency (same behavior every time), or explicit tool restrictions. See the [subagents page](/agentic-ai/subagents) for details.
 
 **Use this when:** you have 2+ independent tasks that would take meaningful time if done sequentially, and the results don't need your deep engagement.
 
@@ -100,7 +104,8 @@ This is the one people forget. If a task is fully repeatable — same inputs, sa
 | Complex domain task | Skill | 10-15 minutes |
 | Fully repeatable task | A script | 5-30 minutes |
 | External system access | MCP server (maybe) | 30 min - few hours |
-| Parallel independent tasks | Subagents | 10-15 min per agent |
+| Parallel independent tasks | Subagents (built-in) | None — just ask |
+| Parallel tasks needing consistency/cost control | Custom subagents | 10-15 min per agent |
 
 ## Common Mistakes
 
@@ -109,8 +114,8 @@ This is the one people forget. If a task is fully repeatable — same inputs, sa
     Don't write skills and slash commands on day one. Use Claude Code for a week first. See what patterns emerge. Then codify the ones you actually repeat. Premature optimization applies to agent configuration too.
   </Accordion>
 
-  <Accordion title="Making everything a subagent">
-    Not every task needs to be parallelized. If tasks are sequential (step 2 needs the output of step 1), subagents add overhead for no benefit. And if the output is something you need to think about scientifically, keep it in your main conversation.
+  <Accordion title="Making everything a custom subagent">
+    Claude already spawns subagents dynamically when it makes sense — you don't need to define custom agents for every parallel workflow. Reserve custom agent definitions for when you need cost control, consistency, or tool restrictions. And remember: if tasks are sequential or the output is something you need to think about scientifically, subagents (custom or otherwise) add overhead for no benefit.
   </Accordion>
 
   <Accordion title="Using an agent when a script would do">

@@ -13,15 +13,29 @@ Subagents are useful for three reasons:
 2. **Context protection** — Subagent work doesn't pollute your main conversation with intermediate noise
 3. **Cost optimization** — You can run subagents on cheaper models (like Haiku) for tasks that don't need the full power of Opus or Sonnet
 
-## When to Use Subagents
+## Claude Already Spawns Subagents
 
-Use subagents when:
-- You have **genuinely parallel work** — tasks that don't depend on each other
-- A task would **eat up your main context window** with information that isn't relevant to your core problem
-- You want to **use a cheaper model** for a straightforward task (e.g., Haiku for literature search)
-- You want to **protect your main conversation** from getting cluttered with intermediate results
+Here's something the rest of this page might obscure: **Claude Code already spawns subagents on its own, without any configuration from you.** When Claude determines that a task would benefit from parallelization or context isolation, it creates subagents dynamically based on the conversation context. You don't need to define anything in `.claude/agents/` for this to work.
 
-Don't use subagents when:
+For example, if you ask Claude to search for a function definition across your codebase while also looking up documentation for a library, it may spawn an exploration subagent for the codebase search while handling the documentation lookup itself. You didn't configure this — Claude read the situation and decided parallelization made sense.
+
+This built-in behavior is surprisingly good. Claude uses your conversation context to decide what each subagent should do, what tools it needs, and how to synthesize the results. For many workflows, this is all you need.
+
+## When to Define Custom Subagents
+
+So if Claude already handles subagent spawning on its own, why would you ever define custom agents in `.claude/agents/`? Three reasons:
+
+1. **Cost control** — You want to force a specific cheaper model. When Claude spawns subagents dynamically, it uses its own judgment about model selection. A custom agent definition lets you pin a task to Haiku explicitly, which matters if you're running the same expensive workflow repeatedly.
+
+2. **Consistency** — You want the exact same behavior every time. Claude's dynamic subagents are shaped by whatever conversation context exists at the moment. If you need a literature search that always checks the same sources in the same order and outputs in the same format, a custom agent definition gives you that reproducibility. You're not relying on Claude to reinvent the approach each time.
+
+3. **Explicit tool restrictions** — You want to lock down what the subagent can access. A custom agent definition with a specific `tools` list ensures the subagent can't accidentally write files when it should only be reading, or can't access the web when it should only be working locally.
+
+If none of those apply — if you're fine with Claude deciding how to parallelize, what model to use, and what tools to give the subagent — you probably don't need custom agent definitions. Just describe what you want and let Claude figure out the orchestration.
+
+## When NOT to Use Subagents (Custom or Otherwise)
+
+Whether Claude spawns them automatically or you define them explicitly, subagents are the wrong choice when:
 - Tasks are sequential and each depends on the previous result — just do them in order
 - The task is simple enough for your main agent — spawning a subagent has overhead
 - **The task's output is something you want to think about** — this is the big one. More on this below.
@@ -78,11 +92,13 @@ Imagine a subagent that:
 
 The rule of thumb: **if the output of a task is something you want to think about, keep it in your main conversation.** If the output is just a summary you'll glance at, a subagent is fine.
 
-## How Subagents Work in Claude Code
+## Defining Custom Subagents
+
+When you do need the consistency, cost control, or tool restrictions that justify a custom agent, here's how to set them up.
 
 <Tabs>
   <Tab title="Claude Code">
-    In Claude Code, you can define custom subagents in `.claude/agents/`:
+    In Claude Code, you define custom subagents in `.claude/agents/`:
 
     ```markdown
     <!-- .claude/agents/literature-search.md -->
