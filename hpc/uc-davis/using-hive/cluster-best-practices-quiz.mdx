@@ -1,0 +1,118 @@
+---
+title: Cluster Best Practices Quiz
+description: Test your understanding of safe, efficient HIVE usage
+---
+
+Use this page as a quick self-check after [Software & Storage](/hpc/uc-davis/using-hive/software-and-storage). Try to answer each scenario before opening the explanation.
+
+<Note>
+  Most of these questions pull from the HIVE pages on [Partitions & Hardware](/hpc/uc-davis/using-hive/partitions-and-hardware), [Job Submission](/hpc/uc-davis/using-hive/job-submission), and [Software & Storage](/hpc/uc-davis/using-hive/software-and-storage).
+</Note>
+
+## Quiz
+
+### 1. You want to test a memory-heavy Python script interactively for two hours. What is the best place to run it?
+
+A. Directly on the login node after SSH  
+B. Inside an interactive `srun ... --pty bash` session or through Open OnDemand  
+C. In your home directory, because home space is meant for active compute work
+
+<AccordionGroup>
+  <Accordion title="Show answer">
+    **B is correct.** The login node is for editing files, submitting jobs, and other light tasks. Heavy or long-running work should happen on compute nodes through an interactive allocation or Open OnDemand.
+  </Accordion>
+</AccordionGroup>
+
+### 2. Your CPU job usually uses about 18 GB of RAM and finishes in 3 hours. Which request is the best starting point?
+
+A. `--mem=256G --time=3-00:00:00`  
+B. `--mem=20G --time=4:00:00`  
+C. `--mem=2G --time=1:00:00`
+
+<AccordionGroup>
+  <Accordion title="Show answer">
+    **B is correct.** Right-size your requests so the scheduler can place your job more easily while still leaving a safety margin. Huge over-requests slow scheduling and block other users; under-requests lead to `OUT_OF_MEMORY` or `TIMEOUT`.
+  </Accordion>
+</AccordionGroup>
+
+### 3. You are launching an array job with 500 tasks. What output pattern is safest on HIVE?
+
+A. Send every task to the same `results.log` file  
+B. Use unique per-task filenames such as `results_%A_%a.out`  
+C. Have every task append to one shared CSV in `/quobyte`
+
+<AccordionGroup>
+  <Accordion title="Show answer">
+    **B is correct.** HIVE's Quobyte storage has a known issue with concurrent writes to the same file from multiple nodes. Give each task its own output and merge results later if needed.
+  </Accordion>
+</AccordionGroup>
+
+### 4. Where should you keep large datasets, simulation outputs, and most project results?
+
+A. `/home/$USER`  
+B. `/tmp` on the login node  
+C. `/quobyte/your_group/your_username/`
+
+<AccordionGroup>
+  <Accordion title="Show answer">
+    **C is correct.** Your home directory is limited and is best for configs, small scripts, and lightweight files. Large project data belongs in your group's Quobyte space.
+  </Accordion>
+</AccordionGroup>
+
+### 5. You need a database for your workflow. What should you do before downloading a fresh copy?
+
+A. Download it immediately into your home directory  
+B. Check your group's shared storage first, such as `/quobyte/your_group/databases/`  
+C. Install it separately in every project folder to avoid sharing
+
+<AccordionGroup>
+  <Accordion title="Show answer">
+    **B is correct.** Shared databases and software directories reduce duplicate downloads, save storage, and keep lab workflows more consistent.
+  </Accordion>
+</AccordionGroup>
+
+### 6. You cannot find the exact software version you need as a module. What is the best next step?
+
+A. Build it on the login node and leave it running there all afternoon  
+B. Create a reproducible conda environment or use an Apptainer container  
+C. Keep changing modules until something sort of works
+
+<AccordionGroup>
+  <Accordion title="Show answer">
+    **B is correct.** User-managed conda environments and containers are the recommended fallback when modules do not cover your use case. Prefer environment files or containers so the setup is reproducible.
+  </Accordion>
+</AccordionGroup>
+
+### 7. Your workload can tolerate restarts and you mainly want faster access to spare capacity. Which partition choice best matches that goal?
+
+A. A low-priority partition that can preempt and requeue jobs  
+B. The highest-priority queue no matter what  
+C. Stay on the login node so there is no wait time
+
+<AccordionGroup>
+  <Accordion title="Show answer">
+    **A is correct.** Preemptible low-priority queues are useful when your code can resume cleanly. They are often a good fit for exploratory or restartable workloads.
+  </Accordion>
+</AccordionGroup>
+
+### 8. You notice after submission that your job script has a bad path and the run is wasting resources. What is the best response?
+
+A. Leave it running since it already started  
+B. Cancel it, fix the script, and resubmit  
+C. Submit a second copy and compare which one fails less
+
+<AccordionGroup>
+  <Accordion title="Show answer">
+    **B is correct.** Cancel broken or unnecessary jobs promptly. That is better for your queue usage and better for everyone else sharing the cluster.
+  </Accordion>
+</AccordionGroup>
+
+## Score Yourself
+
+- **7-8 correct:** You are in good shape to use HIVE responsibly.
+- **5-6 correct:** Revisit the relevant pages and tighten up a few habits.
+- **0-4 correct:** Review the core HIVE guides before running larger jobs.
+
+## Next Step
+
+Continue to [Commands & Troubleshooting](/hpc/uc-davis/using-hive/commands-and-troubleshooting) for the command reference you will use once jobs are running.
