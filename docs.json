@@ -186,6 +186,12 @@
                 ]
               }
             ]
+          },
+          {
+            "group": "Claude Code Best Practices for Beginners",
+            "pages": [
+              "agentic-ai/claude-code/index"
+            ]
           }
         ]
       },
