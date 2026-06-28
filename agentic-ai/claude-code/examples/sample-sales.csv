@@ -1,0 +1,69 @@
+date,customer,product,amount,region
+2025-01-03,Acme Corp,Starter Plan,499.00,North
+01/07/2025,Globex Inc,Annual License,2400.00,West
+January 9 2025,Initech LLC,Consulting Hours,1875.50,East
+2025-01-12,Umbrella Co,Widget Pro,329.99,South
+01/15/2025,Hooli,Team Plan,1200.00,West
+January 18 2025,Stark Industries,Annual License,2400.00,
+2025-01-21,Wayne Enterprises,Starter Plan,499.00,North
+01/24/2025,Soylent Corp,Consulting Hours,,East
+February 2 2025,Acme Corp,Widget Pro,329.99,North
+2025-02-05,Globex Inc,Team Plan,1200.00,West
+02/09/2025,Massive Dynamic,Annual License,2400.00,APAC
+February 11 2025,Initech LLC,Starter Plan,499.00,east
+2025-02-14,Vandelay Industries,Consulting Hours,2210.00,South
+02/18/2025,Hooli,Widget Pro,329.99,West
+February 22 2025,Umbrella Co,Team Plan,1200.00,South
+2025-02-25,Stark Industries,Starter Plan,499.00,North
+03/01/2025,Wayne Enterprises,Annual License,2400.00,North
+March 4 2025,Soylent Corp,Widget Pro,,East
+2025-03-04,Acme Corp,Consulting Hours,1640.00,North
+03/04/2025,Acme Corp,Consulting Hours,1640.00,North
+March 8 2025,Globex Inc,Starter Plan,499.00,West
+2025-03-11,Massive Dynamic,Team Plan,1200.00,APAC
+03/14/2025,Vandelay Industries,Annual License,2400.00,South
+March 17 2025,,Widget Pro,329.99,West
+2025-03-20,Hooli,Consulting Hours,1980.00,West
+03/22/2025,Initech LLC,Starter Plan,499.00,East
+March 26 2025,Umbrella Co,Annual License,2400.00,South
+2025-03-29,Stark Industries,Team Plan,1200.00,NORTH
+04/02/2025,Wayne Enterprises,Widget Pro,329.99,North
+April 5 2025,Soylent Corp,Starter Plan,499.00,East
+2025-04-08,Acme Corp,Annual License,2400.00,North
+04/11/2025,Globex Inc,Consulting Hours,1725.00,West
+April 15 2025,Massive Dynamic,Widget Pro,329.99,APAC
+2025-04-18,Vandelay Industries,Team Plan,1200.00,South
+04/21/2025,Hooli,Starter Plan,,West
+April 24 2025,Initech LLC,Annual License,2400.00,East
+2025-04-27,Umbrella Co,Consulting Hours,2050.00,south
+05/01/2025,Stark Industries,Widget Pro,329.99,North
+May 4 2025,Wayne Enterprises,Team Plan,1200.00,North
+2025-05-04,Globex Inc,Annual License,2400.00,West
+05/04/2025,Globex Inc,Annual License,2400.00,West
+May 9 2025,Soylent Corp,Starter Plan,499.00,East
+2025-05-12,Acme Corp,Widget Pro,329.99,North
+05/15/2025,Massive Dynamic,Consulting Hours,1890.00,APAC
+May 19 2025,Vandelay Industries,Annual License,2400.00,South
+2025-05-22,Hooli,Team Plan,1200.00,West
+05/25/2025,Initech LLC,Widget Pro,329.99,East
+May 28 2025,Umbrella Co,Starter Plan,499.00,
+2025-05-31,Stark Industries,Consulting Hours,2375.00,North
+06/03/2025,Wayne Enterprises,Annual License,2400.00,North
+June 7 2025,Soylent Corp,Team Plan,1200.00,East
+2025-06-10,Acme Corp,Starter Plan,499.00,North
+01/07/2025,Globex Inc,Annual License,2400.00,West
+2025-01-12,Umbrella Co,Widget Pro,329.99,South
+February 14 2025,Vandelay Industries,Consulting Hours,2210.00,South
+2025-03-20,Hooli,Consulting Hours,1980.00,West
+04/02/2025,Wayne Enterprises,Widget Pro,329.99,North
+2025-04-08,Acme Corp,Annual License,2400.00,North
+May 4 2025,Wayne Enterprises,Team Plan,1200.00,North
+2025-06-14,Massive Dynamic,Widget Pro,329.99,APAC
+06/17/2025,Hooli,Annual License,,West
+June 21 2025,Initech LLC,Starter Plan,499.00,East
+2025-06-24,Stark Industries,Team Plan,1200.00,North
+06/24/2025,Stark Industries,Team Plan,1200.00,North
+2025-02-05,Globex Inc,Team Plan,1200.00,West
+February 22 2025,Umbrella Co,Team Plan,1200.00,South
+2025-05-31,Stark Industries,Consulting Hours,2375.00,North
+March 8 2025,Globex Inc,Starter Plan,499.00,West

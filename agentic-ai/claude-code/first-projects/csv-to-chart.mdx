@@ -10,11 +10,23 @@ This is the most universal business win, so it's the one to do first. You have a
 
 ## What you'll need
 
-- A spreadsheet file (a `.csv` or `.xlsx`) with some data in it — sales, expenses, a list of transactions, anything with numbers and dates. A messy one is *better* for practice.
+- A [spreadsheet file](/agentic-ai/claude-code/glossary) (a `.csv` or `.xlsx`) with some data in it — sales, expenses, a list of transactions, anything with numbers and dates. A messy one is *better* for practice.
 - A [workspace folder](/agentic-ai/claude-code/first-session/workspace) with a **copy** of that file in it.
 
+<Note>
+  **Want to follow along with the exact same file?** This site ships a deliberately messy sample at `agentic-ai/claude-code/examples/sample-sales.csv`. Grab it from the repo and drop a copy in your workspace folder — it's ~60 rows of fake sales with duplicate lines, three different date formats, and a few blank amounts. The mess is the point. A peek at what you're walking into:
+
+  ```csv sample-sales.csv
+  date,customer,product,amount,region
+  2025-03-04,Acme Corp,Consulting Hours,1640.00,North
+  03/04/2025,Acme Corp,Consulting Hours,1640.00,North
+  January 9 2025,Initech LLC,Consulting Hours,1875.50,East
+  01/24/2025,Soylent Corp,Consulting Hours,,East
+  ```
+</Note>
+
 <Tip>
-  No data handy? Just ask Claude: *"Create a sample CSV of 500 fake sales transactions with some duplicates and messy dates so I can practice."* Now you have a realistic mess to clean.
+  No data handy and don't want to download anything? Just ask Claude: *"Create a sample CSV of 500 fake sales transactions with some duplicates and messy dates so I can practice."* Now you have a realistic mess to clean.
 </Tip>
 
 ## The walkthrough
