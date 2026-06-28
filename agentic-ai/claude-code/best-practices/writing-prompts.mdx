@@ -1,17 +1,89 @@
 ---
 title: Writing Good Prompts & Giving Context
 description: How to ask for what you want so you actually get it
+icon: comment
 ---
 
-<Note>
-  This page is being written. Outline below.
-</Note>
+The single biggest difference between a frustrating session and a great one is the request itself. The good news: this is **not** "prompt engineering." You don't need secret phrases or special syntax. You need to communicate the way you would with a sharp new analyst on their first day.
 
-The difference between a frustrating session and a great one is almost always the request. Good news: you don't need "prompt engineering" tricks — you need to communicate like you would with a sharp new analyst.
+## The mindset: brief it like a person
 
-**What this page will cover:**
-- Be specific about the outcome, not the steps
-- Give context: what the data is, what it's for, who sees it
-- Show an example of what "good" looks like
-- Tell it what *not* to do
-- Ask it to ask you questions when unsure
+A new analyst is smart and capable but doesn't know your context, your preferences, or what "good" looks like to you. Claude is the same. The more of that you supply, the better the result. Everything below is just a way of being a good manager.
+
+## 1. Describe the outcome, not the keystrokes
+
+Tell Claude *what you want to end up with*, and let it figure out the how.
+
+| Weaker | Stronger |
+|---|---|
+| "Open the file and use a pivot table..." | "Give me total revenue by month as a table and a bar chart." |
+| "Write a Python script that loops through..." | "Clean out the duplicate rows and save the result as a new file." |
+
+You're the one who knows the goal. Claude is the one who knows the mechanics. Stay in your lane and it stays in its.
+
+## 2. Give context
+
+The stuff that's obvious to you is invisible to Claude. Spend a sentence on it:
+
+- **What the data/files are:** *"This is a vendor export; each row is one invoice."*
+- **What it's for:** *"This is going into a board deck, so it needs to look clean."*
+- **Who sees it:** *"My CFO will read this — be conservative and show your assumptions."*
+
+> Here's a CSV of customer orders. Each row is one order; some customers appear multiple times. I want to understand our top customers for a QBR next week.
+
+That one extra sentence prevents a dozen wrong guesses.
+
+## 3. Show what "good" looks like
+
+If you have a format or example in mind, share it. An example is worth a paragraph of description.
+
+> Summarize each contract like this: **Vendor** — one line on price — one line on term — one line on risk. Keep it that tight.
+
+## 4. Say what *not* to do
+
+Guardrails are as useful as goals — especially the irreversible ones.
+
+> Don't change the original file. Don't delete anything. If you're unsure which column is the date, ask me.
+
+## 5. Invite questions instead of guesses
+
+The most underrated line you can add:
+
+> If anything is ambiguous, ask me before you start.
+
+This flips Claude from "guess and barrel ahead" to "check first," which is almost always what you want for real work.
+
+## Putting it together
+
+A weak prompt and a strong prompt for the same task:
+
+<CodeGroup>
+```text Weak
+fix this spreadsheet
+```
+
+```text Strong
+This is `orders.csv` — a messy export where each row is one order.
+Clean it up: remove duplicate rows and standardize the dates.
+Save the result as a NEW file (don't touch the original).
+Then show me total orders by month as a table.
+If you're unsure which column holds the order date, ask me first.
+```
+</CodeGroup>
+
+Same task. The second one gets it right on the first try.
+
+## You don't have to nail it in one shot
+
+If your first prompt was vague, you'll see it in Claude's plan or its questions — just refine and go again. Working with an agent is a conversation, not a one-shot command. The goal isn't a perfect prompt; it's a good back-and-forth.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Plan Mode & Small Steps" icon="list-ol" href="/agentic-ai/claude-code/best-practices/plan-mode-and-small-steps">
+    Look before you leap; break big asks down
+  </Card>
+  <Card title="Reviewing & Verifying" icon="magnifying-glass" href="/agentic-ai/claude-code/best-practices/reviewing-and-verifying">
+    Check the work you get back
+  </Card>
+</CardGroup>

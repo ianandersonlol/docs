@@ -1,17 +1,67 @@
 ---
 title: Permissions & Staying Safe
 description: What Claude asks before it acts, and how to keep your files and data safe
+icon: shield-check
 ---
 
-<Note>
-  This page is being written. Outline below.
-</Note>
+Claude Code is built to be safe by default: it works only in the folder you give it, and it asks permission before doing things that matter. Add a couple of simple habits on top and you can work with total confidence.
 
-Claude Code asks permission before it does things that matter. Understanding those prompts — and a few simple safety habits — lets you say "yes" with confidence.
+## The two built-in guardrails
 
-**What this page will cover:**
-- What the permission prompts mean
-- When to allow once vs. always
-- Working on copies of important files
-- Keeping sensitive/confidential data in mind
-- The "undo" mindset: backups and version history
+1. **The folder boundary.** Claude works inside the [workspace folder](/agentic-ai/claude-code/first-session/workspace) you opened — not your whole computer. Hand it one room, not the keys to the house.
+2. **Permission prompts.** Before Claude runs a command, edits a file, or creates something, it asks. Nothing meaningful happens without your say-so.
+
+## Reading a permission prompt
+
+When Claude wants to act, you'll see a prompt describing what it intends to do. Your options:
+
+| Choice | Meaning | When to use |
+|---|---|---|
+| **Allow once** | Approve just this action | Your default while learning — keeps you in the loop |
+| **Allow always** (this kind, this project) | Stop asking for this *type* of action here | A repetitive, clearly-safe action you've seen enough times to trust |
+| **Reject** | Don't do it | Anything that looks wrong, or touches something you didn't intend |
+
+<Tip>
+  Read the prompt before clicking. The point of the prompt isn't to rubber-stamp — it's to give you a beat to notice "wait, why is it deleting that?" The actions worth pausing on are anything that **deletes**, **overwrites**, or reaches **outside your folder**.
+</Tip>
+
+## Safety habits worth adopting
+
+<Steps>
+  <Step title="Work on copies of anything important">
+    Drag a *copy* of that critical file into your workspace, never your only original. Then the worst case is "redo it," never "lose it." This one habit removes most of the risk on its own.
+  </Step>
+  <Step title="Keep an undo path">
+    Know how you'd undo. The simplest version: you worked on a copy, so your original is safe. A more powerful version, if you installed Git, is a full **version history** — ask Claude *"can you set up version history so we can undo changes?"* and it can snapshot your work as you go.
+  </Step>
+  <Step title="Start cautious, loosen over time">
+    New to a project? Approve actions one at a time. As you learn what Claude does and trust it, you can switch the safe, repetitive stuff to "Allow always." Earn the trust, then grant it.
+  </Step>
+</Steps>
+
+## Handling sensitive or confidential data
+
+If you work in finance, legal, or anywhere with confidential material, treat Claude Code like any other cloud tool — because to do its job, your prompts and the files it reads are sent to Anthropic's models to be processed.
+
+- **Follow your organization's policy.** If your company has rules about what can go into AI tools, those apply here. When in doubt, ask before loading a data room into a workspace.
+- **Prefer approved environments for regulated data.** Team and Enterprise plans exist partly for this; your IT or compliance team may have a sanctioned setup.
+- **Practice on non-sensitive material.** While you're learning the ropes, use data you wouldn't mind sharing. Save the confidential work for when you're confident *and* cleared.
+
+<Warning>
+  Claude can't tell whether a document is public or a sealed M&A agreement — only you can. The responsibility for *what* you put in front of it is always yours.
+</Warning>
+
+## The bottom line
+
+The boundary plus the prompts make Claude Code safe by design. Working on copies and knowing your undo path make it safe in practice. Do those, and you can say "yes" without holding your breath.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Managing Cost & Context" icon="gauge" href="/agentic-ai/claude-code/best-practices/cost-and-context">
+    Keep sessions focused and efficient
+  </Card>
+  <Card title="Common Mistakes & FAQ" icon="triangle-exclamation" href="/agentic-ai/claude-code/common-mistakes">
+    The traps to skip
+  </Card>
+</CardGroup>

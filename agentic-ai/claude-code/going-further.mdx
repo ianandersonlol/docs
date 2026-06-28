@@ -1,19 +1,36 @@
 ---
 title: Going Further
 description: Where to head once the basics feel comfortable
+icon: rocket
 ---
 
-<Note>
-  This page is being written. Outline below.
-</Note>
+Once the [core loop](/agentic-ai/claude-code/first-session/core-loop) feels natural and you've checked a few results with confidence, a whole second layer of Claude Code opens up. You don't need any of this to be productive — but each one removes friction once the basics are second nature.
 
-Once the core loop feels natural, a whole second layer of Claude Code opens up — ways to teach it your preferences and connect it to your tools.
+## 1. Teach Claude your preferences once
 
-**What this page will cover:**
-- Teaching Claude your preferences with a project memory file
-- Reusable shortcuts (slash commands)
-- Connecting external tools and data (MCP)
-- Pointers into the rest of this site's Agentic AI section
+If you keep repeating the same instructions every session — *"work on copies," "show your assumptions," "keep summaries short"* — you can write them down **once** in a project memory file (conventionally named `CLAUDE.md`). Claude reads it automatically every time you open that folder, so your preferences just... stick.
+
+You don't have to create it by hand. Ask:
+
+> Create a CLAUDE.md for this folder that says: always work on copies, never overwrite originals, and keep summaries to five bullets or fewer.
+
+From then on, you stop repeating yourself. It's the highest-leverage "next step" for most people.
+
+## 2. Save reusable shortcuts (slash commands)
+
+If there's a task you do over and over — a weekly report, a standard cleanup — you can save it as a **slash command** and trigger the whole routine by typing `/its-name`. It's a saved prompt you can fire anytime, instead of re-typing the instructions.
+
+## 3. Connect your tools and data (MCP)
+
+Out of the box, Claude works with the files in your folder. **MCP** (Model Context Protocol) extends its reach to *other* systems — so it could pull from a database, a knowledge base, or an app you already use, rather than just local files. It's more advanced, but it's how Claude graduates from "works with my files" to "works with my whole toolset."
+
+## 4. Reusable capabilities (skills)
+
+**Skills** teach Claude specialized, repeatable know-how it can apply across projects — a step beyond a saved prompt. When you find yourself wishing Claude "just knew how to do X the way I like," that's a skill.
+
+## Dive deeper in the rest of this site
+
+This beginner guide is the on-ramp. The broader **Agentic AI** section goes deeper on all of the above — written a bit more for the technically curious, but very readable once you've got the fundamentals here.
 
 <CardGroup cols={2}>
   <Card title="Skills" icon="wand-magic-sparkles" href="/agentic-ai/skills">
@@ -27,5 +44,18 @@ Once the core loop feels natural, a whole second layer of Claude Code opens up �
   </Card>
   <Card title="The Landscape" icon="map" href="/agentic-ai/the-landscape">
     How Claude Code compares to other agents
+  </Card>
+</CardGroup>
+
+## You made it
+
+You can install Claude Code, set up a workspace, run the core loop, complete real tasks, verify the results, and stay safe doing it. That's everything a beginner needs — the rest is just practice. Go point it at something real.
+
+<CardGroup cols={2}>
+  <Card title="Back to the Overview" icon="house" href="/agentic-ai/claude-code">
+    The map of this section
+  </Card>
+  <Card title="Try a Project" icon="list-check" href="/agentic-ai/claude-code/first-projects/csv-to-chart">
+    Put it all into practice
   </Card>
 </CardGroup>

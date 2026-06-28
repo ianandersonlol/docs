@@ -1,17 +1,79 @@
 ---
 title: Plan Mode & Working in Small Steps
 description: Look before you leap — and don't ask for the whole thing at once
+icon: list-ol
 ---
 
-<Note>
-  This page is being written. Outline below.
-</Note>
+Two habits prevent the large majority of beginner mishaps: making Claude **plan before it acts**, and breaking big tasks into **small, checkable steps**. Neither requires any technical skill — just a little discipline.
 
-The two habits that prevent the most disasters: making Claude plan before it acts, and breaking big asks into small, checkable steps.
+## Look before you leap
 
-**What this page will cover:**
-- What plan mode is and when to use it
-- Reading a plan and pushing back before any action is taken
-- Why "do everything" prompts go wrong
-- Breaking a project into reviewable chunks
-- Checkpoints: confirming each step before the next
+For anything beyond a trivial request, get Claude's plan *before* it does anything. It's the cheapest possible insurance: catching a misunderstanding in a plan costs nothing; catching it after Claude has rewritten ten files costs you cleanup.
+
+The plain-English version always works:
+
+> Before you change anything, tell me your plan — which files you'll touch and what you'll do to each. Don't act yet.
+
+Read the plan like a contract. If it says it'll overwrite your original file and you didn't want that, you just saved yourself a headache — for free.
+
+### Plan Mode
+
+Claude Code also has a dedicated **Plan Mode**: a setting where Claude will *research and propose* but make **no changes** until you explicitly approve. It's like asking a contractor for a written estimate before any work begins.
+
+- In the **desktop app**, you can switch a session into Plan Mode from the session's mode controls.
+- In the **terminal**, you cycle interaction modes with the **Shift+Tab** keys until you reach plan mode.
+
+If you can't find the toggle, don't worry — the plain-English "tell me your plan first, don't act yet" gets you 90% of the benefit and works everywhere.
+
+<Tip>
+  Use Plan Mode whenever the task touches important files, involves many steps, or you're just not sure what Claude will do. When in doubt, plan first.
+</Tip>
+
+## Work in small steps
+
+The instinct is to describe the entire job in one giant paragraph. Resist it. A big, all-at-once request is hard for *you* to review and easy for Claude to get subtly wrong somewhere in the middle.
+
+Compare:
+
+<CodeGroup>
+```text One giant ask
+Clean this data, fix the dates, remove duplicates, calculate
+monthly and quarterly totals, make three different charts,
+write a summary memo, and format it all into a report.
+```
+
+```text Small steps
+1. First, clean the data and show me what you removed.
+   (check the result)
+2. Now give me monthly totals as a table.
+   (check the numbers)
+3. Now make a bar chart of those.
+   (look at the chart)
+4. Now draft a one-page memo around it.
+```
+</CodeGroup>
+
+The small-steps version takes the same total time but you **catch problems early**, while they're cheap to fix. If step 1 misread a column, you find out before it has polluted the charts and the memo.
+
+## Checkpoints: confirm, then continue
+
+Between steps, take a beat to verify before moving on. A natural way to keep Claude in step-by-step mode:
+
+> Do that one step, show me the result, and wait for me before doing the next thing.
+
+This keeps you in the driver's seat and turns a scary "it did a bunch of stuff" into a series of small, reviewed moves.
+
+## The rule of thumb
+
+> If you couldn't easily check the result in under a minute, the step is too big. Break it down.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Reviewing & Verifying" icon="magnifying-glass" href="/agentic-ai/claude-code/best-practices/reviewing-and-verifying">
+    How to actually check each step
+  </Card>
+  <Card title="Permissions & Safety" icon="shield-check" href="/agentic-ai/claude-code/best-practices/permissions-and-safety">
+    Approve actions with confidence
+  </Card>
+</CardGroup>

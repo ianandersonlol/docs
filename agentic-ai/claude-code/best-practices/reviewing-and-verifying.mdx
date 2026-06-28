@@ -1,17 +1,72 @@
 ---
 title: Reviewing & Verifying What It Did
 description: Trust, but verify — how to check an agent's work when you can't read code
+icon: magnifying-glass
 ---
 
-<Note>
-  This page is being written. Outline below.
-</Note>
+Here's the truth that makes you safe with this tool: **Claude is confident, and confidence is not the same as correctness.** It can be wrong, and when it's wrong it usually still *sounds* right. The skill that protects you isn't reading code — it's verifying *results*. You can do that with zero technical knowledge.
 
-Claude is capable and confident — and confidence is not correctness. The skill that makes you safe is verifying results without needing to read the code yourself.
+## "It ran without errors" ≠ "it's right"
 
-**What this page will cover:**
-- Why "it ran without errors" doesn't mean "it's right"
-- Spot-checking outputs against a known answer
-- Asking Claude to explain what it did in plain English
-- Having it double-check its own work
-- Red flags that mean "slow down"
+A task can complete cleanly, produce a beautiful chart, and still be wrong — because Claude misread a column, made an assumption you didn't intend, or quietly dropped some rows. No error message will tell you that. Only checking will.
+
+Treat every result as "probably right, let me confirm" rather than "done."
+
+## Five ways to verify (no code required)
+
+<Steps>
+  <Step title="Spot-check against a known answer">
+    Pick one thing you can verify by hand and check it. If the report says March revenue was \$48,200, find March yourself — or ask Claude to show the rows behind it — and confirm.
+  </Step>
+  <Step title="Ask Claude to explain in plain English">
+    > Explain what you just did, step by step, as if I'm not technical.
+
+    If the explanation reveals an assumption you don't like ("I treated blank amounts as zero"), you've found a problem the output alone would have hidden.
+  </Step>
+  <Step title="Make it show its work">
+    > Which exact rows did you include in the March total? List them.
+
+    Numbers should be traceable back to the source. If Claude can't show where a figure came from, don't trust the figure.
+  </Step>
+  <Step title="Have it check itself">
+    > Double-check your own work and tell me where you might be wrong or what assumptions you made.
+
+    Claude is often good at catching its own mistakes when explicitly asked to look for them.
+  </Step>
+  <Step title="Sanity-check the totals">
+    Do the big numbers pass the smell test? Does the cleaned file still have a sensible number of rows? A total that's 10× too big or a month that vanished is a flag worth chasing.
+  </Step>
+</Steps>
+
+## Red flags that mean "slow down"
+
+- The result is **surprising** in a way you can't explain. Surprise is information — investigate before you celebrate.
+- Numbers **don't reconcile** (the parts don't add up to the whole).
+- Claude made a **judgment call** you weren't asked about ("I assumed the fiscal year starts in April").
+- A file got **much smaller or much bigger** than you expected.
+- Claude sounds **unusually hedgy** ("this should roughly work"). Take the hint.
+
+## Match your scrutiny to the stakes
+
+Not everything needs a forensic audit. Calibrate:
+
+| Stakes | How hard to check |
+|---|---|
+| Throwaway exploration, just for you | A glance is fine |
+| Something you'll share internally | Spot-check the key numbers |
+| A decision, a client, money, or the public | Verify thoroughly; trace every figure that matters |
+
+<Warning>
+  The higher the stakes, the more it matters that *you* — not Claude — are the final check. Claude is a brilliant assistant, not an accountable one. You're accountable for what you ship.
+</Warning>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Permissions & Safety" icon="shield-check" href="/agentic-ai/claude-code/best-practices/permissions-and-safety">
+    Keep your files and data safe
+  </Card>
+  <Card title="Common Mistakes & FAQ" icon="triangle-exclamation" href="/agentic-ai/claude-code/common-mistakes">
+    Skip the traps everyone hits
+  </Card>
+</CardGroup>

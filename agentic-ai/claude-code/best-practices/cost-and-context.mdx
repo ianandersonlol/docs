@@ -1,17 +1,63 @@
 ---
 title: Managing Cost & Context
 description: Keeping sessions focused, and knowing when to start fresh
+icon: gauge
 ---
 
+Two questions every beginner has: *"Is this costing me money every time I press enter?"* and *"Why did it seem to get dumber halfway through?"* Both have simple answers, and both come down to managing the conversation.
+
+## How cost works (the short version)
+
+If you're on a **Pro, Max, Team, or Enterprise** plan, your usage is **included** in that subscription — you're not paying per message. Plans do have **usage limits** that reset on a schedule; if you hit one, you wait for the reset or move to a higher tier. For a beginner doing spreadsheet-and-document work, you're unlikely to bump into them.
+
 <Note>
-  This page is being written. Outline below.
+  There's a separate, pay-as-you-go way to use Claude (an API key billed per use). That's an engineering path — most beginners should stick with a normal subscription, where cost is simply "your monthly plan."
 </Note>
 
-Two practical things beginners worry about: "is this costing me money?" and "why did it get dumber halfway through?" Both come down to managing the conversation.
+So: don't be afraid to press enter. You're not running a meter with every message.
 
-**What this page will cover:**
-- How plans and usage work at a high level
-- What "context" is and why long chats degrade
-- When to start a fresh session
-- Keeping a session focused on one task
-- Reusing instructions instead of repeating yourself
+## What "context" is — and why long chats degrade
+
+Here's the more useful concept. Every conversation has a **context** — Claude's working memory of everything said and read so far. It's finite. As a single session goes on and on (dozens of turns, many large files), that memory fills up, and two things happen:
+
+- Claude can start to **lose track** of earlier details.
+- Responses can get **slower or less sharp**.
+
+That "it got dumber" feeling is almost always a **full, cluttered context** — not Claude breaking. The fix is easy.
+
+## When to start a fresh session
+
+Start a new session (a clean conversation) when:
+
+- You're **switching to a different task.** Don't clean a spreadsheet and then plan a trip in the same chat.
+- The current chat has gotten **very long** and feels sluggish or forgetful.
+- Things have gone **sideways** and you'd rather start clean than untangle it.
+
+A fresh session is a reset button. Your **files are untouched** — they live in the folder, not the chat — so starting over costs you nothing but the conversation history.
+
+<Tip>
+  Think one session = one task. It keeps Claude sharp and keeps *you* organized. Finished cleaning the data? Start a fresh session for the memo.
+</Tip>
+
+## Keep a session focused
+
+- **One task per session.** The fastest way to keep context clean.
+- **Don't dump everything at once.** Bring files into the workspace as you need them, not all fifty up front.
+- **Wrap up loose threads.** If you explored three dead ends, a fresh start beats dragging all that clutter forward.
+
+## Stop repeating yourself: reusable instructions
+
+If you find yourself typing the same preferences every session ("always save to a new file, always show your assumptions, l prefer concise summaries"), you can write them down **once** so Claude remembers them for a project. That's what a project memory file (often called `CLAUDE.md`) is for — covered in [Going Further](/agentic-ai/claude-code/going-further).
+
+> Remember for this project: always work on copies, never overwrite originals, and keep summaries to five bullets or fewer.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Common Mistakes & FAQ" icon="triangle-exclamation" href="/agentic-ai/claude-code/common-mistakes">
+    The traps everyone hits — and skips
+  </Card>
+  <Card title="Going Further" icon="rocket" href="/agentic-ai/claude-code/going-further">
+    Teach Claude your preferences and connect your tools
+  </Card>
+</CardGroup>

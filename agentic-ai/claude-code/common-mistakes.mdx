@@ -1,18 +1,84 @@
 ---
 title: Common Mistakes & FAQ
 description: The beginner traps, the gotchas, and quick answers
+icon: triangle-exclamation
 ---
 
-<Note>
-  This page is being written. Outline below.
-</Note>
+The fastest way to get good is to skip the mistakes everyone else makes. Here are the big ones — roughly in the order beginners hit them — followed by quick answers to the questions that always come up.
 
-The fastest way to get good is to skip the mistakes everyone else makes. Here are the big ones, plus quick answers to the questions beginners always ask.
+## The mistakes that trip up almost everyone
 
-**What this page will cover:**
-- "It won't let me in" — the free-plan trap
-- Asking for too much at once
-- Trusting output without checking
-- Vague prompts and how to fix them
-- Setup gotchas (Git on Windows, PATH, tools not found)
-- A short FAQ
+<AccordionGroup>
+  <Accordion title="1. Expecting the free plan to work" icon="lock">
+    The number-one source of "it won't let me in." **Claude Code requires a paid plan** — Pro, Max, Team, or Enterprise. The free Claude.ai plan does not include it. If features are greyed out or you get access errors, check your plan first.
+  </Accordion>
+  <Accordion title="2. Asking for too much at once" icon="layer-group">
+    A single mega-prompt ("clean the data, make five charts, write the memo, format the report") is hard to review and easy to get subtly wrong in the middle. **Break it into small steps** and check each one. See [Plan Mode & Small Steps](/agentic-ai/claude-code/best-practices/plan-mode-and-small-steps).
+  </Accordion>
+  <Accordion title="3. Trusting the output without checking" icon="circle-check">
+    A polished chart or a confident answer can still be wrong. "It ran" is not "it's right." **Spot-check the numbers that matter.** See [Reviewing & Verifying](/agentic-ai/claude-code/best-practices/reviewing-and-verifying).
+  </Accordion>
+  <Accordion title="4. Vague prompts" icon="comment-dots">
+    "Fix this spreadsheet" gives Claude nothing to aim at. Say what the file is, what outcome you want, and what *not* to do. One extra sentence of context prevents a dozen wrong guesses. See [Writing Good Prompts](/agentic-ai/claude-code/best-practices/writing-prompts).
+  </Accordion>
+  <Accordion title="5. Working on your only original" icon="copy">
+    Always point Claude at a **copy** of an important file. It asks before changing things, but "work on a copy" means you can never lose anything. See [Permissions & Safety](/agentic-ai/claude-code/best-practices/permissions-and-safety).
+  </Accordion>
+  <Accordion title="6. Being in the wrong folder" icon="folder">
+    If Claude "can't find" your file, you're probably pointed at the wrong [workspace](/agentic-ai/claude-code/first-session/workspace). Ask *"what files do you see in this folder?"* to confirm you're in the right place.
+  </Accordion>
+  <Accordion title="7. One endless session for everything" icon="infinity">
+    Cramming many unrelated tasks into one long chat makes Claude slower and more forgetful. **One task per session;** start fresh when you switch. Your files are safe either way. See [Managing Cost & Context](/agentic-ai/claude-code/best-practices/cost-and-context).
+  </Accordion>
+</AccordionGroup>
+
+## Setup gotchas
+
+<AccordionGroup>
+  <Accordion title="Windows: the Code tab won't start / 'Git is required'">
+    Windows needs **Git for Windows** installed before the desktop Code tab will work. Install it from [git-scm.com/downloads/win](https://git-scm.com/downloads/win), then fully restart the app. Full details on [Installing on Windows](/agentic-ai/claude-code/setup/install-windows).
+  </Accordion>
+  <Accordion title="Claude can't find a tool I just installed">
+    The desktop app doesn't always pick up changes to your system right away. **Fully quit and reopen** the app after installing something new. On Windows, note the app does not read your PowerShell profile.
+  </Accordion>
+  <Accordion title="A 403 / authentication error">
+    Sign out and back in from the app menu. If it persists, confirm your paid subscription is active.
+  </Accordion>
+  <Accordion title="Do I need WSL on Windows?">
+    Almost certainly not. Native Windows is fully supported, and WSL needs admin rights most work laptops block. Use native unless a specific technical project requires Linux tools. See the [Windows page](/agentic-ai/claude-code/setup/install-windows).
+  </Accordion>
+</AccordionGroup>
+
+## Quick FAQ
+
+<AccordionGroup>
+  <Accordion title="Do I need to know how to code?">
+    No. You describe what you want in plain English; Claude handles the code behind the scenes. You never have to read or write it.
+  </Accordion>
+  <Accordion title="Will it change files without asking?">
+    No. It asks permission before running commands, editing, or creating files — and it only works inside the folder you give it.
+  </Accordion>
+  <Accordion title="Does every message cost extra money?">
+    On a normal paid plan, no — usage is included (within the plan's limits). You're not metered per message.
+  </Accordion>
+  <Accordion title="Is my data sent somewhere?">
+    To do its work, your prompts and the files Claude reads are processed by Anthropic's models. Follow your organization's policy for confidential material, and practice on non-sensitive data while learning. See [Permissions & Safety](/agentic-ai/claude-code/best-practices/permissions-and-safety).
+  </Accordion>
+  <Accordion title="Should I use the desktop app or the terminal?">
+    Beginners: the **desktop app**. It bundles everything and is the gentler entry point. The terminal is for power users; you can switch later, and your settings carry over.
+  </Accordion>
+  <Accordion title="It did something wrong — did I break something?">
+    Almost certainly not. Tell it plainly: *"That's not what I wanted — undo that and do X instead."* If you worked on a copy (you did, right?), your originals are safe regardless.
+  </Accordion>
+</AccordionGroup>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Going Further" icon="rocket" href="/agentic-ai/claude-code/going-further">
+    Teach Claude your preferences and connect your tools
+  </Card>
+  <Card title="Back to the Overview" icon="house" href="/agentic-ai/claude-code">
+    Revisit the map of this section
+  </Card>
+</CardGroup>
