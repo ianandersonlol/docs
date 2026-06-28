@@ -20,6 +20,16 @@ Windows takes a little more care than Mac — there's **one extra install** (Git
 
 ## Step 1: Install the desktop app
 
+Here's the whole Windows install at a glance, across the two sections below:
+
+```mermaid
+graph TD
+    A[Download the app] --> B[Install Git for Windows]
+    B --> C[Restart the app]
+    C --> D[Sign in]
+    D --> E[Find the Code tab]
+```
+
 <Steps>
   <Step title="Download the app">
     Go to [claude.ai/download](https://claude.ai/download) and download the **Windows** installer (there are x64 and ARM64 versions — pick the one matching your PC; x64 is the common one).
@@ -57,7 +67,7 @@ This is the part Mac users get to skip. On Windows, **the Code tab will not star
 
 ## The WSL question (and why you can probably ignore it)
 
-If you read anything online about Claude Code on Windows, you'll hit the term **WSL** (Windows Subsystem for Linux). People treat it like a required step. For your situation, it usually isn't. Here's the plain-English version.
+If you read anything online about Claude Code on Windows, you'll hit the term **[WSL](/agentic-ai/claude-code/glossary)** (Windows Subsystem for Linux). People treat it like a required step. For your situation, it usually isn't. Here's the plain-English version.
 
 **WSL is a way to run a Linux computer *inside* your Windows computer.** Some technical projects need Linux-only tools, and WSL gives you those. But it adds complexity, and — crucially — **it requires administrator rights to turn on**, which many corporate laptops block.
 
