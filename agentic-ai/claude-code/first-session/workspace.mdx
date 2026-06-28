@@ -1,17 +1,93 @@
 ---
 title: Setting Up a Workspace
 description: Where your work lives — folders, projects, and pointing Claude at the right place
+icon: folder-open
 ---
 
+Before Claude Code can help, it needs to know **where** to work. This is the one genuinely new idea in the whole guide for most non-coders — so we'll go slow and it'll click fast.
+
+## The one concept to understand: a folder
+
+Everything Claude Code does happens **inside a single folder** that you choose. That folder is your **workspace** (engineers call it a "project," but "folder" is the honest word).
+
+Think of it like handing a contractor the keys to one room:
+
+- Claude can see and work with everything **inside** that folder — your spreadsheets, PDFs, documents, and anything it creates.
+- Claude does **not** roam your whole computer. It works in the room you handed it.
+
+That boundary is a feature. It keeps things safe and predictable: you always know exactly what Claude can touch.
+
 <Note>
-  This page is being written. Outline below.
+  This is also why Claude Code beats pasting files into a chat window. Instead of uploading one file at a time, you point it at a folder and it can work with **everything in there at once** — fifty PDFs, a dozen spreadsheets, whatever.
 </Note>
 
-Before you do anything useful, Claude Code needs to know *where* to work. For a non-coder, this is the most unfamiliar idea in the whole guide — so we'll take it slow.
+## Step 1: Make a folder for your task
 
-**What this page will cover:**
-- The mental model of a "folder" / "project" and why everything happens inside one
-- Creating a dedicated workspace folder for a task
-- Opening that folder in the Claude Code desktop app
-- Putting your input files (spreadsheets, PDFs) where Claude can see them
-- What Claude can and can't touch outside the folder
+Give each project its own folder. A simple, visible place like your **Desktop** or **Documents** is perfect while you're learning.
+
+<Steps>
+  <Step title="Create a new folder">
+    On your Desktop, make a new folder and give it a clear name — say, `q3-sales-cleanup` or `vendor-contracts-review`. One folder per task keeps things tidy.
+  </Step>
+  <Step title="Put your input files inside it">
+    Drag the files you want Claude to work with into that folder — the messy spreadsheet, the stack of PDFs, whatever the raw material is. If you don't have inputs yet (e.g. you're building something from scratch), an empty folder is fine.
+  </Step>
+</Steps>
+
+<Tip>
+  **Always work on copies of important files.** Drag a *copy* of that critical spreadsheet into the workspace, not your only original. Claude is careful and asks before changing things — but "work on a copy" is a habit that means you can never lose anything. More on this in [Permissions & Safety](/agentic-ai/claude-code/best-practices/permissions-and-safety).
+</Tip>
+
+## Step 2: Open the folder in Claude Code
+
+<Tabs>
+  <Tab title="Desktop app (recommended)">
+    1. Open the Claude desktop app and go to the **Code** tab.
+    2. Start a new session and **choose the folder** you just created.
+    3. That's it — Claude is now "standing in" that folder and can see everything inside it.
+
+    From here on, when you ask Claude to "open the spreadsheet" or "look at the PDFs," it means the ones in this folder. You don't have to upload anything.
+  </Tab>
+  <Tab title="Terminal (optional)">
+    If you're using the command-line version, you "enter" a folder before starting Claude:
+
+    ```bash
+    cd ~/Desktop/q3-sales-cleanup
+    claude
+    ```
+
+    The `cd` command means "change directory" (go into that folder). Then `claude` starts the agent right there. Everything it does happens in that folder.
+  </Tab>
+</Tabs>
+
+## Step 3: Confirm Claude can see your files
+
+A nice first move in any new workspace — just ask:
+
+> What files are in this folder? Give me a one-line description of each.
+
+Claude will list what it found. This does two things: it confirms you're pointed at the right place, and it gets Claude oriented before you ask for real work. If the list looks wrong (empty, or the wrong files), you're in the wrong folder — close the session and reopen the correct one.
+
+## A mental model that helps
+
+| Term you'll hear | What it actually means |
+|---|---|
+| Workspace / project | The folder you chose to work in |
+| Directory | A fancy word for "folder" |
+| "Open a project" | Point Claude at a folder |
+| "The working directory" | The folder Claude is currently standing in |
+
+If you remember just one thing: **Claude works inside the folder you give it, and only that folder.**
+
+## Next
+
+You've got a folder, your files are in it, and Claude can see them. Now let's learn the actual rhythm of getting work done.
+
+<CardGroup cols={2}>
+  <Card title="The Core Loop" icon="arrows-rotate" href="/agentic-ai/claude-code/first-session/core-loop">
+    Describe, review, approve, verify — the rhythm of working with an agent
+  </Card>
+  <Card title="First Projects" icon="list-check" href="/agentic-ai/claude-code/first-projects/csv-to-chart">
+    Put it to work on a real task
+  </Card>
+</CardGroup>
