@@ -158,77 +158,84 @@
         "tab": "Agentic AI",
         "groups": [
           {
-            "group": "Agentic AI for Bioinformatics",
+            "group": "Agentic AI",
             "pages": [
-              "agentic-ai/index",
               {
-                "group": "Foundations",
+                "group": "Agentic AI for Bioinformatics",
+                "expanded": true,
                 "pages": [
-                  "agentic-ai/what-is-agentic-ai",
-                  "agentic-ai/history"
+                  "agentic-ai/index",
+                  {
+                    "group": "Foundations",
+                    "pages": [
+                      "agentic-ai/what-is-agentic-ai",
+                      "agentic-ai/history"
+                    ]
+                  },
+                  {
+                    "group": "The Ecosystem",
+                    "pages": [
+                      "agentic-ai/the-landscape",
+                      "agentic-ai/interaction-modes",
+                      "agentic-ai/mcp"
+                    ]
+                  },
+                  {
+                    "group": "Hands-On",
+                    "pages": [
+                      "agentic-ai/skills",
+                      "agentic-ai/slash-commands",
+                      "agentic-ai/subagents",
+                      "agentic-ai/when-to-use-what"
+                    ]
+                  }
                 ]
               },
               {
-                "group": "The Ecosystem",
+                "group": "Claude Code Best Practices for Beginners",
+                "expanded": true,
                 "pages": [
-                  "agentic-ai/the-landscape",
-                  "agentic-ai/interaction-modes",
-                  "agentic-ai/mcp"
-                ]
-              },
-              {
-                "group": "Hands-On",
-                "pages": [
-                  "agentic-ai/skills",
-                  "agentic-ai/slash-commands",
-                  "agentic-ai/subagents",
-                  "agentic-ai/when-to-use-what"
+                  "agentic-ai/claude-code/index",
+                  {
+                    "group": "Getting Set Up",
+                    "pages": [
+                      "agentic-ai/claude-code/setup/what-is-claude-code",
+                      "agentic-ai/claude-code/setup/install-mac",
+                      "agentic-ai/claude-code/setup/install-windows",
+                      "agentic-ai/claude-code/setup/what-else-to-install"
+                    ]
+                  },
+                  {
+                    "group": "Your First Session",
+                    "pages": [
+                      "agentic-ai/claude-code/first-session/workspace",
+                      "agentic-ai/claude-code/first-session/core-loop"
+                    ]
+                  },
+                  {
+                    "group": "First Projects",
+                    "pages": [
+                      "agentic-ai/claude-code/first-projects/csv-to-chart",
+                      "agentic-ai/claude-code/first-projects/organize-a-folder",
+                      "agentic-ai/claude-code/first-projects/summarize-pdfs",
+                      "agentic-ai/claude-code/first-projects/build-a-tiny-tool"
+                    ]
+                  },
+                  {
+                    "group": "Working Well With It",
+                    "pages": [
+                      "agentic-ai/claude-code/best-practices/writing-prompts",
+                      "agentic-ai/claude-code/best-practices/plan-mode-and-small-steps",
+                      "agentic-ai/claude-code/best-practices/reviewing-and-verifying",
+                      "agentic-ai/claude-code/best-practices/permissions-and-safety",
+                      "agentic-ai/claude-code/best-practices/cost-and-context"
+                    ]
+                  },
+                  "agentic-ai/claude-code/common-mistakes",
+                  "agentic-ai/claude-code/glossary",
+                  "agentic-ai/claude-code/going-further"
                 ]
               }
-            ]
-          },
-          {
-            "group": "Claude Code Best Practices for Beginners",
-            "pages": [
-              "agentic-ai/claude-code/index",
-              {
-                "group": "Getting Set Up",
-                "pages": [
-                  "agentic-ai/claude-code/setup/what-is-claude-code",
-                  "agentic-ai/claude-code/setup/install-mac",
-                  "agentic-ai/claude-code/setup/install-windows",
-                  "agentic-ai/claude-code/setup/what-else-to-install"
-                ]
-              },
-              {
-                "group": "Your First Session",
-                "pages": [
-                  "agentic-ai/claude-code/first-session/workspace",
-                  "agentic-ai/claude-code/first-session/core-loop"
-                ]
-              },
-              {
-                "group": "First Projects",
-                "pages": [
-                  "agentic-ai/claude-code/first-projects/csv-to-chart",
-                  "agentic-ai/claude-code/first-projects/organize-a-folder",
-                  "agentic-ai/claude-code/first-projects/summarize-pdfs",
-                  "agentic-ai/claude-code/first-projects/build-a-tiny-tool"
-                ]
-              },
-              {
-                "group": "Working Well With It",
-                "pages": [
-                  "agentic-ai/claude-code/best-practices/writing-prompts",
-                  "agentic-ai/claude-code/best-practices/plan-mode-and-small-steps",
-                  "agentic-ai/claude-code/best-practices/reviewing-and-verifying",
-                  "agentic-ai/claude-code/best-practices/permissions-and-safety",
-                  "agentic-ai/claude-code/best-practices/cost-and-context"
-                ]
-              },
-              "agentic-ai/claude-code/common-mistakes",
-              "agentic-ai/claude-code/glossary",
-              "agentic-ai/claude-code/going-further"
             ]
           }
         ]
