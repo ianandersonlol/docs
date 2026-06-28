@@ -1,0 +1,104 @@
+---
+title: Glossary
+description: Plain-English definitions for every unfamiliar word in this guide
+icon: book
+---
+
+Every field has its own vocabulary, and tech has more than most. This page is a no-jargon translator for the words you'll bump into across this guide and in the wider world of AI tools. Nothing here assumes you've written code — if a definition leans on another bit of jargon, that's a bug, and we've tried hard not to do it.
+
+Skim it now, or come back whenever a word trips you up.
+
+## Your computer, in plain words
+
+<AccordionGroup>
+  <Accordion title="Folder / Directory" icon="folder">
+    A labeled container on your computer that holds files — exactly like a paper folder in a filing cabinet. "Directory" is just the technical word for the same thing, so whenever you read "directory," think "folder." Claude Code does all its work inside one folder you choose. See [Setting Up a Workspace](/agentic-ai/claude-code/first-session/workspace).
+  </Accordion>
+  <Accordion title="Workspace / Project" icon="folder-open">
+    The single folder you point Claude Code at for a given task. Engineers call it a "project," but it's really just a folder with your files in it. Everything Claude can see and touch lives inside it — and nothing outside it. See [Setting Up a Workspace](/agentic-ai/claude-code/first-session/workspace).
+  </Accordion>
+  <Accordion title="Desktop app" icon="window-maximize">
+    The Claude program you download and open like any other application — the way you open Excel, Slack, or Chrome. It's the recommended starting point for beginners because it bundles everything and never makes you type into a text window. See [What Claude Code Actually Is](/agentic-ai/claude-code/setup/what-is-claude-code).
+  </Accordion>
+  <Accordion title="Terminal" icon="terminal">
+    A plain window where you control your computer by typing text instead of clicking buttons and icons. It looks intimidating — usually a dark screen with a blinking cursor — but as a beginner you can ignore it completely and use the desktop app instead.
+  </Accordion>
+  <Accordion title="Command line / CLI" icon="keyboard">
+    Another name for that typing-instead-of-clicking way of using a computer. "CLI" stands for "command-line interface." It's how power users work; you do not need it to get started, and you can switch to it later if you ever want to.
+  </Accordion>
+</AccordionGroup>
+
+## File types you'll work with
+
+<AccordionGroup>
+  <Accordion title="Spreadsheet file" icon="table-cells">
+    A table of information arranged in rows and columns — the kind of thing you open in Excel or Google Sheets. It's the natural home for lists, numbers, and anything you'd want to total, sort, or chart.
+  </Accordion>
+  <Accordion title="CSV file" icon="file-csv">
+    A spreadsheet saved as plain text, where each value is separated by a comma ("CSV" stands for comma-separated values). It's a simple, universal format that almost every system can export and almost every program can open. You can open a CSV right in Excel. See [Project: Spreadsheet to Chart](/agentic-ai/claude-code/first-projects/csv-to-chart).
+  </Accordion>
+  <Accordion title="PDF" icon="file-pdf">
+    A document that looks identical no matter where you open it — think contracts, reports, statements, and pitch decks. Claude Code can read the text inside a whole stack of them at once and pull out what you need. See [Project: Summarize PDFs](/agentic-ai/claude-code/first-projects/summarize-pdfs).
+  </Accordion>
+</AccordionGroup>
+
+## Working with Claude Code
+
+<AccordionGroup>
+  <Accordion title="Prompt" icon="comment">
+    What you type to Claude — your request, written in plain English. A good prompt names the file you mean, the outcome you want, and anything to avoid. See [Writing Good Prompts](/agentic-ai/claude-code/best-practices/writing-prompts).
+  </Accordion>
+  <Accordion title="Running a script or command" icon="play">
+    A "command" is a single instruction you give the computer; a "script" is a short list of those instructions saved together so they run in order. When Claude "runs" one, it's actually doing the work — cleaning your data or building a chart — rather than just describing it.
+  </Accordion>
+  <Accordion title="Session" icon="comments">
+    One continuous conversation with Claude Code, from the moment you open a folder until you close it. Treat it like a single meeting: start a fresh session for each new task instead of reusing one forever. See [Managing Cost & Context](/agentic-ai/claude-code/best-practices/cost-and-context).
+  </Accordion>
+  <Accordion title="Context" icon="brain">
+    Everything Claude is currently keeping in mind during a session — your instructions, the files it has read, and what's been said so far. It works like short-term memory: there's a limit, which is exactly why one focused task per session beats one endless catch-all chat. See [Managing Cost & Context](/agentic-ai/claude-code/best-practices/cost-and-context).
+  </Accordion>
+  <Accordion title="Permission prompt" icon="shield-check">
+    A small pop-up where Claude asks for your okay before it actually does something — running a command, editing a file, or creating a new one. You approve it, or you say no and tell Claude what to do instead. Nothing meaningful happens without your click. See [The Core Loop](/agentic-ai/claude-code/first-session/core-loop) and [Permissions & Safety](/agentic-ai/claude-code/best-practices/permissions-and-safety).
+  </Accordion>
+  <Accordion title="Plan Mode" icon="list-check">
+    A way of asking Claude to lay out how it would tackle a task before it changes anything. You read the plan and approve it first — like getting an estimate before the work starts. See [Plan Mode & Small Steps](/agentic-ai/claude-code/best-practices/plan-mode-and-small-steps).
+  </Accordion>
+  <Accordion title="Model" icon="microchip">
+    The underlying AI that does the actual reading, reasoning, and writing — the "brain" behind Claude. Claude Code is powered by Anthropic's Claude models, and you don't need to choose one to get started.
+  </Accordion>
+</AccordionGroup>
+
+## Words you'll meet in setup and beyond
+
+<AccordionGroup>
+  <Accordion title="Git" icon="code-branch">
+    A tool that keeps track of changes to files over time, originally built for software teams. You don't need to learn it to use Claude Code — but on Windows, the desktop Code tab requires it to be installed before it will run. See [Installing on Windows](/agentic-ai/claude-code/setup/install-windows).
+  </Accordion>
+  <Accordion title="WSL" icon="windows">
+    Short for "Windows Subsystem for Linux" — a way to run Linux-style tools inside Windows. Most beginners should skip it: native Windows works fine, and WSL often needs admin rights that work laptops block. See [Installing on Windows](/agentic-ai/claude-code/setup/install-windows).
+  </Accordion>
+  <Accordion title="MCP" icon="plug">
+    Short for "Model Context Protocol." It's a standard way to connect Claude to other systems — a database, a knowledge base, or an app you already use — so it can work with more than just the files in your folder. Strictly a later-stage upgrade. See [Going Further](/agentic-ai/claude-code/going-further) and the deeper [MCP page](/agentic-ai/mcp).
+  </Accordion>
+  <Accordion title="Skill" icon="wand-magic-sparkles">
+    A reusable bundle of know-how you give Claude so it handles a particular kind of task the way you like, across different projects. Think of it as teaching Claude a repeatable specialty once. See [Going Further](/agentic-ai/claude-code/going-further) and the deeper [Skills page](/agentic-ai/skills).
+  </Accordion>
+  <Accordion title="Slash command" icon="forward-slash">
+    A saved prompt you trigger by typing a slash and a name, like `/weekly-report`. Instead of re-typing the same instructions every time, you fire off the whole routine in one go. See [Going Further](/agentic-ai/claude-code/going-further) and the deeper [Slash Commands page](/agentic-ai/slash-commands).
+  </Accordion>
+</AccordionGroup>
+
+<Tip>
+  Hit a word that isn't here? Just ask Claude in plain English — *"explain what this means like I'm not technical"* — and it'll translate on the spot.
+</Tip>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Back to the Overview" icon="house" href="/agentic-ai/claude-code">
+    The map of this whole section
+  </Card>
+  <Card title="The Core Loop" icon="arrows-rotate" href="/agentic-ai/claude-code/first-session/core-loop">
+    Describe, review, approve, verify — the rhythm of working with an agent
+  </Card>
+</CardGroup>
