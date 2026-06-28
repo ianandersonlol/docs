@@ -1,0 +1,74 @@
+---
+title: What Claude Code Actually Is
+description: The plain-English version, for people who don't write code
+icon: circle-question
+---
+
+## The Simple Version
+
+You've used a chatbot. You type a question, it types an answer. Helpful, but it lives in a box — it can't open your files, run anything, or actually *do* the work. You're still the one copying, pasting, and clicking.
+
+**Claude Code is different. It can operate your computer.** Point it at a folder and it can:
+
+- **Read your files** — spreadsheets, PDFs, Word docs, exports from other systems
+- **Run small programs** — to clean data, do calculations, generate charts
+- **Create and change files** — produce a report, a chart image, a tidy folder
+- **Work step by step** — break a task into pieces and do them in order, checking as it goes
+
+A chatbot gives you text. **Claude Code gives you finished work.**
+
+## The "but I'm not technical" reframe
+
+Claude Code is sold as a tool for software engineers, and that label scares off exactly the people who'd get the most out of it. So here's the honest reframe:
+
+> The code is just plumbing. You care about the result.
+
+When you ask Claude to "clean up this sales export and chart the monthly totals," it might write a few lines of Python behind the scenes. You will never have to read that Python. You'll get a clean spreadsheet and a chart. The programming is how it gets there — not something you have to learn.
+
+If you can write an email to a sharp new analyst describing what you want, you can drive Claude Code.
+
+## A concrete example
+
+Imagine you've just exported a year of transactions as a `.csv` file — 8,000 rows, inconsistent date formats, some duplicates, a few blank cells. Normally that's an afternoon of Excel wrangling.
+
+With Claude Code, the conversation looks like this:
+
+> **You:** Here's a CSV of last year's transactions. Some rows are duplicated and the dates are a mess. Clean it up, then give me a table of total spend by month and a bar chart.
+
+Claude reads the file, tells you what it found ("I see 8,043 rows, 112 duplicates, and three different date formats"), proposes a plan, and — once you approve — produces a cleaned file, a summary table, and a chart image sitting in your folder. You then *check* the numbers (we'll cover how), and you're done.
+
+That's the whole idea.
+
+## How it's different from the Claude app you might know
+
+Many people have used **Claude.ai** or the Claude chat app. Claude Code is a cousin, not a clone:
+
+| | Claude chat (the website/app) | Claude Code |
+|---|---|---|
+| **Lives in** | A chat window | A folder on your computer |
+| **Can read your files?** | Only what you upload, one at a time | Yes — a whole folder at once |
+| **Can run things?** | No | Yes — cleans data, makes charts, builds tools |
+| **Best for** | Questions, drafting, brainstorming | Getting actual work done on your files |
+
+<Note>
+  Good news: if you have a paid Claude plan, **Claude Code is included** — you don't pay separately. The desktop app even has both a regular **Chat** tab and a **Code** tab in one place. More on plans on the next page.
+</Note>
+
+## What it is *not*
+
+- It's **not** a magic button. It can be wrong, and it can be confidently wrong. Your job is to check its work — an entire page of this guide is about exactly that.
+- It's **not** going to email your clients or move money on its own. It asks permission before it does anything that matters, and it only touches the folder you point it at.
+- It's **not** only for engineers. That's the myth this whole section exists to bust.
+
+## Where to go next
+
+You're ready to install it. Pick your operating system:
+
+<CardGroup cols={2}>
+  <Card title="Install on Mac" icon="apple" href="/agentic-ai/claude-code/setup/install-mac">
+    The desktop app route, in a few clicks
+  </Card>
+  <Card title="Install on Windows" icon="windows" href="/agentic-ai/claude-code/setup/install-windows">
+    Desktop app, Git, and the WSL question answered
+  </Card>
+</CardGroup>

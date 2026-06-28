@@ -1,0 +1,63 @@
+---
+title: What Else to Install
+description: The short list of companion tools that are actually worth it — and the famous one you don't need
+icon: screwdriver-wrench
+---
+
+The internet has long checklists of "essential tools" for Claude Code. Most of them are aimed at engineers. Here's the honest, short list for a beginner — what's worth installing, what's optional, and one popular recommendation you can safely ignore.
+
+## Worth installing
+
+<CardGroup cols={1}>
+  <Card title="A paid Claude plan — required" icon="id-card">
+    Not software, but it belongs at the top. Claude Code needs **Pro, Max, Team, or Enterprise**. The free plan won't work. This is the #1 reason beginners get stuck.
+  </Card>
+  <Card title="Git — required on Windows, nice on Mac" icon="code-branch">
+    On **Windows**, the desktop app's Code tab won't start without [Git for Windows](https://git-scm.com/downloads/win). On **Mac** it's usually already there and not strictly required, but it powers a useful safety net: a version history of your files so you can undo changes. Install it if it's easy; don't stress if you skip it at first.
+  </Card>
+  <Card title="A code editor (VS Code) — optional but recommended" icon="window-maximize">
+    [Visual Studio Code](https://code.visualstudio.com) is a free editor that's handy for *eyeballing* what Claude changed — opening a file, viewing a before/after. You don't need it to use Claude Code, but it makes reviewing work easier. Think of it as a nice-to-have, not a requirement.
+  </Card>
+</CardGroup>
+
+## The one you *don't* need: ripgrep
+
+You'll see people insist you should install **ripgrep** (the `rg` command) — a fast search tool — "instead of grep." Good instinct, wrong conclusion for our purposes:
+
+<Note>
+  **Ripgrep already ships inside Claude Code.** Both the desktop app and the command-line version bundle their own copy. Claude uses it automatically to search your files quickly. You do **not** need to install it separately, on Mac or Windows.
+</Note>
+
+So if a tutorial tells you to `brew install ripgrep` or download `rg` before you start — skip it. It's already handled.
+
+## Only if you went the npm route
+
+If you (or someone helping you) chose to install the **command-line** version via npm, you'll need **[Node.js](https://nodejs.org) version 18 or newer**. The desktop app and the official installers bundle everything and need **no** Node.js — so most beginners never touch this.
+
+## Desktop app vs. the terminal: which should you use?
+
+Short answer for beginners: **the desktop app.**
+
+| | Desktop app | Terminal (command line) |
+|---|---|---|
+| **Learning curve** | Low — it's a normal app | Higher — you type commands |
+| **Setup** | One download, bundles everything | A few install steps |
+| **Best for** | Getting started, most everyday work | Power users, automation, scripting |
+| **This guide assumes** | ✅ This | Optional, mentioned in asides |
+
+The rest of this site happens to use the terminal version, because that's how heavy users (and the author) run it. But there's no shame in the desktop app — it runs the **same** Claude Code engine under the hood, and it shares your settings and sign-in. You can always graduate to the terminal later. Start where it's comfortable.
+
+<Tip>
+  The desktop app and the terminal version share the same configuration, memory files, and login. So nothing you learn in one is wasted if you switch to the other — it's the same tool with two front doors.
+</Tip>
+
+## You're set up — now what?
+
+<CardGroup cols={2}>
+  <Card title="Your First Session" icon="circle-play" href="/agentic-ai/claude-code/first-session/workspace">
+    Set up a workspace and learn the core loop
+  </Card>
+  <Card title="First Projects" icon="list-check" href="/agentic-ai/claude-code/first-projects/csv-to-chart">
+    Jump into a real, hands-on task
+  </Card>
+</CardGroup>
