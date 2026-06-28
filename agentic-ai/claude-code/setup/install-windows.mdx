@@ -70,6 +70,16 @@ Here's the comparison:
 | **Good for** | Spreadsheets, PDFs, documents, scripts — i.e. business work | Linux-specific developer toolchains |
 | **Beginner-friendly?** | Yes | Not really |
 
+```mermaid
+graph TD
+    A[You are on Windows] --> B{Does your work need Linux-only tools?}
+    B -->|No - spreadsheets, PDFs, documents| C[Use native Windows]
+    B -->|Yes| D{Do you have admin rights on this PC?}
+    D -->|No - locked-down work laptop| C
+    D -->|Yes, and you really need Linux| E[WSL is worth considering]
+    C --> F[Install the desktop app plus Git for Windows]
+```
+
 <Tip>
   **For a business/finance user working with spreadsheets, documents, and folders: use native Windows.** You do not need WSL. You'd only want it if a specific technical project told you it required Linux tools — and if you're at that point, you're past "beginner."
 </Tip>

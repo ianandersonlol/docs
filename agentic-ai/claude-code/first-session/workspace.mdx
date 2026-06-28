@@ -17,6 +17,14 @@ Think of it like handing a contractor the keys to one room:
 
 That boundary is a feature. It keeps things safe and predictable: you always know exactly what Claude can touch.
 
+```mermaid
+graph TD
+    C([Claude Code]) -->|can see and edit| W[The workspace folder you opened]
+    C -.->|cannot see or touch| O[Every other folder on your computer]
+    W --> F1[Your spreadsheets and PDFs]
+    W --> F2[Files Claude creates for you]
+```
+
 <Note>
   This is also why Claude Code beats pasting files into a chat window. Instead of uploading one file at a time, you point it at a folder and it can work with **everything in there at once** — fifty PDFs, a dozen spreadsheets, whatever.
 </Note>

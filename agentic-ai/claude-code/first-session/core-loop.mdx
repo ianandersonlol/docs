@@ -6,6 +6,21 @@ icon: arrows-rotate
 
 Claude Code is a **loop**, not a vending machine. You don't drop in a coin and walk away — you work *with* it, in a back-and-forth that takes a few rounds. Once this rhythm feels natural, everything else in this guide is just detail.
 
+## The loop at a glance
+
+```mermaid
+graph TD
+    A[Describe the outcome you want] --> B[Claude proposes a plan]
+    B --> C[You review it]
+    C --> D{Looks right?}
+    D -->|Not quite| A
+    D -->|Yes| E[Approve - Claude works, asking permission as it goes]
+    E --> F[You verify the result]
+    F --> G{Good enough?}
+    G -->|Tweak it| A
+    G -->|Yes| H[Done]
+```
+
 ## The five beats
 
 <Steps>
