@@ -1,17 +1,84 @@
 ---
 title: "Project: Build a Tiny Tool"
 description: Make a small web page or script that does something useful for you
+icon: wrench
 ---
 
-<Note>
-  This page is being written. Outline below.
-</Note>
+This is the "wow" project — the one where you describe a little tool out loud and watch Claude build it. It has more moving parts than the others, which is why we saved it for last. You still won't write or read any code; you'll describe, preview, and refine.
 
-The "wow" moment: describing a small tool and watching Claude build it. A simple calculator, a one-page dashboard, a reusable script. More moving parts than the other projects, so we save it for last.
+**What you'll practice:** building something from nothing, previewing it, and iterating in plain English.
 
-**What this walkthrough will cover:**
-- Describing the tool you want in plain English
-- Letting Claude scaffold and run it for you
-- Previewing it (opening a local web page)
-- Asking for changes in plain English
-- Saving it so you can reuse it later
+## What you'll need
+
+- An empty [workspace folder](/agentic-ai/claude-code/first-session/workspace).
+- A small, concrete idea. The trick is to keep it *small*. Good first tools:
+  - A tip / loan / margin calculator
+  - A simple one-page dashboard that reads a CSV and shows a few numbers
+  - A unit or currency converter
+  - A countdown or deadline tracker
+
+## The walkthrough
+
+<Steps>
+  <Step title="Describe the tool — and ask for a plan">
+    > I want a simple web page that calculates a loan payment. The user types in the loan amount, interest rate, and number of years, and it shows the monthly payment. Make it clean and easy to read. Before you build it, tell me your plan.
+
+    Claude proposes what it'll create. Approve when it looks right.
+  </Step>
+  <Step title="Let it build">
+    Claude creates the necessary file(s) in your folder, asking permission as it goes. You don't need to understand the files it makes — that's the plumbing.
+  </Step>
+  <Step title="Preview it">
+    Ask Claude how to see it:
+
+    > How do I open this and try it out?
+
+    For a simple web page, that's usually just double-clicking the file it created to open it in your browser. Claude will tell you exactly what to do.
+  </Step>
+  <Step title="Refine in plain English">
+    Try it, then ask for changes like you're talking to a designer:
+
+    > Make the result bigger and bold. Add a field for a down payment. And round the payment to the nearest dollar.
+
+    Each request is another lap of the loop. Refresh the page to see updates.
+  </Step>
+</Steps>
+
+## Verify
+
+A tool is only useful if it's *correct*, so test it like a skeptic:
+
+- **Try a known answer.** Put in numbers you can check by hand (or against an online calculator) and confirm it matches.
+- **Try the edges.** Zero, a blank field, a huge number. Does it behave sensibly or break?
+- **Have Claude explain the math.** *"Walk me through the formula you used for the monthly payment."* Make sure it's the right one.
+
+<Warning>
+  A tool that looks polished can still be subtly wrong. Always validate it against an answer you trust before you rely on it for anything real.
+</Warning>
+
+## Save it so you can reuse it
+
+The beauty of a tool is that it keeps working after the conversation ends. The file Claude made lives in your folder — keep that folder and you can use the tool any time, no Claude required. If you want it to be reusable or shareable, ask:
+
+> Add a short note (a README) explaining what this is and how to use it, so I remember later.
+
+## Take it further
+
+- *"Let me upload a CSV and have the dashboard chart it automatically."*
+- *"Make it work nicely on my phone too."*
+- *"Add a button to download the result as a PDF."*
+
+When you're ready for tools you can summon anywhere — not just from a folder — that's what [skills and slash commands](/agentic-ai/claude-code/going-further) are for.
+
+## Next
+
+You've done all four projects. Time to sharpen the habits that make every future task smoother.
+
+<CardGroup cols={2}>
+  <Card title="Working Well With It" icon="thumbs-up" href="/agentic-ai/claude-code/best-practices/writing-prompts">
+    The best-practices section
+  </Card>
+  <Card title="Going Further" icon="rocket" href="/agentic-ai/claude-code/going-further">
+    Skills, slash commands, and connecting your tools
+  </Card>
+</CardGroup>

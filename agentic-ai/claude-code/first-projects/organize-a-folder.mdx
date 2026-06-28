@@ -1,17 +1,71 @@
 ---
 title: "Project: Organize a Messy Folder"
 description: Have Claude rename and sort a pile of files into a sane structure
+icon: folder-tree
 ---
 
-<Note>
-  This page is being written. Outline below.
-</Note>
+Everyone has the folder. A junk drawer of downloads — invoices, contracts, screenshots, scans — with names like `Scan_002 (final) FINAL (2).pdf`. This project shows the "an agent can operate your computer" idea at its most tangible, and it's wonderfully low-stakes.
 
-A pile of downloads — invoices, contracts, screenshots — with names like `Scan_002 (final) FINAL.pdf`. This walkthrough shows the "agent operates your computer" idea at its most concrete.
+**What you'll practice:** approving file operations carefully, planning before acting, and working safely on copies.
 
-**What this walkthrough will cover:**
-- Pointing Claude at a messy folder
-- Asking it to propose a renaming/sorting scheme *before* moving anything
-- Reviewing the plan and approving in stages
-- Safe moves: working on a copy, keeping an undo path
-- Verifying nothing was lost
+## What you'll need
+
+- A folder full of mixed, messily-named files. (If you'd rather practice safely, copy a sampling of files into a fresh `practice-folder` first.)
+
+<Warning>
+  This project **moves and renames real files**. Do it on a **copy** the first time. Make a duplicate of the messy folder and point Claude at the duplicate — then if anything surprises you, your original is untouched.
+</Warning>
+
+## The walkthrough
+
+<Steps>
+  <Step title="Have Claude survey the mess">
+    > Look at every file in this folder and tell me what's here — group them by what they seem to be (invoices, contracts, images, etc.) and point out anything with a confusing name.
+
+    Claude inventories the folder and proposes natural groupings. You'll get a clear picture before a single file moves.
+  </Step>
+  <Step title="Ask for a plan — not action yet">
+    This is the key move. Get the plan in writing *before* anything happens:
+
+    > Propose a clean folder structure and a consistent naming scheme for these files. Show me the full before-and-after list of what you'd rename and where you'd move it. **Don't move anything yet** — just show me the plan.
+
+    Claude lays out exactly what it intends to do. Read it like a contract.
+  </Step>
+  <Step title="Adjust the plan in plain English">
+    Tweak anything you don't like:
+
+    > Use `YYYY-MM-Vendor` for invoice names, and put contracts in a separate `Contracts` subfolder. Otherwise looks good.
+  </Step>
+  <Step title="Approve the moves">
+    Now tell it to go. Claude will ask permission as it renames and moves files — approve with **Allow once** and watch the first few go by so you trust the pattern.
+
+    > Great, go ahead and apply the plan.
+  </Step>
+</Steps>
+
+## Verify
+
+- **Open the folder yourself** and look. Does the new structure match the plan?
+- **Count.** *"How many files were there before, and how many are there now? Did anything get skipped or lost?"* The counts should reconcile.
+- **Check a couple of renames** against the originals to be sure nothing was mislabeled.
+
+<Tip>
+  Because you worked on a copy, the safety net is built in: if the result isn't what you wanted, delete the copy and try again with a clearer instruction. Nothing was ever at risk.
+</Tip>
+
+## Take it further
+
+- *"Also extract the invoice total and date from each PDF and put them in a spreadsheet."* (This bridges into the [PDF project](/agentic-ai/claude-code/first-projects/summarize-pdfs).)
+- *"Flag any duplicates — same content, different names."*
+- *"Write a short note explaining the folder structure so the next person understands it."*
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Project: Summarize PDFs" icon="file-lines" href="/agentic-ai/claude-code/first-projects/summarize-pdfs">
+    Pull insights out of a stack of documents
+  </Card>
+  <Card title="Permissions & Safety" icon="shield-check" href="/agentic-ai/claude-code/best-practices/permissions-and-safety">
+    The habits that keep your files safe
+  </Card>
+</CardGroup>

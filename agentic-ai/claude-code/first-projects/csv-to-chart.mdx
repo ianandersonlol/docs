@@ -1,17 +1,77 @@
 ---
 title: "Project: Messy Spreadsheet → Clean Chart"
 description: Turn a raw CSV of data into a cleaned-up summary and a chart
+icon: chart-column
 ---
 
-<Note>
-  This page is being written. Outline below.
-</Note>
+This is the most universal business win, so it's the one to do first. You have a messy export of data; you want it cleaned, summarized, and turned into a chart — without spending an hour fighting Excel formulas.
 
-The most universal business win: you have a messy export of data and you want it cleaned, summarized, and visualized — without touching Excel formulas for an hour.
+**What you'll practice:** the [core loop](/agentic-ai/claude-code/first-session/core-loop), reading a plan, approving steps, and verifying numbers.
 
-**What this walkthrough will cover:**
-- Dropping a CSV into your workspace
-- Asking Claude to inspect and describe the data first
-- Cleaning: deduping, fixing types, handling blanks
-- Producing a summary table and a chart (saved as an image)
-- Sanity-checking the numbers before you trust them
+## What you'll need
+
+- A spreadsheet file (a `.csv` or `.xlsx`) with some data in it — sales, expenses, a list of transactions, anything with numbers and dates. A messy one is *better* for practice.
+- A [workspace folder](/agentic-ai/claude-code/first-session/workspace) with a **copy** of that file in it.
+
+<Tip>
+  No data handy? Just ask Claude: *"Create a sample CSV of 500 fake sales transactions with some duplicates and messy dates so I can practice."* Now you have a realistic mess to clean.
+</Tip>
+
+## The walkthrough
+
+<Steps>
+  <Step title="Let Claude look first">
+    Before asking for anything, have Claude describe what it's working with:
+
+    > Take a look at `sales.csv` and tell me what's in it — how many rows, what the columns are, and anything messy you notice (duplicates, blanks, inconsistent formats).
+
+    Claude reads the file and reports back. You'll often learn things about your own data here ("three different date formats," "112 duplicate rows").
+  </Step>
+  <Step title="Ask for the cleanup — as a new file">
+    Now the real request. Notice we tell it to save a **new** file rather than overwrite the original:
+
+    > Clean this up: remove duplicate rows, standardize the dates to YYYY-MM-DD, and drop rows with no amount. Save the result as `sales-clean.csv` — don't change the original. Tell me what you removed.
+  </Step>
+  <Step title="Approve the steps">
+    Claude will propose what it's doing and ask permission to run and to write the new file. Read each prompt, approve with **Allow once**. When it finishes, it'll summarize what changed ("removed 112 duplicates, fixed 340 dates, dropped 5 empty rows").
+  </Step>
+  <Step title="Ask for the summary and chart">
+    > Using the cleaned data, give me a table of total revenue by month, and save a bar chart of it as `revenue-by-month.png`.
+
+    Claude builds the table in the chat and saves a chart image into your folder. Open it like any image.
+  </Step>
+</Steps>
+
+## Verify before you trust it
+
+This is the most important step, and the easiest to skip. A few quick checks:
+
+- **Eyeball the chart.** Do the months and rough magnitudes make sense? A spike or a missing month is worth questioning.
+- **Spot-check one number.** Pick one month and ask: *"Show me how you calculated March's total — which rows went into it?"* Claude will show its work.
+- **Sanity-check the totals.** *"What's the grand total across all months, and does it match the sum of the cleaned file?"*
+
+<Warning>
+  "It produced a chart" is not "the chart is right." Claude is capable but can misread a column or make an assumption you didn't intend. Thirty seconds of spot-checking is what makes this trustworthy. See [Reviewing & Verifying](/agentic-ai/claude-code/best-practices/reviewing-and-verifying).
+</Warning>
+
+## Take it further
+
+Once the basics work, try iterating — this is where it gets fun:
+
+- *"Make it quarterly instead of monthly."*
+- *"Add a line for a 3-month rolling average."*
+- *"Break it out by region in a grouped bar chart."*
+- *"Put the table and chart into a one-page summary I can send to my boss."*
+
+Each of these is just another lap around the loop.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Project: Organize a Folder" icon="folder-tree" href="/agentic-ai/claude-code/first-projects/organize-a-folder">
+    Wrangle a messy pile of files
+  </Card>
+  <Card title="Reviewing & Verifying" icon="magnifying-glass" href="/agentic-ai/claude-code/best-practices/reviewing-and-verifying">
+    Get good at checking the work
+  </Card>
+</CardGroup>

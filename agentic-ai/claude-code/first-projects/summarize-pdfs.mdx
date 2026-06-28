@@ -1,17 +1,69 @@
 ---
 title: "Project: Summarize a Stack of PDFs"
 description: Extract key points and a comparison table from many documents at once
+icon: file-lines
 ---
 
-<Note>
-  This page is being written. Outline below.
-</Note>
+This is the one that feels like a superpower the first time. You have a folder of PDFs — vendor proposals, contracts, research reports, a data room's worth of documents — and a question you need answered *across all of them*. Reading each one and copy-pasting into a chat window would take all afternoon. Claude reads the whole stack.
 
-Due-diligence energy: a folder full of PDFs and a question you need answered across all of them. This is where an agent that can read every file beats copy-pasting into a chat window.
+**What you'll practice:** working across many files at once, building comparison tables, and tracing claims back to the source.
 
-**What this walkthrough will cover:**
-- Putting a set of PDFs in your workspace
-- Asking for a per-document summary
-- Building a comparison table across documents
-- Pulling specific figures or clauses into a spreadsheet
-- Spot-checking citations back to the source pages
+## What you'll need
+
+- A [workspace folder](/agentic-ai/claude-code/first-session/workspace) with several PDFs in it. Proposals, contracts, or reports work great.
+
+<Tip>
+  Keep the documents non-confidential while you're learning, or use your organization's approved environment for sensitive material. See [Permissions & Safety](/agentic-ai/claude-code/best-practices/permissions-and-safety) for handling confidential data responsibly.
+</Tip>
+
+## The walkthrough
+
+<Steps>
+  <Step title="Get the lay of the land">
+    > List the PDFs in this folder and give me a one-sentence description of what each one is.
+
+    This confirms Claude can read them and orients it before the heavy lifting.
+  </Step>
+  <Step title="Ask for per-document summaries">
+    > For each PDF, give me a short summary: the key points, any dollar figures, and important dates or deadlines. Keep each to a few bullets.
+  </Step>
+  <Step title="Build a comparison across documents">
+    The real payoff is comparing them side by side:
+
+    > Now put these into a comparison table — one row per proposal — with columns for vendor, total price, contract length, and any termination clause. Save it as `proposal-comparison.csv`.
+
+    Claude reads across every document and assembles the table. What was an afternoon is now a minute.
+  </Step>
+  <Step title="Ask the question you actually care about">
+    > Which proposal is cheapest over three years once you account for the annual increases? Show your math.
+  </Step>
+</Steps>
+
+## Verify — especially here
+
+PDF extraction is powerful but it's where a confident-but-wrong answer can sneak in (a misread number, a clause pulled from the wrong section). So trace before you trust:
+
+- **Ask for sources.** *"For each price in the table, tell me which document and roughly which page it came from."* Then open one or two and confirm.
+- **Check the outlier.** If one vendor looks suspiciously cheap, that's exactly the figure to verify by hand.
+- **Re-read the conclusion's basis.** *"What assumptions did you make to pick the cheapest option?"* Make sure they match reality.
+
+<Warning>
+  The more documents involved, the more tempting it is to trust the tidy table and skip checking. Resist that. Spot-check the numbers that decisions will hang on. See [Reviewing & Verifying](/agentic-ai/claude-code/best-practices/reviewing-and-verifying).
+</Warning>
+
+## Take it further
+
+- *"Draft a one-page memo recommending a vendor, with the comparison table embedded."*
+- *"Flag any contract clauses that are unusual or worth a lawyer's eye."*
+- *"Pull every deadline across all documents into a single calendar list."*
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Project: Build a Tiny Tool" icon="screwdriver-wrench" href="/agentic-ai/claude-code/first-projects/build-a-tiny-tool">
+    Make something small and reusable
+  </Card>
+  <Card title="Writing Good Prompts" icon="comment" href="/agentic-ai/claude-code/best-practices/writing-prompts">
+    Ask better questions of your documents
+  </Card>
+</CardGroup>
