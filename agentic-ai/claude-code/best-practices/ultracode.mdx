@@ -1,0 +1,83 @@
+---
+title: "Ultracode: Going All-Out"
+description: When to unleash a whole team of Claudes on one big task
+icon: bolt
+---
+
+Most of the time, one Claude working through your task step by step is exactly right. But every so often you hit a job that's *sprawling* — comb through every contract in a folder, cross-check a pile of research, leave absolutely nothing out — and you'd happily trade some cost for thoroughness. That's what **ultracode** is for. It's the "go big" button.
+
+<Note>
+  **The simple version:** ultracode tells Claude to stop working alone and instead put a whole *team* of itself on your task, all at once, to be exhaustive. It's powerful — and it uses a lot more of your plan's usage. Reach for it when "complete and thorough" matters more than "quick and cheap."
+</Note>
+
+## What it actually does
+
+Ultracode flips on two things at the same time:
+
+1. **It cranks the thinking up** to a high effort level (see [Choosing a Model & Effort](/agentic-ai/claude-code/best-practices/choosing-a-model)).
+2. **It fans the work out across many helper agents** running in parallel — instead of one Claude doing everything in sequence, it's a coordinated team, each tackling a slice, with the results stitched back together.
+
+The analogy that makes it click: normally you've got one sharp analyst working a list of 200 documents one at a time. With ultracode, you put a whole team on it — each person takes a stack, a coordinator hands out the work, and a reviewer double-checks the findings before they reach you. Same task, far more coverage, finished as one tidy answer.
+
+## When it earns its keep
+
+Ultracode shines on **big, sprawling jobs where completeness is the whole point:**
+
+- **Combing a large pile.** *"Go through every contract in the `inputs` folder and flag each one missing a signature or an end date."*
+- **Heavy, repetitive work across many files.** Standardizing, extracting, or cross-referencing a hundred documents at once.
+- **Deep research that checks itself.** Fan out across many sources, then have agents verify each other's claims before you trust them.
+- **Looking at a problem from several angles.** Draft a plan from a few independent perspectives, then keep the best of each.
+
+If a task makes you think *"this would take a person all afternoon and they'd still miss a few,"* it's an ultracode candidate.
+
+## How to turn it on
+
+<Tabs>
+  <Tab title="For one task (recommended)">
+    Just put the word **`ultracode`** in your request. Claude uses the big-team approach for that task only, then goes back to normal.
+
+    > ultracode: go through every PDF in the `inputs` folder and build me one spreadsheet listing each document's title, date, total amount, and counterparty.
+  </Tab>
+  <Tab title="For a whole session">
+    Type **`/effort ultracode`** to leave it on for everything that follows. Switch back with **`/effort high`** when you're done with the heavy lifting.
+  </Tab>
+</Tabs>
+
+## The trade-off: thoroughness costs usage
+
+There's no free lunch. Spinning up a team means doing a lot more work under the hood, so a single ultracode task can use **many times** the plan usage of doing it the ordinary way.
+
+| | Normal | Ultracode |
+|---|---|---|
+| How it works | One Claude, step by step | A whole team of Claudes, in parallel |
+| Thoroughness | Great for most tasks | Exhaustive — built to leave nothing out |
+| Speed to finish | Quick to get going | Slower to spin up, but covers far more ground |
+| Usage cost | Normal | **Much higher** — potentially several times a normal task |
+| Best for | Day-to-day work | Big, sprawling, must-be-complete jobs |
+
+<Warning>
+  Ultracode is a sledgehammer. For a quick question, a small edit, or anything a single pass handles well, it's overkill — you'll burn through your plan's usage for no real benefit. Match the tool to the task.
+</Warning>
+
+## When *not* to use it
+
+- Quick, simple, or one-off tasks.
+- Anything you can comfortably check in a minute.
+- When you're still exploring and not sure what you want yet — figure that out cheaply first, *then* go big if needed.
+
+## One naming gotcha
+
+<Note>
+  Don't confuse **ultracode** with **`/code-review ultra`** (sometimes called "ultrareview"). They sound alike but are different tools: ultracode puts a team on *doing your task*, while `/code-review ultra` is a separate, developer-focused feature for deeply reviewing code changes. For general spreadsheet-and-document work, ultracode is the one you'll reach for — you can ignore the other.
+</Note>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Choosing a Model & Effort" icon="microchip" href="/agentic-ai/claude-code/best-practices/choosing-a-model">
+    The everyday dials behind ultracode
+  </Card>
+  <Card title="Common Mistakes & FAQ" icon="triangle-exclamation" href="/agentic-ai/claude-code/common-mistakes">
+    The traps to skip
+  </Card>
+</CardGroup>

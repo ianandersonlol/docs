@@ -1,0 +1,80 @@
+---
+title: Undo & Rewind
+description: How to recover when Claude changed something you did not want
+icon: rotate-left
+---
+
+Before you let any agent change files, you should know how to get back. Claude Code gives you several recovery options, from simple copies to checkpoints and version history.
+
+Think of them as layers.
+
+## Layer 1: work on copies
+
+This is still the best beginner safety habit:
+
+> Put copies of important files in the workspace. Keep the originals somewhere else.
+
+If the result is bad, delete the workspace copy and start again. No special tool, no stress.
+
+## Layer 2: ask Claude to undo
+
+For a small mistake, plain English is enough:
+
+> Undo the last change you made and explain what you restored.
+
+This works well when the change is recent and Claude still has the context.
+
+## Layer 3: rewind to a checkpoint
+
+Claude Code can create checkpoints during a session so you can rewind to an earlier state. If you see a checkpoint or rewind option in your app, use it when the session has drifted or a set of edits went the wrong direction.
+
+You can also try:
+
+```text
+/rewind
+```
+
+Use rewind when:
+
+- Several file edits happened and you want to go back before them.
+- You approved something but later realized the plan was wrong.
+- The conversation went sideways and you want to return to a known-good point.
+
+<Note>
+  Checkpoints are a recovery tool, not a substitute for working on copies. A checkpoint helps restore files in the workspace. It does not make confidential data "unsent," undo actions in outside services, or replace your own judgment.
+</Note>
+
+## Layer 4: use Git when the work matters
+
+Git is version history for a folder. You do not need to become a Git expert, but you can ask Claude:
+
+> Set up version history for this folder and make a snapshot before we start.
+
+For longer projects, this gives you a stronger undo path than memory alone.
+
+## Which undo should I use?
+
+| Situation | Best recovery |
+|---|---|
+| You are practicing on a throwaway copy | Delete the copy and retry |
+| Claude made one small unwanted edit | Ask it to undo that edit |
+| Several edits went wrong | Rewind to a checkpoint |
+| You are doing a multi-day project | Use Git snapshots |
+| You changed something outside the workspace | Stop and handle that system directly |
+
+## The one sentence to remember
+
+> Before you change anything important, make sure I have an undo path.
+
+Claude understands that. Ask it early.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="When It Goes Sideways" icon="life-ring" href="/agentic-ai/claude-code/best-practices/when-it-goes-sideways">
+    A calm recovery recipe
+  </Card>
+  <Card title="Permissions & Safety" icon="shield-check" href="/agentic-ai/claude-code/best-practices/permissions-and-safety">
+    Approve actions without guessing
+  </Card>
+</CardGroup>

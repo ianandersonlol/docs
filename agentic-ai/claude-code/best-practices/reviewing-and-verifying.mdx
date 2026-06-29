@@ -12,7 +12,7 @@ A task can complete cleanly, produce a beautiful chart, and still be wrong — b
 
 Treat every result as "probably right, let me confirm" rather than "done."
 
-## Five ways to verify (no code required)
+## Six ways to verify (no code required)
 
 <Steps>
   <Step title="Spot-check against a known answer">
@@ -35,6 +35,9 @@ Treat every result as "probably right, let me confirm" rather than "done."
   </Step>
   <Step title="Sanity-check the totals">
     Do the big numbers pass the smell test? Does the cleaned file still have a sensible number of rows? A total that's 10× too big or a month that vanished is a flag worth chasing.
+  </Step>
+  <Step title="Check whether the input was readable">
+    A wrong answer often starts with a file Claude could not read cleanly. For PDFs and spreadsheets, ask: *"Which files or sheets were hard to read, and what did you skip?"* See [Files Claude May Struggle With](/agentic-ai/claude-code/first-session/file-limitations).
   </Step>
 </Steps>
 
@@ -66,7 +69,7 @@ Not everything needs a forensic audit. Calibrate:
   <Card title="Permissions & Safety" icon="shield-check" href="/agentic-ai/claude-code/best-practices/permissions-and-safety">
     Keep your files and data safe
   </Card>
-  <Card title="Common Mistakes & FAQ" icon="triangle-exclamation" href="/agentic-ai/claude-code/common-mistakes">
-    Skip the traps everyone hits
+  <Card title="When It Goes Sideways" icon="life-ring" href="/agentic-ai/claude-code/best-practices/when-it-goes-sideways">
+    Recover when verification finds a problem
   </Card>
 </CardGroup>
