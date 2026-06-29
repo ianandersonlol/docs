@@ -238,6 +238,16 @@
                       "agentic-ai/claude-code/best-practices/subagents-and-plugins"
                     ]
                   },
+                  {
+                    "group": "Capstone: A Forecasting Model",
+                    "pages": [
+                      "agentic-ai/claude-code/forecasting-model/index",
+                      "agentic-ai/claude-code/forecasting-model/build-the-model",
+                      "agentic-ai/claude-code/forecasting-model/write-a-skill",
+                      "agentic-ai/claude-code/forecasting-model/ask-questions",
+                      "agentic-ai/claude-code/forecasting-model/workflows"
+                    ]
+                  },
                   "agentic-ai/claude-code/common-mistakes",
                   "agentic-ai/claude-code/glossary",
                   "agentic-ai/claude-code/going-further"

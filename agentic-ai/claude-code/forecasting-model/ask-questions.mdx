@@ -1,0 +1,84 @@
+---
+title: "Step 3: Ask It Questions"
+description: Run scenarios, sensitivities, and goal-seeks against your model in plain English
+icon: magnifying-glass-chart
+---
+
+A static model is a report. A model you can *interrogate* is a decision tool. This is where the project pays off: with the forecast built and your [conventions captured in a skill](/agentic-ai/claude-code/forecasting-model/write-a-skill), you can now ask the kinds of questions you'd normally spend an afternoon wiring up in Excel — and get answers in a sentence.
+
+**What you'll practice:** treating the model as something you *converse with*, and verifying every answer before you believe it.
+
+## Two ways to ask — know the difference
+
+When you ask a question, you can have Claude either **answer in the chat** or **change the model and re-export**. They're different tools:
+
+| You want… | Ask for… | Example |
+|---|---|---|
+| A quick read, model untouched | An answer in the chat | "What's ending ARR in the downside case?" |
+| A new saved version to share | An update to `forecast.xlsx` + fresh outputs | "Add a 7% churn scenario and re-export the summary." |
+
+<Tip>
+  Be explicit about which you want. *"Just tell me — don't change the file"* keeps the model frozen. *"Update the model and save it as a new dated copy"* produces an artifact. Mixing these up is the most common source of "wait, why did my model change?"
+</Tip>
+
+## The questions worth asking
+
+<Steps>
+  <Step title="Driver questions — what's moving the numbers">
+    > In the base case, what's driving the revenue ramp more — new customer adds or rising revenue per customer? Break down the growth between the two.
+
+    This is the analysis you actually care about: not *what* the forecast says, but *why*.
+  </Step>
+
+  <Step title="Sensitivities — how fragile is it">
+    > Hold everything else flat. Show me ending ARR if monthly churn is 3%, 4%, 5%, and 6%. How much ARR does each point of churn cost me?
+
+    One prompt, a sensitivity table. Ask for the ones that keep you up at night — churn, new-customer pace, price.
+  </Step>
+
+  <Step title="Goal-seek — work backwards from a target">
+    > I want to hit $2M ARR by December next year. Holding churn and price at base, how many new customers per month would I need? Is that realistic versus our recent actuals?
+
+    This is the question executives actually ask, and the one spreadsheets make tedious. Here it's a sentence.
+  </Step>
+
+  <Step title="Scenario comparison — line them up">
+    > Put base, upside, and downside side by side: ending customers, ending ARR, total 24-month revenue, and ending cash. Which scenario runs out of cash, and when?
+
+    A clean comparison table you can drop straight into a board deck.
+  </Step>
+
+  <Step title="A custom what-if — save this one">
+    > Build a fourth scenario: we raise price 10% in month 6 but it lifts churn by one point. Net effect on ending ARR versus base? If it's positive, add it to the model as a new scenario and save a dated copy.
+
+    Notice this one crosses the line from *asking* to *changing* — so it gets a dated backup, per your skill.
+  </Step>
+</Steps>
+
+## Verify every answer
+
+A confident wrong answer is the whole danger of this step. The model can be audited, so audit it.
+
+- **Make it show its work.** *"Show me the exact cells and formula behind that $2M ARR figure."* Numbers you can trace are numbers you can trust.
+- **Sanity-check the direction.** Higher churn should *lower* ARR. If a sensitivity moves the wrong way, a sign is flipped somewhere — stop and dig.
+- **Reconcile against the file.** *"Does the number you just told me match what's actually in `forecast.xlsx` right now?"* This catches answers computed in the chat that never made it into the model (or vice versa).
+- **Spot-check one by hand.** Take the 5% churn sensitivity and check a single month's roll-forward with a calculator. One match buys a lot of confidence.
+
+<Warning>
+  Claude will happily answer a question the model can't actually support — extrapolating, assuming, or quietly inventing an input. Always ask *"what did you assume to answer that?"* For anything headed to an investor or your CFO, trace it back to a cell. See [Reviewing &amp; Verifying](/agentic-ai/claude-code/best-practices/reviewing-and-verifying).
+</Warning>
+
+## You're now running the model, not just building it
+
+Building the model was step one; this is the part that makes it worth having. But you've probably noticed a rhythm forming — new actuals arrive, you refresh, you re-run the same handful of questions, you re-export the same outputs. That repetition is the signal it's time to wrap the whole routine into one command.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Step 4: Make It Repeatable" icon="diagram-project" href="/agentic-ai/claude-code/forecasting-model/workflows">
+    Turn the monthly routine into one command
+  </Card>
+  <Card title="Writing Good Prompts" icon="comment" href="/agentic-ai/claude-code/best-practices/writing-prompts">
+    Ask sharper questions, get sharper answers
+  </Card>
+</CardGroup>

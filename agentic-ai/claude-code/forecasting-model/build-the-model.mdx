@@ -1,0 +1,89 @@
+---
+title: "Step 1: Build the Model"
+description: Turn historical actuals into a driver-based forecast with live, auditable formulas
+icon: calculator
+---
+
+You've got the [project folder](/agentic-ai/claude-code/forecasting-model) and the historical actuals in `data/`. Now you'll turn those 18 months of history into a 24-month forward forecast — driven by a handful of assumptions you control, built on formulas you can audit.
+
+**What you'll practice:** the [core loop](/agentic-ai/claude-code/first-session/core-loop) on a project that has to be *correct*, plan-first discipline, and verifying a model against reality.
+
+## The mindset: drivers, not magic
+
+A good forecast isn't a guess about next month's revenue. It's a small set of **drivers** — new customers per month, churn rate, average revenue per customer, costs — and the math that turns those drivers into revenue and cash. Change a driver, the whole forecast moves. That's the point: you want a model you can *steer*, not a static chart.
+
+So your first job isn't "predict the future." It's "let's agree on the drivers, then let the spreadsheet do the arithmetic."
+
+## The walkthrough
+
+<Steps>
+  <Step title="Let Claude read the history first">
+    Before forecasting anything, have Claude understand the past — exactly like the [CSV project](/agentic-ai/claude-code/first-projects/csv-to-chart):
+
+    > Look at `data/monthly-actuals.csv`. Tell me what's in it, then calculate the trends that matter for a forecast: the average monthly new-customer count, the monthly churn rate (churned ÷ starting customers), and the average revenue per customer (MRR ÷ customers). Show me how each has moved over the 18 months.
+
+    Now you both know the starting point — and you've learned the drivers' recent values instead of inventing them.
+  </Step>
+
+  <Step title="Ask for a plan and an assumptions block — not the model yet">
+    This is the key move. Get the structure agreed *before* a single formula is written:
+
+    > Plan a 24-month forecast that continues from the last actual month. I want it **driver-based**: a clearly labeled **assumptions block** at the top — new customers per month, monthly churn rate, revenue per customer, gross margin %, and fixed monthly operating costs — and then the forecast reading from those assumptions. Propose starting values based on the recent trends, but don't build it yet. Show me the plan and the assumptions you'd use.
+
+    Claude proposes the layout and starting assumptions. Read it like an analyst reviewing a junior's setup — adjust anything that looks off ("use 5% churn, not 6%"; "hold price flat").
+  </Step>
+
+  <Step title="Insist on live formulas">
+    Before it builds, set the one rule that makes the model trustworthy:
+
+    > Build it in `model/forecast.xlsx`. Every forecast cell must be a **live Excel formula that references the assumptions block** — no hard-coded numbers in the forecast. I want to change an assumption and watch the whole model update.
+
+    This is the difference between a real model and a screenshot. Hard-coded numbers can't be steered or audited; formulas can.
+  </Step>
+
+  <Step title="Let it build, approving as it goes">
+    Claude creates the spreadsheet, asking permission to write the file. When it finishes, it'll summarize the structure: an assumptions block up top, then monthly rows for customers, MRR, ARR, revenue, gross profit, operating costs, and cash/EBITDA.
+  </Step>
+
+  <Step title="Add the scenarios">
+    Now make it flex:
+
+    > Add a scenario selector with three presets — **base**, **upside**, **downside** — that change the new-customer and churn assumptions. Upside: more new customers, lower churn. Downside: the reverse. I want to switch scenarios in one place and have the forecast recalculate.
+  </Step>
+</Steps>
+
+## Verify before you trust it
+
+This is non-negotiable. A forecast that reaches your CFO is *your* forecast, not Claude's — so check it like a skeptic.
+
+- **Tie to actuals.** *"Does the first forecast month continue cleanly from the last actual? Show me the hand-off — last actual customers and MRR vs. the first forecast row."* A discontinuity here means a broken assumption.
+- **Audit one column's formula.** Open `forecast.xlsx` in Excel and click a forecast cell. Is it a formula pointing at the assumptions block, or a typed-in number? Spot-check MRR: does it equal customers × revenue-per-customer?
+- **Trace the customer roll-forward.** *"Walk me through how customers go from one month to the next — which cells add new customers and subtract churn?"* It should be: prior customers + new − (prior customers × churn rate).
+- **Stress one driver.** Change new-customers-per-month to zero in the assumptions and confirm the forecast actually flattens. If nothing moves, the formulas aren't live — send it back.
+
+<Warning>
+  "It produced a model" is not "the model is right." The most common silent failure is **hard-coded forecast cells that look like formulas but aren't** — they'll never respond to your scenarios. Thirty seconds clicking cells in Excel is what makes this trustworthy. See [Reviewing &amp; Verifying](/agentic-ai/claude-code/best-practices/reviewing-and-verifying).
+</Warning>
+
+## Make it presentable
+
+Once the math checks out, ask for the outputs you'd actually share:
+
+> Save a chart of monthly revenue across all three scenarios to `outputs/revenue-scenarios.png`, and a one-page summary table of ending ARR, total revenue, and ending cash by scenario.
+
+## What you have now
+
+A working, auditable, driver-based model in `model/forecast.xlsx` that you can steer with assumptions and flip between scenarios. That's already more than most people build in a week.
+
+But notice what just happened: you spent several careful prompts teaching Claude *how you like a model built* — formulas not hard-codes, a labeled assumptions block, a scenario selector. Next month you'd have to say all of that again. Unless you capture it once.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Step 2: Teach It Your Method" icon="wand-magic-sparkles" href="/agentic-ai/claude-code/forecasting-model/write-a-skill">
+    Save your conventions as a reusable skill
+  </Card>
+  <Card title="Reviewing &amp; Verifying" icon="magnifying-glass" href="/agentic-ai/claude-code/best-practices/reviewing-and-verifying">
+    Get sharper at checking the work
+  </Card>
+</CardGroup>

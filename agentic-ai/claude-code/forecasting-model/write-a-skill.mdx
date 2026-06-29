@@ -1,0 +1,106 @@
+---
+title: "Step 2: Teach It Your Method"
+description: Capture your modeling conventions in a reusable skill so Claude builds it your way every time
+icon: wand-magic-sparkles
+---
+
+In [Step 1](/agentic-ai/claude-code/forecasting-model/build-the-model) you spent real effort teaching Claude your standards: live formulas, a labeled assumptions block, a base/upside/downside selector, MRR and churn defined your way. That knowledge is currently trapped in one conversation. When that chat ends, it's gone — and next month you'll re-type all of it.
+
+A **skill** fixes that. It's a small file that captures *how you like this kind of work done*, so Claude applies it automatically — this session, next month, and in any future model. This is the single biggest leap from "using Claude" to "Claude knowing your playbook."
+
+<Note>
+  **Skill vs. saved prompt.** A [slash command](/agentic-ai/claude-code/forecasting-model/workflows) is a saved *request* ("refresh the forecast"). A skill is saved *know-how* ("here's what a correct forecast looks like to me"). The command says what to do; the skill says how to do it well. You'll use both — the skill comes first.
+</Note>
+
+## What goes in a modeling skill
+
+Think about everything a new associate would get wrong on their first model that you'd have to correct:
+
+- **Definitions.** MRR is monthly recurring revenue; ARR is MRR × 12; churn is churned ÷ starting customers.
+- **Structure.** Assumptions block at the top, forecast reads from it, nothing hard-coded.
+- **Conventions.** Always live formulas. Always a base/upside/downside selector. Fiscal year ends December. Currency in USD, no cents on summary tables.
+- **Outputs.** A scenario chart to `outputs/`, a one-page summary table.
+- **Guardrails.** Never overwrite the previous model — save a dated copy first. Flag any assumption you had to invent.
+
+Write those down once and Claude stops needing the reminder.
+
+## Create the skill — let Claude write it
+
+You don't have to learn any file format by hand. Describe the playbook and have Claude create the skill for you — the same move as the [CLAUDE.md trick](/agentic-ai/claude-code/going-further), one level up:
+
+> Create a skill called `forecast-model` that captures how I build forecasts, so you apply it automatically whenever I work on this model. The rules:
+> - It's a driver-based subscription forecast: assumptions block at the top, forecast cells read from it, **never hard-code forecast numbers**.
+> - Definitions: MRR = monthly recurring revenue, ARR = MRR × 12, churn = churned ÷ starting customers.
+> - Always include base / upside / downside scenarios in one selector.
+> - Always use live Excel formulas so I can audit and steer the model.
+> - Before changing `model/forecast.xlsx`, save a dated copy of the old one.
+> - Save a scenario chart and a one-page summary to `outputs/`.
+> - Call out any assumption you had to invent.
+
+Claude creates a `SKILL.md` file (conventionally under a `skills/` or `.claude/skills/forecast-model/` folder) that looks roughly like this:
+
+```markdown SKILL.md
+---
+name: forecast-model
+description: Build and update Ian's driver-based subscription forecast. Use whenever working on forecast.xlsx or any revenue/cash projection in this project.
+---
+
+# Forecast model conventions
+
+## Structure
+- A labeled **assumptions block** at the top: new customers/month, monthly
+  churn rate, revenue per customer, gross margin %, fixed monthly opex.
+- The 24-month forecast reads from the assumptions block via **live formulas**.
+- Never hard-code a forecast cell. If I change an assumption, the model moves.
+
+## Definitions
+- MRR = monthly recurring revenue. ARR = MRR × 12.
+- Churn rate = churned customers ÷ starting customers for the month.
+- Customer roll-forward = prior customers + new − (prior customers × churn).
+
+## Scenarios
+- Always include base / upside / downside in a single selector.
+- Upside: more new customers, lower churn. Downside: the reverse.
+
+## Outputs &amp; safety
+- Before editing model/forecast.xlsx, save a dated copy (e.g. forecast-2025-07.xlsx).
+- Export a scenario chart and a one-page summary to outputs/.
+- Flag any assumption I had to invent rather than derive from data.
+```
+
+<Tip>
+  The **`description`** line is the most important part — it's how Claude decides when to reach for the skill on its own. Make it specific about *when* it applies ("whenever working on forecast.xlsx"), not just what it is.
+</Tip>
+
+## The payoff: a one-line rebuild
+
+Here's the test that shows the skill working. Start a **fresh session** in the `forecast` folder and say something deliberately short:
+
+> Rebuild the forecast from the latest actuals.
+
+With no skill, Claude would ask a dozen questions or guess at your conventions. With the skill, it already knows: live formulas, assumptions block, three scenarios, dated backup, outputs to `outputs/`. The terse request gets your full playbook applied — because you taught it once.
+
+## Verify the skill actually fired
+
+A skill is only useful if it's being used. Confirm it:
+
+- **Check it was applied.** *"Did you use the `forecast-model` skill just now? Which of its rules did you follow?"*
+- **Audit against the rules.** Did it save a dated backup before editing? Are the forecast cells still live formulas? Did the outputs land in `outputs/`?
+- **Tune it.** If it missed something or you change your mind, just say so: *"Update the `forecast-model` skill to also include a quarterly summary, and to round ARR to the nearest thousand."* The skill evolves with your taste.
+
+<Warning>
+  A skill makes Claude *consistent*, not *correct*. It will faithfully apply a bad convention as reliably as a good one. Keep verifying the actual numbers — the skill guarantees the model is built your way, not that the answer is right.
+</Warning>
+
+## Going deeper on skills
+
+This is a deliberately beginner-sized skill — one project, a handful of rules. Skills can do much more, and the broader site covers them in depth.
+
+<CardGroup cols={2}>
+  <Card title="Step 3: Ask It Questions" icon="magnifying-glass-chart" href="/agentic-ai/claude-code/forecasting-model/ask-questions">
+    Now interrogate the model you built
+  </Card>
+  <Card title="Skills, in depth" icon="wand-magic-sparkles" href="/agentic-ai/skills">
+    The full picture of what skills can do
+  </Card>
+</CardGroup>
