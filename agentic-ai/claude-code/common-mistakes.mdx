@@ -10,7 +10,7 @@ The fastest way to get good is to skip the mistakes everyone else makes. Here ar
 
 <AccordionGroup>
   <Accordion title="1. Expecting the free plan to work" icon="lock">
-    The number-one source of "it won't let me in." **Claude Code requires a paid plan** — Pro, Max, Team, or Enterprise. The free Claude.ai plan does not include it. If features are greyed out or you get access errors, check your plan first.
+    The number-one source of "it won't let me in." For the desktop-app path in this guide, **Claude Code requires a paid plan** — Pro, Max, Team, or Enterprise. The free Claude.ai plan does not include it. If features are greyed out or you get access errors, check your plan first.
   </Accordion>
   <Accordion title="2. Asking for too much at once" icon="layer-group">
     A single mega-prompt ("clean the data, make five charts, write the memo, format the report") is hard to review and easy to get subtly wrong in the middle. **Break it into small steps** and check each one. See [Plan Mode & Small Steps](/agentic-ai/claude-code/best-practices/plan-mode-and-small-steps).
@@ -29,6 +29,12 @@ The fastest way to get good is to skip the mistakes everyone else makes. Here ar
   </Accordion>
   <Accordion title="7. One endless session for everything" icon="infinity">
     Cramming many unrelated tasks into one long chat makes Claude slower and more forgetful. **One task per session;** start fresh when you switch. Your files are safe either way. See [Managing Cost & Context](/agentic-ai/claude-code/best-practices/cost-and-context).
+  </Accordion>
+  <Accordion title="8. Not knowing your undo path" icon="rotate-left">
+    Before important edits, know how you would get back: copies, checkpoints, rewind, or Git. Ask Claude *"what is our undo path before you start?"* See [Undo & Rewind](/agentic-ai/claude-code/best-practices/undo-and-rewind).
+  </Accordion>
+  <Accordion title="9. Assuming every file was read perfectly" icon="file-circle-question">
+    Scanned PDFs, hidden spreadsheet tabs, cloud placeholders, and huge files can all trip up a clean-looking result. Start by asking Claude which files it can read cleanly. See [Files Claude May Struggle With](/agentic-ai/claude-code/first-session/file-limitations).
   </Accordion>
 </AccordionGroup>
 
@@ -56,7 +62,7 @@ The fastest way to get good is to skip the mistakes everyone else makes. Here ar
     No. You describe what you want in plain English; Claude handles the code behind the scenes. You never have to read or write it.
   </Accordion>
   <Accordion title="Will it change files without asking?">
-    No. It asks permission before running commands, editing, or creating files — and it only works inside the folder you give it.
+    In the beginner desktop workflow, Claude asks permission before running commands, editing, or creating files. It starts in the folder you give it; if you add folders or tools later, treat that as a deliberate expansion.
   </Accordion>
   <Accordion title="Does every message cost extra money?">
     On a normal paid plan, no — usage is included (within the plan's limits). You're not metered per message.
@@ -68,15 +74,18 @@ The fastest way to get good is to skip the mistakes everyone else makes. Here ar
     Beginners: the **desktop app**. It bundles everything and is the gentler entry point. The terminal is for power users; you can switch later, and your settings carry over.
   </Accordion>
   <Accordion title="It did something wrong — did I break something?">
-    Almost certainly not. Tell it plainly: *"That's not what I wanted — undo that and do X instead."* If you worked on a copy (you did, right?), your originals are safe regardless.
+    Almost certainly not. Tell it plainly: *"Stop, tell me what changed, and do not edit anything else yet."* Then undo, rewind, or restart smaller. See [When It Goes Sideways](/agentic-ai/claude-code/best-practices/when-it-goes-sideways).
+  </Accordion>
+  <Accordion title="Should I care about subagents or plugins yet?">
+    A little, but only conceptually. Subagents mean separate passes for bigger jobs; plugins mean extra capabilities. You do not need to configure them on day one. See [Subagents & Plugins](/agentic-ai/claude-code/best-practices/subagents-and-plugins).
   </Accordion>
 </AccordionGroup>
 
 ## Next
 
 <CardGroup cols={2}>
-  <Card title="Going Further" icon="rocket" href="/agentic-ai/claude-code/going-further">
-    Teach Claude your preferences and connect your tools
+  <Card title="When It Goes Sideways" icon="life-ring" href="/agentic-ai/claude-code/best-practices/when-it-goes-sideways">
+    Recover from wrong turns calmly
   </Card>
   <Card title="Back to the Overview" icon="house" href="/agentic-ai/claude-code">
     Revisit the map of this section

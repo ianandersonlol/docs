@@ -10,7 +10,7 @@ The internet has long checklists of "essential tools" for Claude Code. Most of t
 
 <CardGroup cols={1}>
   <Card title="A paid Claude plan — required" icon="id-card">
-    Not software, but it belongs at the top. Claude Code needs **Pro, Max, Team, or Enterprise**. The free plan won't work. This is the #1 reason beginners get stuck.
+    Not software, but it belongs at the top for the desktop-app path in this guide. Claude Code needs **Pro, Max, Team, or Enterprise**. The free plan won't work. This is the #1 reason beginners get stuck.
   </Card>
   <Card title="Git — required on Windows, nice on Mac" icon="code-branch">
     On **Windows**, the desktop app's Code tab won't start without [Git for Windows](https://git-scm.com/downloads/win). On **Mac** it's usually already there and not strictly required, but it powers a useful safety net: a version history of your files so you can undo changes. Install it if it's easy; don't stress if you skip it at first.
@@ -20,15 +20,19 @@ The internet has long checklists of "essential tools" for Claude Code. Most of t
   </Card>
 </CardGroup>
 
-## The one you *don't* need: ripgrep
+<Note>
+  Advanced command-line users may see other authentication paths, including API or enterprise setups. Beginners should ignore that for now: if you are using the Claude desktop app, start with a normal paid Claude plan.
+</Note>
+
+## The one you probably *don't* need: ripgrep
 
 You'll see people insist you should install **ripgrep** (the `rg` command) — a fast search tool — "instead of grep." Good instinct, wrong conclusion for our purposes:
 
 <Note>
-  **Ripgrep already ships inside Claude Code.** Both the desktop app and the command-line version bundle their own copy. Claude uses it automatically to search your files quickly. You do **not** need to install it separately, on Mac or Windows.
+  Claude Code usually includes or manages the fast file-search tooling it needs. For a beginner, do **not** install ripgrep just because an online checklist says so. If Claude ever complains that a tool is missing, handle that specific message then.
 </Note>
 
-So if a tutorial tells you to `brew install ripgrep` or download `rg` before you start — skip it. It's already handled.
+So if a tutorial tells you to `brew install ripgrep` or download `rg` before you start, skip it for now. It is not part of the beginner setup.
 
 ## Only if you went the npm route
 
@@ -66,7 +70,7 @@ The rest of this site happens to use the terminal version, because that's how he
   <Card title="Your First Session" icon="circle-play" href="/agentic-ai/claude-code/first-session/workspace">
     Set up a workspace and learn the core loop
   </Card>
-  <Card title="First Projects" icon="list-check" href="/agentic-ai/claude-code/first-projects/csv-to-chart">
-    Jump into a real, hands-on task
+  <Card title="The Controls Worth Knowing" icon="sliders" href="/agentic-ai/claude-code/first-session/controls-worth-knowing">
+    Recognize the buttons and menus you will actually use
   </Card>
 </CardGroup>

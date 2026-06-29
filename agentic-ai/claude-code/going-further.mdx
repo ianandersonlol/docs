@@ -20,13 +20,23 @@ From then on, you stop repeating yourself. It's the highest-leverage "next step"
 
 If there's a task you do over and over — a weekly report, a standard cleanup — you can save it as a **slash command** and trigger the whole routine by typing `/its-name`. It's a saved prompt you can fire anytime, instead of re-typing the instructions.
 
-## 3. Connect your tools and data (MCP)
+## 3. Let Claude split the work
 
-Out of the box, Claude works with the files in your folder. **MCP** (Model Context Protocol) extends its reach to *other* systems — so it could pull from a database, a knowledge base, or an app you already use, rather than just local files. It's more advanced, but it's how Claude graduates from "works with my files" to "works with my whole toolset."
+For bigger tasks, Claude can approach the job in separate passes: one pass extracts facts, another checks assumptions, another reconciles the final table. You do not need to configure anything to benefit from this. Just ask for it:
 
-## 4. Reusable capabilities (skills)
+> Handle this in separate passes: extract the facts, verify the numbers, then combine the result.
+
+That is the beginner-friendly version of [subagents](/agentic-ai/claude-code/best-practices/subagents-and-plugins): not more machinery, just better task decomposition.
+
+## 4. Reusable capabilities (skills and plugins)
 
 **Skills** teach Claude specialized, repeatable know-how it can apply across projects — a step beyond a saved prompt. When you find yourself wishing Claude "just knew how to do X the way I like," that's a skill.
+
+**Plugins** are bigger packages of extra capabilities. They are useful when plain files and prompts are not enough, but they are still a "later" move: learn the core loop first, then add tools when a repeated need appears.
+
+## 5. External integrations
+
+MCP and hooks are powerful, but they are not beginner topics. They connect Claude to outside systems or event-driven workflows. Come back to them once you are already comfortable with folders, permissions, verification, and recovery.
 
 ## Dive deeper in the rest of this site
 
@@ -36,11 +46,11 @@ This beginner guide is the on-ramp. The broader **Agentic AI** section goes deep
   <Card title="Skills" icon="wand-magic-sparkles" href="/agentic-ai/skills">
     Teach your agent reusable capabilities
   </Card>
+  <Card title="Subagents & Plugins" icon="puzzle-piece" href="/agentic-ai/claude-code/best-practices/subagents-and-plugins">
+    The beginner architecture behind bigger workflows
+  </Card>
   <Card title="Slash Commands" icon="forward-slash" href="/agentic-ai/slash-commands">
     Quick-fire prompt templates
-  </Card>
-  <Card title="Model Context Protocol" icon="plug" href="/agentic-ai/mcp">
-    Connect agents to external tools and data
   </Card>
   <Card title="The Landscape" icon="map" href="/agentic-ai/the-landscape">
     How Claude Code compares to other agents

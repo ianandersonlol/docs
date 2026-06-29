@@ -12,10 +12,10 @@ Skim it now, or come back whenever a word trips you up.
 
 <AccordionGroup>
   <Accordion title="Folder / Directory" icon="folder">
-    A labeled container on your computer that holds files — exactly like a paper folder in a filing cabinet. "Directory" is just the technical word for the same thing, so whenever you read "directory," think "folder." Claude Code does all its work inside one folder you choose. See [Setting Up a Workspace](/agentic-ai/claude-code/first-session/workspace).
+    A labeled container on your computer that holds files — exactly like a paper folder in a filing cabinet. "Directory" is just the technical word for the same thing, so whenever you read "directory," think "folder." The beginner workflow starts by pointing Claude Code at one folder you choose. See [Setting Up a Workspace](/agentic-ai/claude-code/first-session/workspace).
   </Accordion>
   <Accordion title="Workspace / Project" icon="folder-open">
-    The single folder you point Claude Code at for a given task. Engineers call it a "project," but it's really just a folder with your files in it. Everything Claude can see and touch lives inside it — and nothing outside it. See [Setting Up a Workspace](/agentic-ai/claude-code/first-session/workspace).
+    The folder you point Claude Code at for a given task. Engineers call it a "project," but it's really just a folder with your files in it. Beginner sessions start here; you can add more access later only when you mean to. See [Setting Up a Workspace](/agentic-ai/claude-code/first-session/workspace).
   </Accordion>
   <Accordion title="Desktop app" icon="window-maximize">
     The Claude program you download and open like any other application — the way you open Excel, Slack, or Chrome. It's the recommended starting point for beginners because it bundles everything and never makes you type into a text window. See [What Claude Code Actually Is](/agentic-ai/claude-code/setup/what-is-claude-code).
@@ -63,8 +63,17 @@ Skim it now, or come back whenever a word trips you up.
   <Accordion title="Plan Mode" icon="list-check">
     A way of asking Claude to lay out how it would tackle a task before it changes anything. You read the plan and approve it first — like getting an estimate before the work starts. See [Plan Mode & Small Steps](/agentic-ai/claude-code/best-practices/plan-mode-and-small-steps).
   </Accordion>
+  <Accordion title="Checkpoint / Rewind" icon="rotate-left">
+    A recovery point you can return to if a set of edits goes wrong. Copies are still your simplest safety net, but checkpoints and rewind are useful when you want to move a session back to an earlier state. See [Undo & Rewind](/agentic-ai/claude-code/best-practices/undo-and-rewind).
+  </Accordion>
   <Accordion title="Model" icon="microchip">
-    The underlying AI that does the actual reading, reasoning, and writing — the "brain" behind Claude. Claude Code is powered by Anthropic's Claude models, and you don't need to choose one to get started.
+    The underlying AI that does the actual reading, reasoning, and writing — the "brain" behind Claude. You don't need to choose one to get started, but you can switch models when a task is unusually big, small, fast, or high-stakes. See [Choosing a Model & Effort](/agentic-ai/claude-code/best-practices/choosing-a-model).
+  </Accordion>
+  <Accordion title="Effort level" icon="gauge-high">
+    How hard Claude thinks before it answers. Turn it up for tricky problems; leave it alone for ordinary work. Higher effort can help, but it can also be slower and heavier on your plan usage. See [Choosing a Model & Effort](/agentic-ai/claude-code/best-practices/choosing-a-model).
+  </Accordion>
+  <Accordion title="Subagent" icon="users">
+    A helper pass Claude can use for one slice of a larger task. Beginners do not need to configure subagents; it is enough to ask Claude to handle a job in separate passes and reconcile the result. See [Subagents & Plugins](/agentic-ai/claude-code/best-practices/subagents-and-plugins).
   </Accordion>
 </AccordionGroup>
 
@@ -78,7 +87,10 @@ Skim it now, or come back whenever a word trips you up.
     Short for "Windows Subsystem for Linux" — a way to run Linux-style tools inside Windows. Most beginners should skip it: native Windows works fine, and WSL often needs admin rights that work laptops block. See [Installing on Windows](/agentic-ai/claude-code/setup/install-windows).
   </Accordion>
   <Accordion title="MCP" icon="plug">
-    Short for "Model Context Protocol." It's a standard way to connect Claude to other systems — a database, a knowledge base, or an app you already use — so it can work with more than just the files in your folder. Strictly a later-stage upgrade. See [Going Further](/agentic-ai/claude-code/going-further) and the deeper [MCP page](/agentic-ai/mcp).
+    Short for "Model Context Protocol." It's a standard way to connect Claude to other systems — a database, a knowledge base, or an app you already use. Powerful, but not part of the beginner path. See the deeper [MCP page](/agentic-ai/mcp) when you are ready.
+  </Accordion>
+  <Accordion title="Plugin" icon="puzzle-piece">
+    A package that gives Claude extra capabilities, tools, or workflows. Plugins are useful after the basics, when plain files and prompts are not enough. See [Subagents & Plugins](/agentic-ai/claude-code/best-practices/subagents-and-plugins).
   </Accordion>
   <Accordion title="Skill" icon="wand-magic-sparkles">
     A reusable bundle of know-how you give Claude so it handles a particular kind of task the way you like, across different projects. Think of it as teaching Claude a repeatable specialty once. See [Going Further](/agentic-ai/claude-code/going-further) and the deeper [Skills page](/agentic-ai/skills).
