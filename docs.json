@@ -160,11 +160,12 @@
           {
             "group": "Agentic AI",
             "pages": [
+              "agentic-ai/index",
               {
                 "group": "Agentic AI for Bioinformatics",
                 "expanded": true,
                 "pages": [
-                  "agentic-ai/index",
+                  "agentic-ai/bioinformatics",
                   {
                     "group": "Foundations",
                     "pages": [
