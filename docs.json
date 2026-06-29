@@ -238,7 +238,8 @@
                       "agentic-ai/claude-code/first-projects/summarize-pdfs",
                       "agentic-ai/claude-code/first-projects/build-a-tiny-tool",
                       {
-                        "group": "Capstone: A Forecasting Model",
+                        "group": "Build a Forecasting Model",
+                        "icon": "chart-line",
                         "pages": [
                           "agentic-ai/claude-code/forecasting-model/index",
                           "agentic-ai/claude-code/forecasting-model/build-the-model",
