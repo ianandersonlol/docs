@@ -8,19 +8,19 @@ Before Claude Code can help, it needs to know **where** to work. This is the one
 
 ## The one concept to understand: a folder
 
-Everything Claude Code does happens **inside a single folder** that you choose. That folder is your **workspace** (engineers call it a "project," but "folder" is the honest word).
+For the beginner workflow in this guide, Claude Code starts inside **one folder** that you choose. That folder is your **workspace** (engineers call it a "project," but "folder" is the honest word).
 
 Think of it like handing a contractor the keys to one room:
 
 - Claude can see and work with everything **inside** that folder — your spreadsheets, PDFs, documents, and anything it creates.
-- Claude does **not** roam your whole computer. It works in the room you handed it.
+- Claude does **not** roam your whole computer by default. If you add another folder or connect another tool later, treat that as widening the room.
 
-That boundary is a feature. It keeps things safe and predictable: you always know exactly what Claude can touch.
+That boundary is a feature. It keeps things safe and predictable: you know what you deliberately handed Claude.
 
 ```mermaid
 graph TD
     C([Claude Code]) -->|can see and edit| W[The workspace folder you opened]
-    C -.->|cannot see or touch| O[Every other folder on your computer]
+    C -.->|not included by default| O[Every other folder on your computer]
     W --> F1[Your spreadsheets and PDFs]
     W --> F2[Files Claude creates for you]
 ```
@@ -85,17 +85,17 @@ Claude will list what it found. This does two things: it confirms you're pointed
 | "Open a project" | Point Claude at a folder |
 | "The working directory" | The folder Claude is currently standing in |
 
-If you remember just one thing: **Claude works inside the folder you give it, and only that folder.**
+If you remember just one thing: **start Claude in the folder that contains the files for this task.** Add more access only when you mean to.
 
 ## Next
 
-You've got a folder, your files are in it, and Claude can see them. Now let's learn the actual rhythm of getting work done.
+You've got a folder, your files are in it, and Claude can see them. Next, a simple system for arranging what goes in that folder — so nothing gets lost and you never confuse an original with a result.
 
 <CardGroup cols={2}>
-  <Card title="The Core Loop" icon="arrows-rotate" href="/agentic-ai/claude-code/first-session/core-loop">
-    Describe, review, approve, verify — the rhythm of working with an agent
+  <Card title="Managing Your Data & Files" icon="folders" href="/agentic-ai/claude-code/first-session/managing-data-and-files">
+    Organize your inputs and outputs so nothing gets lost
   </Card>
-  <Card title="First Projects" icon="list-check" href="/agentic-ai/claude-code/first-projects/csv-to-chart">
-    Put it to work on a real task
+  <Card title="Files Claude May Struggle With" icon="file-circle-question" href="/agentic-ai/claude-code/first-session/file-limitations">
+    Learn what to inspect before trusting a result
   </Card>
 </CardGroup>

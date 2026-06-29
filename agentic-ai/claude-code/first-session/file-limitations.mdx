@@ -1,0 +1,76 @@
+---
+title: Files Claude May Struggle With
+description: The file types and edge cases to check before trusting the result
+icon: file-circle-question
+---
+
+Claude Code can work with a surprisingly wide range of everyday files: spreadsheets, PDFs, Word documents, text files, images, and folders full of mixed material. But "can open the file" is not the same as "read it perfectly."
+
+This page teaches one beginner habit: **ask Claude to inspect the files before doing the real task.**
+
+## The first question to ask
+
+In any new workspace with real files, start with:
+
+> Look through this folder and tell me which files you can read cleanly, which ones might be hard to read, and why. Do not change anything yet.
+
+That turns hidden file problems into visible ones before they affect your output.
+
+## Common trouble spots
+
+| File situation | What can go wrong | What to ask Claude |
+|---|---|---|
+| **Scanned PDFs** | The PDF may be a picture of text, not real selectable text | "Can you read the text directly, or does this need OCR (text recognition)?" |
+| **Password-protected files** | Claude cannot read what your computer cannot open | "Which files are locked or unreadable?" |
+| **Huge spreadsheets** | It may need to process in chunks; hidden sheets can be missed | "List all sheets, row counts, columns, formulas, and hidden tabs before cleaning anything." |
+| **Excel formulas and macros** | Values, formulas, and macros are different things | "Tell me whether you are using displayed values or formulas." |
+| **CSV files with weird formatting** | Dates, encodings, commas, and currency symbols can be misread | "Show me the columns, date formats, blank cells, and unusual characters you see." |
+| **Images and screenshots** | Text extraction can be imperfect | "Pull the text out, then tell me which parts were uncertain." |
+| **Cloud placeholder files** | Dropbox, OneDrive, Box, or iCloud may show a file that is not fully downloaded | "Which files failed to open, and do any look like cloud placeholders?" |
+| **Hundreds of files** | The task can exceed what is reasonable to inspect in one pass | "Work in batches of 25 and wait for me after the first batch." |
+
+## For PDFs: ask for page-level sources
+
+PDFs are where beginners get the most false confidence. A tidy table can hide a misread price or clause. Ask for source breadcrumbs:
+
+> For every important number or claim, tell me which PDF and roughly which page it came from.
+
+Then open a few of those pages yourself. If the first two checks are wrong, stop and tighten the task.
+
+## For spreadsheets: ask for reconciliation
+
+With spreadsheets, the danger is not usually "Claude cannot read it." The danger is that it quietly makes a choice you did not intend: treating blanks as zero, dropping rows, picking the wrong date column, or ignoring hidden sheets.
+
+Before cleanup, ask:
+
+> Before changing anything, tell me how many rows and columns there are, what each column seems to mean, whether there are hidden sheets, and what assumptions you would make.
+
+After cleanup, ask:
+
+> Reconcile the result: how many rows started, how many were removed, why, and what is the final row count?
+
+## When Claude says a file is hard to read
+
+Do not force it through. Give it a better input:
+
+- Open the file yourself and export it to a simpler format, like CSV or PDF.
+- Download cloud files locally before asking Claude to inspect them.
+- Split a giant spreadsheet into the tabs or years you actually need.
+- For scans, use text recognition first or ask Claude whether it is needed.
+
+## The rule
+
+<Warning>
+  If the input file is hard to read, the output is harder to trust. Inspect first, then work.
+</Warning>
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="The Core Loop" icon="arrows-rotate" href="/agentic-ai/claude-code/first-session/core-loop">
+    Describe, review, approve, verify
+  </Card>
+  <Card title="Reviewing & Verifying" icon="magnifying-glass" href="/agentic-ai/claude-code/best-practices/reviewing-and-verifying">
+    Check the output before you rely on it
+  </Card>
+</CardGroup>
