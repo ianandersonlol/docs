@@ -209,7 +209,10 @@
                     "group": "Your First Session",
                     "pages": [
                       "agentic-ai/claude-code/first-session/workspace",
-                      "agentic-ai/claude-code/first-session/core-loop"
+                      "agentic-ai/claude-code/first-session/managing-data-and-files",
+                      "agentic-ai/claude-code/first-session/file-limitations",
+                      "agentic-ai/claude-code/first-session/core-loop",
+                      "agentic-ai/claude-code/first-session/controls-worth-knowing"
                     ]
                   },
                   {
@@ -228,7 +231,11 @@
                       "agentic-ai/claude-code/best-practices/plan-mode-and-small-steps",
                       "agentic-ai/claude-code/best-practices/reviewing-and-verifying",
                       "agentic-ai/claude-code/best-practices/permissions-and-safety",
-                      "agentic-ai/claude-code/best-practices/cost-and-context"
+                      "agentic-ai/claude-code/best-practices/undo-and-rewind",
+                      "agentic-ai/claude-code/best-practices/when-it-goes-sideways",
+                      "agentic-ai/claude-code/best-practices/cost-and-context",
+                      "agentic-ai/claude-code/best-practices/choosing-a-model",
+                      "agentic-ai/claude-code/best-practices/subagents-and-plugins"
                     ]
                   },
                   "agentic-ai/claude-code/common-mistakes",
