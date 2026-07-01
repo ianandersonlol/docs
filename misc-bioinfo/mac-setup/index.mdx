@@ -9,6 +9,8 @@ Setting up a new Mac for bioinformatics work can feel overwhelming with the shee
 
 <small>Thank you to CC for the impetus to making this. I've given it to a lot of people who have found it very useful!</small>
 
+## Core Setup
+
 <CardGroup cols={2}>
   <Card title="Prerequisites" icon="hammer" href="/misc-bioinfo/mac-setup/prerequisites">
     Install Xcode Command Line Tools
@@ -25,17 +27,24 @@ Setting up a new Mac for bioinformatics work can feel overwhelming with the shee
   <Card title="VS Code" icon="code" href="/misc-bioinfo/mac-setup/vscode">
     Your bioinformatics IDE
   </Card>
-  <Card title="Terminal Theme" icon="palette" href="/misc-bioinfo/mac-setup/terminal-theme">
-    Dracula theme for better aesthetics
-  </Card>
-  <Card title="Miniforge + Mamba" icon="snake" href="/misc-bioinfo/mac-setup/mambaforge">
+  <Card title="Miniforge + Mamba" icon="snake" href="/misc-bioinfo/mac-setup/miniforge">
     Fast conda/mamba package management
   </Card>
   <Card title="R & RStudio" icon="chart-line" href="/misc-bioinfo/mac-setup/r-rstudio">
     Statistical computing powerhouse
   </Card>
+</CardGroup>
+
+## Optional Polish
+
+These steps make the setup more comfortable, but they are not required before you start doing analysis.
+
+<CardGroup cols={2}>
   <Card title="Shell Customization" icon="wand-magic-sparkles" href="/misc-bioinfo/mac-setup/shell-customization">
     Customize your .zshrc
+  </Card>
+  <Card title="Terminal Theme" icon="palette" href="/misc-bioinfo/mac-setup/terminal-theme">
+    Dracula theme for better aesthetics
   </Card>
   <Card title="Troubleshooting" icon="wrench" href="/misc-bioinfo/mac-setup/troubleshooting">
     Common issues and fixes
@@ -51,7 +60,45 @@ For the best experience, follow the guides in this order:
 3. **CLI Tools** - Get essential utilities
 4. **GitHub** - Set up version control
 5. **VS Code** - Configure your editor
-6. **Terminal Theme** - (Optional) Beautify your terminal
-7. **Miniforge + Mamba** - Set up conda/mamba for bioinformatics packages
-8. **R & RStudio** - Install R ecosystem
-9. **Shell Customization** - Add helpful aliases and functions
+6. **Miniforge + Mamba** - Set up conda/mamba for bioinformatics packages
+7. **R & RStudio** - Install R ecosystem
+8. **Shell Customization** - Add helpful aliases and functions
+9. **Terminal Theme** - (Optional) Beautify your terminal
+10. **Troubleshooting** - Come back here when something breaks
+
+## Final Smoke Test
+
+After finishing the core setup, open a new terminal window and run:
+
+```bash
+# System development tools
+xcode-select -p
+git --version
+
+# Homebrew
+brew --version
+brew doctor
+
+# Core command-line tools
+htop --version
+tree --version
+jq --version
+
+# GitHub and VS Code
+gh auth status
+code --version
+
+# Conda/mamba
+conda --version
+mamba --version
+conda env list
+
+# R
+R --version
+```
+
+Most commands should print a version number. `brew doctor` may print warnings, but it should not report a broken installation. `gh auth status` should say you are logged in after you finish the GitHub setup.
+
+<Tip>
+  If one of these commands says `command not found`, go to [Troubleshooting](/misc-bioinfo/mac-setup/troubleshooting), especially the PATH section.
+</Tip>
