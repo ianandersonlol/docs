@@ -143,10 +143,10 @@
                   "misc-bioinfo/mac-setup/cli-tools",
                   "misc-bioinfo/mac-setup/github",
                   "misc-bioinfo/mac-setup/vscode",
-                  "misc-bioinfo/mac-setup/terminal-theme",
-                  "misc-bioinfo/mac-setup/mambaforge",
+                  "misc-bioinfo/mac-setup/miniforge",
                   "misc-bioinfo/mac-setup/r-rstudio",
                   "misc-bioinfo/mac-setup/shell-customization",
+                  "misc-bioinfo/mac-setup/terminal-theme",
                   "misc-bioinfo/mac-setup/troubleshooting"
                 ]
               }

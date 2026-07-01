@@ -1,0 +1,174 @@
+---
+title: Miniforge + Mamba
+description: Install Miniforge and mamba for fast, reproducible bioinformatics environments
+icon: snake
+---
+
+<Frame>
+  ![Mamba Logo](/images/MambaLogo.png)
+</Frame>
+
+[Miniforge](https://conda-forge.org/download/) is the recommended lightweight conda distribution from conda-forge. It includes `conda`, `mamba`, and their dependencies, with conda-forge configured from the start.
+
+<Warning>
+  Use **Miniforge**, not Mambaforge. Mambaforge was formally sunset by conda-forge, and Miniforge now provides the same practical workflow.
+</Warning>
+
+## Installation
+
+```bash
+# Download and install Miniforge
+curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+bash Miniforge3-$(uname)-$(uname -m).sh
+```
+
+Follow the installation prompts and allow it to initialize your shell. Then close and reopen Terminal.
+
+Verify the installation:
+
+```bash
+conda --version
+mamba --version
+conda info --base
+```
+
+## Package Manager Rules of Thumb
+
+Use the right tool for the job:
+
+| Use case | Prefer |
+|----------|--------|
+| System utilities like `htop`, `tree`, `wget`, `jq` | Homebrew |
+| GUI apps like VS Code, RStudio, IGV | Homebrew casks |
+| Project-specific bioinformatics tools | Miniforge/mamba environments |
+| R analysis projects | R/RStudio with `renv`, unless a pipeline specifically needs conda R |
+
+<Tip>
+  Avoid installing project tools into the `base` environment. Keep `base` boring, and create a new environment for each project or workflow.
+</Tip>
+
+## Why Mamba Over Regular Conda?
+
+- **Speed**: Mamba is 10-100x faster than conda for complex environments
+- **Better Dependency Resolution**: More reliable solving of complex bioinformatics dependencies
+- **Same Environment Model**: Use `mamba` for fast create/install/update commands and `conda activate` to switch environments
+- **Conda-forge First**: Prioritizes the community-maintained conda-forge channel
+
+## Configure Bioconda
+
+Bioconda provides most of the bioinformatics command-line tools you will want. Configure the channels once:
+
+```bash
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda config --set channel_priority strict
+conda config --show channels
+```
+
+The order matters. In `conda config`, `--add` prepends channels, so the commands above leave `conda-forge` as the highest-priority channel and `bioconda` below it.
+
+## Bioinformatics Environments
+
+Here are some specialized environments for different types of analysis. Treat these as starting points, not permanent global installs.
+
+### Genomics Environment
+
+```bash
+mamba create -n genomics -c conda-forge -c bioconda \
+    python=3.12 samtools bcftools bedtools bwa minimap2
+```
+
+### RNA-seq Analysis
+
+```bash
+mamba create -n rnaseq -c conda-forge -c bioconda \
+    python=3.12 salmon kallisto hisat2 stringtie \
+    bioconductor-deseq2 bioconductor-edger bioconductor-limma
+```
+
+### General Data Science
+
+```bash
+mamba create -n datascience -c conda-forge \
+    python pandas numpy scipy matplotlib seaborn jupyter biopython
+```
+
+### Phylogenetics
+
+```bash
+mamba create -n phylo -c conda-forge -c bioconda \
+    iqtree raxml-ng mafft muscle fasttree beast2
+```
+
+## Reproducible Environments
+
+For real projects, prefer an `environment.yml` committed with your analysis code:
+
+```yaml
+name: genomics
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.12
+  - samtools
+  - bcftools
+  - bedtools
+  - bwa
+  - minimap2
+```
+
+Create the environment from that file:
+
+```bash
+mamba env create -f environment.yml
+conda activate genomics
+```
+
+To record what you intentionally installed:
+
+```bash
+conda env export --from-history > environment.yml
+```
+
+If you need an exact machine-readable snapshot, export the full environment too:
+
+```bash
+conda env export > environment.lock.yml
+```
+
+## Environment Management
+
+```bash
+# List all environments
+mamba env list
+
+# Activate an environment
+conda activate genomics
+
+# Deactivate current environment
+conda deactivate
+
+# Remove an environment
+mamba env remove -n old_environment
+
+# Create environment from file
+mamba env create -f environment.yml
+```
+
+## Useful Maintenance
+
+```bash
+# Update the package index metadata
+mamba update -n base conda mamba
+
+# Clean up unused packages and tarballs
+mamba clean --all
+
+# Search for packages
+mamba search -c bioconda samtools
+```
+
+<Tip>
+  **Documentation**: [Miniforge](https://conda-forge.org/download/) | [Mamba Documentation](https://mamba.readthedocs.io/) | [Bioconda Usage](https://bioconda.github.io/)
+</Tip>
