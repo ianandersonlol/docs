@@ -193,6 +193,14 @@
                 ]
               },
               {
+                "group": "Working with Spreadsheets with Claude",
+                "icon": "table",
+                "expanded": true,
+                "pages": [
+                  "agentic-ai/spreadsheets/index"
+                ]
+              },
+              {
                 "group": "Claude Code Best Practices for Beginners",
                 "expanded": true,
                 "pages": [
