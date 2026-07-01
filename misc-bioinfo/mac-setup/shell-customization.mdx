@@ -9,6 +9,9 @@ Now that you have all the tools installed, we can customize your shell to make y
 ## Basic .zshrc Setup
 
 ```bash
+# Back up your current shell config first
+cp ~/.zshrc ~/.zshrc.backup.$(date +%Y%m%d-%H%M%S) 2>/dev/null || true
+
 # Open your .zshrc file
 code ~/.zshrc
 ```
@@ -43,8 +46,8 @@ alias gd="git diff"
 # CONDA/MAMBA SHORTCUTS
 # ============================================
 
-alias ca="mamba activate"
-alias cda="mamba deactivate"
+alias ca="conda activate"
+alias cda="conda deactivate"
 alias cenv="mamba env list"
 alias cin="mamba install"
 
@@ -73,14 +76,28 @@ alias sizeof="du -sh"
 
 # Quick sequence statistics
 seqstats() {
-    if [ -z "$1" ]; then
+    if [[ -z "$1" || ! -f "$1" ]]; then
         echo "Usage: seqstats <fasta_file>"
         return 1
     fi
+
     echo "File: $1"
-    echo "Number of sequences: $(grep -c '^>' $1)"
-    echo "Total bases: $(grep -v '^>' $1 | wc -m)"
-    echo "File size: $(du -h $1 | cut -f1)"
+    awk '
+        BEGIN {
+            sequences = 0
+            bases = 0
+        }
+        /^>/ { sequences++; next }
+        {
+            gsub(/[[:space:]]/, "")
+            bases += length($0)
+        }
+        END {
+            print "Number of sequences: " sequences
+            print "Total bases/residues: " bases
+        }
+    ' "$1"
+    echo "File size: $(du -h "$1" | cut -f1)"
 }
 
 # Create and enter directory
@@ -90,19 +107,19 @@ mkcd() {
 
 # Extract various archive formats
 extract() {
-    if [ -f $1 ]; then
-        case $1 in
-            *.tar.bz2)   tar xjf $1     ;;
-            *.tar.gz)    tar xzf $1     ;;
-            *.bz2)       bunzip2 $1     ;;
-            *.rar)       unrar x $1     ;;
-            *.gz)        gunzip $1      ;;
-            *.tar)       tar xf $1      ;;
-            *.tbz2)      tar xjf $1     ;;
-            *.tgz)       tar xzf $1     ;;
-            *.zip)       unzip $1       ;;
-            *.Z)         uncompress $1  ;;
-            *.7z)        7z x $1        ;;
+    if [[ -f "$1" ]]; then
+        case "$1" in
+            *.tar.bz2)   tar xjf "$1"     ;;
+            *.tar.gz)    tar xzf "$1"     ;;
+            *.bz2)       bunzip2 "$1"     ;;
+            *.rar)       unrar x "$1"     ;;
+            *.gz)        gunzip "$1"      ;;
+            *.tar)       tar xf "$1"      ;;
+            *.tbz2)      tar xjf "$1"     ;;
+            *.tgz)       tar xzf "$1"     ;;
+            *.zip)       unzip "$1"       ;;
+            *.Z)         uncompress "$1"  ;;
+            *.7z)        7z x "$1"        ;;
             *)           echo "'$1' cannot be extracted via extract()" ;;
         esac
     else
@@ -112,12 +129,18 @@ extract() {
 
 # Quick BLAST database search
 blastdb() {
-    if [ -z "$1" ] || [ -z "$2" ]; then
+    if [[ -z "$1" || -z "$2" ]]; then
         echo "Usage: blastdb <query.fasta> <database>"
         echo "Example: blastdb protein.fasta nr"
         return 1
     fi
-    blastp -query $1 -db $2 -outfmt 6 -max_target_seqs 10
+
+    if ! command -v blastp >/dev/null 2>&1; then
+        echo "blastp is not installed or not in your PATH"
+        return 1
+    fi
+
+    blastp -query "$1" -db "$2" -outfmt 6 -max_target_seqs 10
 }
 ```
 

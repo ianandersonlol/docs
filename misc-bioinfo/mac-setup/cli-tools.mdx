@@ -7,8 +7,10 @@ icon: terminal
 These utilities will become your daily drivers for file manipulation, system monitoring, and data processing.
 
 ```bash
-brew install htop tree wget curl jq git awk
+brew install htop tree wget jq git gawk
 ```
+
+macOS already includes `curl` and `awk`. Installing `gawk` gives you GNU awk, which is useful when you need behavior that matches many Linux/HPC examples.
 
 ## htop - Interactive Process Viewer
 
@@ -39,10 +41,10 @@ Both are essential for downloading datasets, reference genomes, and other files 
 
 ```bash
 # Download with wget
-wget https://example.com/genome.fasta
+wget https://files.rcsb.org/download/1CRN.pdb
 
 # Download with curl
-curl -O https://example.com/proteins.faa
+curl -L -O https://files.rcsb.org/download/1CRN.pdb
 ```
 
 <Note>
@@ -54,11 +56,11 @@ curl -O https://example.com/proteins.faa
 `jq` is invaluable for parsing JSON responses from APIs, which is common when working with biological databases.
 
 ```bash
-# Pretty print JSON
-curl -s "https://api.example.com/gene/BRCA1" | jq '.'
+# Pretty print JSON from the RCSB Protein Data Bank API
+curl -s "https://data.rcsb.org/rest/v1/core/entry/1CRN" | jq '.'
 
-# Extract specific fields
-curl -s "https://api.example.com/gene/BRCA1" | jq '.description'
+# Extract the structure title
+curl -s "https://data.rcsb.org/rest/v1/core/entry/1CRN" | jq -r '.struct.title'
 ```
 
 ## Quick Reference
@@ -71,4 +73,4 @@ curl -s "https://api.example.com/gene/BRCA1" | jq '.description'
 | `curl` | HTTP requests | API calls, downloads |
 | `jq` | JSON processing | Parse API responses |
 | `git` | Version control | Track code changes |
-| `awk` | Text processing | Parse tabular data |
+| `awk` / `gawk` | Text processing | Parse tabular data |

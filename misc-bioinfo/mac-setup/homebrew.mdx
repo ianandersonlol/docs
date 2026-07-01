@@ -16,20 +16,41 @@ icon: beer-mug-empty
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-After installation, add Homebrew to your PATH (the installer will provide specific instructions for your system):
+After installation, add Homebrew to your PATH. The installer will print commands specific to your system; the conditional version below works for both Apple Silicon and Intel Macs:
 
 ```bash
-echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
-eval "$(/opt/homebrew/bin/brew shellenv)"
+if [[ "$(uname -m)" == "arm64" ]]; then
+    BREW_PREFIX="/opt/homebrew"
+else
+    BREW_PREFIX="/usr/local"
+fi
+
+echo "eval \"\$(${BREW_PREFIX}/bin/brew shellenv)\"" >> ~/.zprofile
+eval "$(${BREW_PREFIX}/bin/brew shellenv)"
+brew --version
 ```
+
+Homebrew's official default prefix is `/opt/homebrew` on Apple Silicon and `/usr/local` on Intel macOS.
 
 ## Why Homebrew is Essential for Bioinformatics
 
 - **Dependency Management**: Automatically handles complex dependencies between tools
-- **Version Control**: Easy to install specific versions of bioinformatics tools
+- **System Tooling**: Great for stable utilities you use across many projects
 - **Large Package Catalog**: Many common bioinformatics tools are available directly as core formulas
 - **Easy Updates**: Keep all your tools up to date with simple commands
 - **Binary Distribution**: Pre-compiled packages mean faster installation than building from source
+
+## What Should Go in Homebrew?
+
+Use Homebrew for system-level tools and GUI applications:
+
+| Good fit for Homebrew | Better elsewhere |
+|-----------------------|------------------|
+| `git`, `wget`, `jq`, `htop`, `tree` | Project-specific bioinformatics toolchains |
+| VS Code, RStudio, IGV | Reproducible pipeline environments |
+| General developer utilities | R package libraries for a specific analysis |
+
+For reproducible analysis environments, use [Miniforge + Mamba](/misc-bioinfo/mac-setup/miniforge). For R analysis projects, use R/RStudio with `renv` when you need package snapshots.
 
 ## Understanding Formulas vs Casks
 
@@ -185,7 +206,7 @@ If a tool is missing from Homebrew, install it via bioconda in a dedicated envir
 ### Common Bioinformatics Installations
 
 ```bash
-# Essential bioinformatics tools (formulas)
+# Quick local bioinformatics utilities
 brew install samtools bcftools bedtools
 brew install blast bwa
 
@@ -195,13 +216,22 @@ brew install --cask jalview
 brew install --cask figtree
 ```
 
+<Note>
+  Homebrew bioinformatics formulas are useful for quick local work. For a project or pipeline you need to reproduce later, install the same tools in a mamba environment and save an `environment.yml`.
+</Note>
+
 ### Best Practices
 
 ```bash
 # Weekly maintenance routine
-brew update && brew upgrade && brew cleanup
+brew update
+brew outdated
 
-# Before starting a new project, update everything
+# Upgrade intentionally when you are ready
+brew upgrade
+brew cleanup
+
+# Before starting a new project, check your installation
 brew update && brew doctor
 
 # Check what's installed

@@ -10,6 +10,22 @@ icon: hammer
 
 Before installing anything else, you need the **Xcode Command Line Tools** — a collection of development utilities provided by Apple that form the foundation of your bioinformatics environment.
 
+## Know Your Mac
+
+Before you install package managers, check your macOS version and CPU architecture:
+
+```bash
+sw_vers
+uname -m
+```
+
+`uname -m` returns:
+
+| Output | Meaning | Common Homebrew prefix |
+|--------|---------|------------------------|
+| `arm64` | Apple Silicon Mac | `/opt/homebrew` |
+| `x86_64` | Intel Mac | `/usr/local` |
+
 ## What's Included
 
 <CardGroup cols={2}>

@@ -10,6 +10,23 @@ icon: github
 
 Version control is crucial for reproducible research and collaboration.
 
+## Configure Git Identity
+
+Before making commits, tell Git who you are:
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "your_email@example.com"
+git config --global init.defaultBranch main
+git config --global pull.rebase false
+```
+
+Check the result:
+
+```bash
+git config --global --list
+```
+
 ## GitHub CLI Installation
 
 ```bash
@@ -76,6 +93,43 @@ GitHub Desktop provides a visual interface for Git operations, which can be help
 - **Backup**: Your code is safely stored remotely on GitHub
 - **Documentation**: Commit messages serve as a log of your analysis decisions
 - **Sharing**: Easily share your analysis code with publications
+
+<Warning>
+  GitHub is for code, documentation, small config files, and reproducible environment files. Do not commit private human data, raw sequencing files, credentials, API keys, unpublished collaborator data, or very large generated outputs unless you have explicit permission and an appropriate repository setup.
+</Warning>
+
+## Bioinformatics .gitignore Starter
+
+Create a `.gitignore` file in each analysis repository so you do not accidentally commit large or sensitive files:
+
+```gitignore
+# Raw sequencing and large biological data
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+*.bam
+*.cram
+*.sam
+*.vcf.gz
+*.bcf
+
+# Indexes and generated outputs
+*.bai
+*.crai
+*.tbi
+results/
+output/
+tmp/
+
+# Credentials and local config
+.env
+*.key
+*.pem
+
+# macOS
+.DS_Store
+```
 
 ## Quick Git Workflow
 

@@ -22,10 +22,11 @@ If you encounter permission errors:
 brew doctor
 
 # Check current Homebrew ownership
-ls -ld /opt/homebrew
+brew --prefix
+ls -ld "$(brew --prefix)"
 
 # Last resort: only run this if `brew doctor` explicitly says to fix ownership
-sudo chown -R "$(whoami)":admin /opt/homebrew/Cellar /opt/homebrew/Homebrew
+sudo chown -R "$(whoami)":admin "$(brew --prefix)/Cellar" "$(brew --prefix)/Homebrew"
 ```
 
 ## Path Issues
@@ -37,10 +38,14 @@ If commands aren't found after installation:
 echo $PATH
 
 # Verify a tool's location
-which samtools
+type -a samtools
 
 # Make sure Homebrew is in your PATH
-eval "$(/opt/homebrew/bin/brew shellenv)"
+if [[ "$(uname -m)" == "arm64" ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+else
+    eval "$(/usr/local/bin/brew shellenv)"
+fi
 ```
 
 ### Common PATH Additions
@@ -63,12 +68,14 @@ If environments aren't activating:
 # Reinitialize conda
 conda init zsh
 
-# Reload your shell
-source ~/.zshrc
+# Restart Terminal, or reload your shell
+exec zsh -l
 
 # Check if conda is properly configured
 conda info
 ```
+
+If `mamba activate` gives errors, use `conda activate <env>` instead. Activation is shell integration, and `conda activate` is the most reliable command after `conda init zsh`.
 
 ### Environment Conflicts
 
@@ -80,6 +87,9 @@ mamba create -n myenv python=3.10
 
 # Use strict channel priority
 conda config --set channel_priority strict
+
+# Check channel order
+conda config --show channels
 ```
 
 ## Memory Issues
@@ -125,7 +135,7 @@ mamba search -c bioconda <package_name>
 brew cleanup
 brew upgrade <package>
 
-# Nuclear option - reinstall
+# Clean reinstall
 brew uninstall <package>
 brew install <package>
 ```

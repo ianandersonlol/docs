@@ -8,7 +8,7 @@ icon: chart-line
   ![RStudio](/images/Rstudio.png)
 </Frame>
 
-R remains the gold standard for statistical analysis in bioinformatics, and RStudio provides the best development environment for R.
+R is one of the main languages for statistical analysis in bioinformatics, and RStudio provides a comfortable development environment for R projects.
 
 ## Installation
 
@@ -19,6 +19,8 @@ brew install r
 # Install RStudio Desktop
 brew install --cask rstudio
 ```
+
+Use this setup for most interactive R analysis. If a workflow manager or pipeline requires R packages from Bioconda, put that pipeline-specific R installation in a dedicated mamba environment instead of mixing it with your main RStudio library.
 
 ## Useful Bioinformatics R Packages
 
@@ -93,12 +95,33 @@ install.packages(c(
 | `SingleCellExperiment` | Data structures for scRNA-seq |
 | `scater` | Quality control and visualization |
 
+## Reproducible R Projects with renv
+
+For real analysis projects, use `renv` to snapshot the R package versions used by that project:
+
+```r
+install.packages("renv")
+renv::init()
+```
+
+After installing packages for a project, save the package state:
+
+```r
+renv::snapshot()
+```
+
+This creates an `renv.lock` file that should be committed with your analysis code. Later, you or a collaborator can restore the same package versions:
+
+```r
+renv::restore()
+```
+
 ## RStudio Tips for Bioinformatics
 
 1. **Project Management**: Always work in RStudio projects for better organization
 2. **R Markdown**: Create reproducible reports combining code, results, and text
 3. **Environment Panel**: Keep track of your data objects and their sizes
-4. **Integrated Git/GitHub**: Version control directly within RStudio
+4. **Integrated Git/GitHub**: Version control code, notebooks, small config files, and lockfiles directly within RStudio
 
 <Warning>
   Git is your friend! Learn to use it - it will be helpful for future jobs.

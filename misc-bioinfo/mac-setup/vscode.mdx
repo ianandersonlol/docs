@@ -14,6 +14,22 @@ VS Code has become the go-to editor for bioinformatics work thanks to its extens
 brew install --cask visual-studio-code
 ```
 
+## Enable the `code` Command
+
+The extension commands below require the `code` command to be available in Terminal:
+
+1. Open VS Code
+2. Press `Cmd+Shift+P`
+3. Search for `Shell Command: Install 'code' command in PATH`
+4. Run it, then restart Terminal
+
+Verify:
+
+```bash
+code --version
+code .
+```
+
 ## Essential Extensions for Bioinformatics
 
 These are some great extensions to make VS Code work even better, but totally optional!
@@ -22,9 +38,11 @@ These are some great extensions to make VS Code work even better, but totally op
 # Install from command line
 code --install-extension ms-python.python
 code --install-extension ms-toolsai.jupyter
-code --install-extension ms-vscode.r
+code --install-extension REditorSupport.r
 code --install-extension yzhang.markdown-all-in-one
 code --install-extension redhat.vscode-yaml
+code --install-extension ms-vscode-remote.remote-ssh
+code --install-extension github.vscode-github-actions
 ```
 
 ### Key Extensions
@@ -36,6 +54,14 @@ code --install-extension redhat.vscode-yaml
 | **R** | R language support and debugging |
 | **Markdown All in One** | Essential for writing documentation and papers |
 | **YAML** | For configuration files and workflow definitions |
+| **Remote - SSH** | Edit files directly on HPC clusters or lab servers |
+| **GitHub Actions** | Inspect workflow files and CI status |
+
+If you plan to use R inside VS Code, install the R language server from R:
+
+```r
+install.packages("languageserver")
+```
 
 ## VS Code Tips for Bioinformatics
 
