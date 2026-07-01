@@ -1,0 +1,48 @@
+---
+title: Workbook Hygiene
+description: Make the workbook legible to Claude — organized tabs, explicit rules, and versions before big edits
+icon: broom
+---
+
+The easiest way to make Claude better at spreadsheets is to make the workbook easier to understand. Do the boring organization up front. A legible workbook gets you better inspections, safer edits, and citations that actually point somewhere.
+
+## Keep the workbook legible
+
+Use tabs with jobs:
+
+```text
+README        - what this workbook is and how to use it
+Inputs        - assumptions and user-editable values
+Raw Data      - untouched exports or source data
+Clean Data    - normalized data used by the model
+Calculations  - formulas and intermediate logic
+Outputs       - charts, summary tables, dashboard, board view
+Checks        - reconciliations, tie-outs, error flags
+Claude Log    - optional record of Claude's changes
+```
+
+You do not need every tab for every workbook. The point is separation: inputs are not outputs, raw data is not cleaned data, and checks are not hidden in the corner of a model tab.
+
+## Tell Claude what is sacred
+
+Use direct rules:
+
+```text
+Do not edit Raw Data.
+Do not overwrite formulas with hard-coded values.
+Use blue font for inputs and black font for formulas.
+Put new outputs on the Outputs tab unless I say otherwise.
+If a number does not reconcile, stop and tell me before changing more cells.
+```
+
+You are not just asking for an answer; you are defining how the workbook should be maintained. Rules you repeat every session belong in the add-in's Instructions field instead — see [Instructions and Skills](/agentic-ai/spreadsheets/claude-for-excel#instructions-and-skills).
+
+## Version before big edits
+
+For anything important, make a copy before the session or ask Claude to do it:
+
+```text
+Before changing the workbook, create a dated backup copy. Then make edits only in the working copy.
+```
+
+This is the same habit from [Managing Your Data & Files](/agentic-ai/claude-code/first-session/managing-data-and-files): originals stay safe, outputs are easy to find, and you always know what changed. It is also your most reliable undo — more on that in [Verify and Stay Safe](/agentic-ai/spreadsheets/verify-and-stay-safe#how-to-undo-claudes-changes).

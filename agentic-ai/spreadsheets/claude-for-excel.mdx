@@ -1,0 +1,103 @@
+---
+title: Working in Claude for Excel
+description: What the Excel add-in is good at, a worked example, prompt patterns, and how Instructions and Skills fit in
+icon: file-excel
+---
+
+[Claude for Excel](https://support.claude.com/en/articles/12650343-use-claude-for-excel) is an Excel add-in. That matters. Claude is not just reading a pasted table in a chat window; it can work with the open workbook's cells, formulas, tabs, formatting, and relationships.
+
+Use it for:
+
+- **Understanding a workbook.** Ask what drives a forecast, how a formula flows through the model, which tabs feed an output, or why a balance does not reconcile.
+- **Updating assumptions.** Change growth, churn, pricing, costs, hiring, or discount-rate assumptions while preserving formula dependencies.
+- **Debugging formulas.** Trace `#REF!`, `#VALUE!`, circular references, broken lookups, and formulas that return a plausible but wrong number.
+- **Building or filling templates.** Populate a standard model, build a dashboard, create a scenario tab, or convert a raw export into a cleaner workbook.
+- **Native Excel edits.** Sort, filter, format, add conditional formatting, set validation, edit charts, adjust pivots, and prepare a workbook for printing.
+- **Cell-level citations.** Ask Claude to cite the exact cells behind a claim so you can jump straight to the source.
+
+<Tip>
+  A good first prompt is not "fix this." Start with inspection:
+
+  > Before changing anything, inspect this workbook. List the tabs, identify the input areas, key formulas, outputs, hidden sheets, errors, and anything risky or unclear. Cite the important cells you reference.
+</Tip>
+
+## A worked example: the broken quarterly rollup
+
+Here is what a real session looks like. The Q2 summary tab shows total revenue of $2.41M, but the three monthly tabs add up to $2.58M. Something is dropping $170K.
+
+<Steps>
+  <Step title="Inspect first">
+    > Before changing anything, inspect this workbook. List the tabs, identify inputs, key formulas, and outputs, and flag anything broken or risky. Cite cells.
+
+    Claude maps the workbook: three monthly tabs feeding a `Summary` tab, and it flags that `Summary!D18` uses a `SUMIF` over a range that stops at row 240 while the June tab has data through row 267.
+  </Step>
+  <Step title="Trace the wrong number">
+    > `Summary!D18` should equal April + May + June revenue but it is $170K short. Trace every source cell behind it, explain the formula in plain English, and tell me the likely cause. Do not change anything yet.
+
+    Claude confirms the diagnosis — the range was hard-coded when June had fewer rows — and cites the exact cells so you can check its reasoning yourself.
+  </Step>
+  <Step title="Make a constrained fix">
+    > Fix only the range in `Summary!D18` so it covers the full June data, using a structured reference so it will not break next month. Do not touch any other cell. Show me the formula before and after.
+  </Step>
+  <Step title="Verify">
+    > List every cell you changed. Then confirm `Summary!D18` now ties to the sum of the three monthly revenue totals, and cite the cells for each.
+
+    Now you check the tie-out yourself before saving. The pattern — inspect, trace, constrained edit, verify — is the whole method. Every prompt below is a variation on it.
+  </Step>
+</Steps>
+
+## Prompt patterns that work
+
+<AccordionGroup>
+  <Accordion title="Make a constrained edit">
+    > Change only the growth assumption in `Inputs!B12` from 8% to 6%. Do not change formulas. Then show me which output cells changed the most and cite them.
+  </Accordion>
+
+  <Accordion title="Debug a formula">
+    > Cell `Summary!F24` looks wrong. Trace it back to its source cells, explain the formula in plain English, identify the likely issue, and propose a fix before applying it.
+  </Accordion>
+
+  <Accordion title="Build safely">
+    > Add a downside scenario. Put all new assumptions on the Inputs tab, keep forecast cells formula-driven, add checks that tie ending cash and revenue totals, and highlight every cell you change.
+  </Accordion>
+
+  <Accordion title="Review like an analyst">
+    > Review this model as if it will go to a CFO. Find hard-coded forecast cells, broken links, inconsistent formulas across periods, missing checks, and assumptions that are not documented. Do not edit yet.
+  </Accordion>
+</AccordionGroup>
+
+## Instructions and Skills
+
+Claude for Excel has two important memory layers:
+
+- **Instructions** are the persistent preferences for Excel work: formatting conventions, output style, modeling rules, or how you like commentary written. Instructions you set in the Excel add-in apply only to Excel — they are separate from Instructions in other apps like PowerPoint.
+- **Skills** are reusable playbooks Claude can apply when a task needs specialized knowledge. Skills you enable in your Claude settings are also available inside the Excel add-in.
+
+Put stable preferences in the Excel add-in's Instructions field:
+
+```text
+Use finance-style formatting: blue font for hard-coded inputs, black font for formulas, green font for links to other sheets, yellow fill for key assumptions. Never hard-code forecast periods. Add a Checks tab for tie-outs and explain any assumption you invent.
+```
+
+Use a Skill when you want a repeatable method, especially if multiple people or multiple workbooks should follow the same playbook. For example:
+
+```text
+Apply our monthly reporting skill: keep raw exports untouched, normalize data on Clean Data, refresh the dashboard, update variance commentary, and run the checks tab before summarizing results.
+```
+
+This matches the pattern from the forecasting project: use a skill for the method, and use the workbook or project folder for the specific files. See [Build a Forecasting Model](/agentic-ai/claude-code/forecasting-model) and [Skills](/agentic-ai/skills) for the deeper version.
+
+## A good session, start to finish
+
+The center of gravity stays in Excel: open the workbook, have Claude inspect it, plan the edits, make constrained changes, review the changed cells and citations, then verify formulas and totals before saving. If the job grows beyond workbook edits — a memo, a deck, a recurring monthly refresh — hand off to Cowork or Claude Code rather than stretching the add-in past what it is for.
+
+Two habits make that loop reliable, and they get their own pages:
+
+<CardGroup cols={2}>
+  <Card title="Workbook Hygiene" icon="broom" href="/agentic-ai/spreadsheets/workbook-hygiene">
+    Set up tabs, rules, and versioning so Claude cannot get lost — do this before the first big edit
+  </Card>
+  <Card title="Verify and Stay Safe" icon="shield-check" href="/agentic-ai/spreadsheets/verify-and-stay-safe">
+    The audit loop for every session, plus current limits and the risks worth taking seriously
+  </Card>
+</CardGroup>

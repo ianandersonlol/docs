@@ -1,0 +1,78 @@
+---
+title: Verify and Stay Safe
+description: The audit loop for Claude's spreadsheet changes, how to undo, current limits, and the risks worth taking seriously
+icon: shield-check
+---
+
+The Excel add-in makes spreadsheet work faster, not automatically correct. Keep a short audit loop, know your escape hatches, and take three risks seriously.
+
+## Verification checklist
+
+<Steps>
+  <Step title="Review changed cells">
+    Look at the cells Claude changed before saving or sharing the workbook. If it made broad edits, ask for a list grouped by tab.
+  </Step>
+  <Step title="Trace one important number">
+    Pick one output that matters and ask Claude to cite every source cell behind it. Then inspect the cells yourself.
+  </Step>
+  <Step title="Test a driver">
+    Change a key input, like growth or churn, and confirm the expected outputs move. If nothing changes, you may have hard-codes or broken formulas.
+  </Step>
+  <Step title="Reconcile totals">
+    Compare before and after totals. Row counts, revenue totals, cash, headcount, and ending balances should move only for explainable reasons.
+  </Step>
+  <Step title="Check workbook edge cases">
+    Ask about hidden sheets, protected sheets, external links, pivot sources, named ranges, macros, and formulas that use volatile functions.
+  </Step>
+</Steps>
+
+For high-stakes work, combine this with the general [Reviewing & Verifying](/agentic-ai/claude-code/best-practices/reviewing-and-verifying) habits: spot-check known answers, ask Claude to show its work, and match your scrutiny to the consequences.
+
+## How to undo Claude's changes
+
+The warnings below are easier to live with when you know how to get back to yesterday's model.
+
+- **Do not count on Ctrl+Z.** Edits made through an add-in may not land in Excel's undo stack the way your own typing does. Treat undo as a bonus, not a plan.
+- **Version history is your real safety net.** If the workbook lives in OneDrive or SharePoint, use **File → Info → Version History** to restore any earlier saved version. If it lives only on your desktop, you do not have this — which is a good reason to move important models into OneDrive or a synced folder.
+- **Backup copies are the guarantee.** A dated copy made before the session (see [Version before big edits](/agentic-ai/spreadsheets/workbook-hygiene#version-before-big-edits)) works everywhere, no matter where the file lives.
+- **Get the change list before you save.** Ask Claude to list every cell it changed, grouped by tab, while the session is still open. Once you save and close, reconstructing what changed is much harder.
+
+## What Claude for Excel can't do (as of July 2026)
+
+Feature limits change fast, so verify against [Anthropic's current docs](https://support.claude.com/en/articles/12650343-use-claude-for-excel) before relying on this list:
+
+- **File formats:** it works with `.xlsx` and `.xlsm` files. Other formats need converting first.
+- **Advanced Excel features:** it does not handle data tables, macros, or VBA. If your model depends on them, ask Claude what it can and cannot safely inspect before trusting the result.
+- **Older and mobile Excel:** perpetual-license Excel 2016 and 2019 are not supported, and neither is Excel on Android. You need Excel on the web, or a current Microsoft 365 build on Windows, Mac, or iPad.
+- **Risky functions prompt for confirmation:** functions that reach outside the workbook, like `WEBSERVICE` and `IMAGE`, trigger a confirmation pop-up before Claude proceeds. That friction is deliberate — see the prompt injection warning below.
+
+## Safety
+
+There are three spreadsheet-specific risks worth taking seriously.
+
+<Warning>
+  **Do not use Claude for Excel on untrusted spreadsheets.** Vendor templates, downloaded workbooks, collaborative files, and imported data can contain hidden instructions in cells, formulas, comments, or other content — a prompt injection attack. [Anthropic's Claude for Excel docs](https://support.claude.com/en/articles/12650343-use-claude-for-excel) are explicit: only use it with trusted spreadsheets, because a poisoned file can steer Claude into leaking or corrupting your data.
+</Warning>
+
+<Warning>
+  **Do not treat Claude as the accountable reviewer.** It can help find errors, but you are still responsible for final client deliverables, audit-critical calculations, regulated data, and financial judgment.
+</Warning>
+
+<Warning>
+  **Cowork widens the blast radius.** If you let Claude work across Excel, PowerPoint, Word, and Outlook, it may carry spreadsheet context into other outputs without you explicitly directing the transfer. That is powerful for board packs and memos, but it also means sensitive spreadsheet data can travel farther than you intended. [Anthropic's Cowork safety guide](https://support.claude.com/en/articles/13364135-use-claude-cowork-safely) recommends avoiding sensitive files during active Cowork sessions and being cautious with "act without asking" autonomy.
+</Warning>
+
+## Working on a company machine
+
+If you are using Claude for Excel at work, two questions come up before any of the above: *can I install it* and *where does the data go*. Short answers to take to IT:
+
+- **Installation may need an admin.** Individuals install from the Microsoft Marketplace, but many companies lock down add-ins; an administrator can deploy Claude for Excel centrally through the Microsoft 365 admin center. The [setup guide](https://support.claude.com/en/articles/12650343-use-claude-for-excel) covers both paths.
+- **Workbook contents are processed by Anthropic** under whatever data terms your plan carries — Team and Enterprise plans have different commitments than individual Pro accounts. If you handle client, regulated, or otherwise sensitive data, get your firm's policy before pointing Claude at those files, not after. Anthropic's [Help Center](https://support.claude.com) and your admin are the authoritative sources here.
+
+## Official references
+
+- [Use Claude for Excel](https://support.claude.com/en/articles/12650343-use-claude-for-excel)
+- [Get started with Claude Cowork](https://support.claude.com/en/articles/13345190-get-started-with-claude-cowork)
+- [Use Claude Cowork safely](https://support.claude.com/en/articles/13364135-use-claude-cowork-safely)
+- [Work across Microsoft 365 apps](https://support.claude.com/en/articles/13892150-work-across-microsoft-365-apps)
+- [Use Google Workspace connectors](https://support.claude.com/en/articles/10166901-use-google-workspace-connectors)

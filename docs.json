@@ -193,11 +193,14 @@
                 ]
               },
               {
-                "group": "Working with Spreadsheets with Claude",
+                "group": "Working with Spreadsheets",
                 "icon": "table",
                 "expanded": true,
                 "pages": [
-                  "agentic-ai/spreadsheets/index"
+                  "agentic-ai/spreadsheets/index",
+                  "agentic-ai/spreadsheets/claude-for-excel",
+                  "agentic-ai/spreadsheets/workbook-hygiene",
+                  "agentic-ai/spreadsheets/verify-and-stay-safe"
                 ]
               },
               {
