@@ -1,0 +1,39 @@
+name: Monthly broken link check
+
+on:
+  schedule:
+    - cron: "0 15 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: monthly-broken-links
+  cancel-in-progress: true
+
+jobs:
+  broken-links:
+    name: Check documentation links
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Install Mintlify CLI
+        run: npm install --global mint@4.2.720
+
+      - name: Check links
+        run: >-
+          mint broken-links
+          --check-anchors
+          --check-external
+          --check-redirects
+          --check-snippets
